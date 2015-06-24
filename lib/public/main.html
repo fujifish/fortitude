@@ -55,17 +55,75 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
-          <h2 class="sub-header">Nodes</h2>
-          <i id="load_spinner" class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
+          <div class="container-fluid">
+            <div class="row">
+              <h1 class="page-header">Dashboard</h1>
+              <h2 class="sub-header">Nodes</h2>
+              <i id="load_spinner" class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
 
 
-          <div class="table-responsive">
-            <table id="nodes-table"></table>
+              <div class="table-responsive">
+                <table id="nodes-table"></table>
+              </div>
+            </div>
+            <div class="row">
+              <hr>
+              <div class=" col-md-5"></div>
+              <div class=" col-md-2">
+                <button id="copyState" class="glyphicon glyphicon-menu-right" aria-label="Copy" aria-hidden="true"></button>
+              </div>
+              <div class=" col-md-5"></div>
+            </div>
+            <div class="row">
+              <div id="node-details">
+                <div class="table-responsive col-md-6">
+                  <h3>Current State</h3>
+                  <table id="currentState-table"></table>
+                </div>
+                <div class="table-responsive col-md-6">
+                  <h3>Planned State</h3>
+                  <table id="plannedState-table"></table>
+                </div>
+              </div>
+            </div>
           </div>
-          <hr>
-          <div class="table-responsive">
-            <table id="modules-table"></table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Module edit modal -->
+   <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="Edit Module">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">Edit Module</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="edit-module-name" class="control-label">Name:</label>
+                <input type="text" class="form-control" id="edit-module-name">
+              </div>
+              <div class="form-group">
+                <label for="edit-module-version" class="control-label">Version:</label>
+                <input type="text" class="form-control" id="edit-module-version">
+              </div>
+              <div class="form-group">
+                <label for="edit-module-configuration" class="control-label">Configuration:</label>
+                <textarea class="form-control" id="edit-module-configuration"></textarea>
+              </div>
+              <div class="checkbox">
+                <label>
+                  <input id="edit-module-started" type="checkbox"> Started?
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="edit-module-save">Save</button>
           </div>
         </div>
       </div>
@@ -77,6 +135,7 @@
     <script src="bower/jquery/dist/jquery.min.js"></script>
     <script src="bower/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower/bootstrap-table/dist/bootstrap-table.min.js"></script>
+    <script src="javascripts/node.js"></script>
     <script src="javascripts/main.js"></script>
   </body>
 </html>
