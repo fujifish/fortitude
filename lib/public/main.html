@@ -12,7 +12,8 @@
     <title>Homebase</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="bower/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="bower/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <link href="stylesheets/bootstrap.paper.min.css" rel="stylesheet">
     <link href="bower/components-font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="bower/bootstrap-table/dist/bootstrap-table.min.css" rel="stylesheet" >
 
@@ -55,34 +56,48 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Dashboard</h1>
           <div class="container-fluid">
-            <div class="row">
-              <h1 class="page-header">Dashboard</h1>
-              <h2 class="sub-header">Nodes</h2>
-              <i id="load_spinner" class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
+            <div class="section">
 
+              <div class="row">
 
-              <div class="table-responsive">
-                <table id="nodes-table"></table>
-              </div>
-            </div>
-            <div class="row">
-              <hr>
-              <div class=" col-md-5"></div>
-              <div class=" col-md-2">
-                <button id="copyState" class="glyphicon glyphicon-menu-right" aria-label="Copy" aria-hidden="true"></button>
-              </div>
-              <div class=" col-md-5"></div>
-            </div>
-            <div class="row">
-              <div id="node-details">
-                <div class="table-responsive col-md-6">
-                  <h3>Current State</h3>
-                  <table id="currentState-table"></table>
+                <h2 class="sub-header">Nodes</h2>
+                <i id="load_spinner" class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
+
+                <div class="table-responsive">
+                  <table id="nodes-table"></table>
+                  <hr>
                 </div>
-                <div class="table-responsive col-md-6">
-                  <h3>Planned State</h3>
-                  <table id="plannedState-table"></table>
+              </div>
+
+              <div class="row">
+                <div id="node-details">
+
+                  <div class="table-responsive col-md-5">
+                    <h3>Current State
+                      <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions" style="margin-top:8px;">
+                        <button id="copyState" class="btn btn-primary" aria-label="Copy" aria-hidden="true"><i class="glyphicon glyphicon-forward"></i></button>
+                      </div>
+                    </h3>
+                    <table id="currentState-table"></table>
+                  </div>
+
+                  <div class="col-md-5 col-md-offset-1">
+                    <h3>Planned State
+                      <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions" style="margin-top:8px;">
+                        <button id="moduleAdd" class="btn btn-primary" aria-label="Add"><i class="glyphicon glyphicon-plus"></i></button>
+                      </div>
+                    </h3>
+                    <div class="table-responsive" id="plannedState-table-container" style="position:relative">
+                      <table id="plannedState-table"></table>
+                      <!--<div id="plannedStateActions" class="btn-group btn-group-sm" role="group" aria-label="Actions" style="position:absolute;top:0;right:0;">-->
+                        <!--<button id="moduleActionEdit" class="btn" aria-label="Edit"><i class="glyphicon glyphicon-edit"></i></button>-->
+                        <!--<button id="moduleActionDelete" class="btn" aria-label="Delete"><i class="glyphicon glyphicon-remove"></i></button>-->
+                      <!--</div>-->
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
