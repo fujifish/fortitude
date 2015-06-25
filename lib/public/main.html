@@ -1,169 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="../../favicon.ico">
 
-    <title>Homebase</title>
+  <title>Homebase</title>
 
-    <!-- Bootstrap core CSS -->
-    <!--<link href="bower/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
-    <link href="stylesheets/bootstrap.paper.min.css" rel="stylesheet">
-    <link href="bower/components-font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="bower/bootstrap-table/dist/bootstrap-table.min.css" rel="stylesheet" >
+  <!-- Bootstrap core CSS -->
+  <!--<link href="bower/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
+  <link href="stylesheets/bootstrap.paper.min.css" rel="stylesheet">
+  <link href="bower/components-font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="bower/bootstrap-table/dist/bootstrap-table.min.css" rel="stylesheet">
 
 
-    <!-- Custom styles for this template -->
-    <link href="stylesheets/dashboard.css" rel="stylesheet">
-  </head>
+  <!-- Custom styles for this template -->
+  <link href="stylesheets/dashboard.css" rel="stylesheet">
+</head>
 
-  <body>
+<body>
 
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+              aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Homebase</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Settings</a></li>
+      </ul>
+      <form class="navbar-form navbar-right">
+        <input type="text" class="form-control" placeholder="Search...">
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li class="active"><a href="#">Nodes <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Configurations</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
       <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Homebase</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
-        </div>
-      </div>
-    </nav>
+        <h1 class="page-header">Dashboard</h1>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Nodes <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Configurations</a></li>
-          </ul>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <section>
+          <h2>Nodes</h2>
+          <i id="load_spinner" class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
+
+          <div class="table-responsive">
+            <table id="nodes-table"></table>
+          </div>
+        </section>
+
+        <section>
           <div class="container-fluid">
-          <h1 class="page-header">Dashboard</h1>
 
-            <section>
-                <h2>Nodes</h2>
-                <i id="load_spinner" class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
-
-                <div class="table-responsive">
-                  <table id="nodes-table"></table>
-                </div>
-            </section>
-
-            <section>
-              <div class="container-fluid">
-              <div id="node-details">
-                  <div class="row">
-                      <div class="col-md-12">
-                          <div class="table-responsive" id="commands-table-container">
-                              <table id="commands-table"></table>
-                          </div>
-                      </div>
+            <div id="node-details">
+              <section>
+              <div class="row">
+                <div class="col-md-12">
+                  <h4>Commands</h4>
+                  <div class="table-responsive" id="commands-table-container">
+                    <table id="commands-table"></table>
                   </div>
-                <div class="row">
+                </div>
+              </div>
+              </section>
 
-                  <div class="col-md-5">
-                    <h4>Current State
-                      <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
-                        <button id="copyState" class="btn btn-default" aria-label="Copy" aria-hidden="true"><i class="glyphicon glyphicon-forward"></i></button>
-                      </div>
-                    </h4>
-                    <div class="table-responsive" id="currentState-table-container">
-                      <table id="currentState-table"></table>
+              <div class="row">
+
+                <div class="col-md-5">
+                  <h4>Current State
+                    <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
+                      <button id="copyState" class="btn btn-default" aria-label="Copy" aria-hidden="true"><i
+                          class="glyphicon glyphicon-forward"></i></button>
                     </div>
+                  </h4>
+                  <div class="table-responsive" id="currentState-table-container">
+                    <table id="currentState-table"></table>
                   </div>
+                </div>
 
-                  <div class="col-md-5 col-md-offset-1">
-                    <h4>Planned State
-                      <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
-                        <button id="applyState" class="btn btn-default" aria-label="Apply"><i class="glyphicon glyphicon-save"></i></button>
-                        <button id="moduleAdd" class="btn btn-default" aria-label="Add"><i class="glyphicon glyphicon-plus"></i></button>
-                      </div>
-                    </h4>
-                    <div class="table-responsive" id="plannedState-table-container" style="position:relative">
-                      <table id="plannedState-table"></table>
+                <div class="col-md-5 col-md-offset-1">
+                  <h4>Planned State
+                    <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
+                      <button id="applyState" class="btn btn-default" aria-label="Apply"><i
+                          class="glyphicon glyphicon-save"></i></button>
+                      <button id="moduleAdd" class="btn btn-default" aria-label="Add"><i
+                          class="glyphicon glyphicon-plus"></i></button>
                     </div>
+                  </h4>
+                  <div class="table-responsive" id="plannedState-table-container" style="position:relative">
+                    <table id="plannedState-table"></table>
                   </div>
-
                 </div>
-              </div>
-                </div>
-            </section>
-          </div>
-        </div>
-      </div>
-    </div>
 
-
-    <!-- Module edit modal -->
-   <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="Edit Module">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="exampleModalLabel">Edit Module</h4>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="form-group">
-                <h5>Name</h5>
-                <input type="text" class="form-control" id="edit-module-name">
               </div>
-              <div class="form-group">
-                <h5>Version</h5>
-                <input type="text" class="form-control" id="edit-module-version">
-              </div>
-              <!--<div class="form-group">-->
-                <!--&lt;!&ndash;<label for="edit-module-configuration" class="control-label">Configuration:</label>&ndash;&gt;-->
-                <!--&lt;!&ndash;<textarea class="form-control" id="edit-module-configuration"></textarea>&ndash;&gt;-->
-              <!--</div>-->
-              <div class="checkbox">
-                <label>
-                  <input id="edit-module-started" type="checkbox"> Started Module
-                </label>
-              </div>
-            </form>
-            <div>
-              <h5>Configuration</h5>
-              <form id="moduleform"></form>
             </div>
-
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="edit-module-save">Save</button>
-          </div>
-        </div>
+        </section>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bower/jquery/dist/jquery.min.js"></script>
-    <script src="bower/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="bower/bootstrap-table/dist/bootstrap-table.js"></script>
-    <script src="javascripts/jsonform/deps/underscore.js"></script>
-    <script src="javascripts/jsonform/jsonform.js"></script>
-    <script src="javascripts/node.js"></script>
-    <script src="javascripts/main.js"></script>
-  </body>
+
+<!-- Module edit modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="Edit Module">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">Edit Module</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <h5>Name</h5>
+            <input type="text" class="form-control" id="edit-module-name">
+          </div>
+          <div class="form-group">
+            <h5>Version</h5>
+            <input type="text" class="form-control" id="edit-module-version">
+          </div>
+          <!--<div class="form-group">-->
+          <!--&lt;!&ndash;<label for="edit-module-configuration" class="control-label">Configuration:</label>&ndash;&gt;-->
+          <!--&lt;!&ndash;<textarea class="form-control" id="edit-module-configuration"></textarea>&ndash;&gt;-->
+          <!--</div>-->
+          <div class="checkbox">
+            <label>
+              <input id="edit-module-started" type="checkbox"> Started Module
+            </label>
+          </div>
+        </form>
+        <div>
+          <h5>Configuration</h5>
+
+          <form id="moduleform"></form>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="edit-module-save">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="bower/jquery/dist/jquery.min.js"></script>
+<script src="bower/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower/bootstrap-table/dist/bootstrap-table.js"></script>
+<script src="javascripts/jsonform/deps/underscore.js"></script>
+<script src="javascripts/jsonform/jsonform.js"></script>
+<script src="javascripts/node.js"></script>
+<script src="javascripts/main.js"></script>
+</body>
 </html>
