@@ -70,14 +70,20 @@
 
             <section>
               <div class="container-fluid">
-              <div class="row">
-                <div id="node-details">
-
+              <div id="node-details">
+                  <div class="row">
+                      <div class="col-md-12">
+                          <div class="table-responsive" id="commands-table-container">
+                              <table id="commands-table"></table>
+                          </div>
+                      </div>
+                  </div>
+                <div class="row">
 
                   <div class="col-md-5">
                     <h4>Current State
                       <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
-                        <button id="copyState" class="btn btn-primary" aria-label="Copy" aria-hidden="true"><i class="glyphicon glyphicon-forward"></i></button>
+                        <button id="copyState" class="btn btn-default" aria-label="Copy" aria-hidden="true"><i class="glyphicon glyphicon-forward"></i></button>
                       </div>
                     </h4>
                     <div class="table-responsive" id="currentState-table-container">
@@ -88,7 +94,8 @@
                   <div class="col-md-5 col-md-offset-1">
                     <h4>Planned State
                       <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
-                        <button id="moduleAdd" class="btn btn-primary" aria-label="Add"><i class="glyphicon glyphicon-plus"></i></button>
+                        <button id="applyState" class="btn btn-default" aria-label="Apply"><i class="glyphicon glyphicon-save"></i></button>
+                        <button id="moduleAdd" class="btn btn-default" aria-label="Add"><i class="glyphicon glyphicon-plus"></i></button>
                       </div>
                     </h4>
                     <div class="table-responsive" id="plannedState-table-container" style="position:relative">
