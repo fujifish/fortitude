@@ -56,31 +56,33 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header">Dashboard</h1>
           <div class="container-fluid">
-            <div class="section">
+          <h1 class="page-header">Dashboard</h1>
 
-              <div class="row">
-
-                <h2 class="sub-header">Nodes</h2>
+            <section>
+                <h2>Nodes</h2>
                 <i id="load_spinner" class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
 
                 <div class="table-responsive">
                   <table id="nodes-table"></table>
-                  <hr>
                 </div>
-              </div>
+            </section>
 
+            <section>
+              <div class="container-fluid">
               <div class="row">
                 <div id="node-details">
 
-                  <div class="table-responsive col-md-5">
+
+                  <div class="col-md-5">
                     <h4>Current State
                       <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
                         <button id="copyState" class="btn btn-primary" aria-label="Copy" aria-hidden="true"><i class="glyphicon glyphicon-forward"></i></button>
                       </div>
                     </h4>
-                    <table id="currentState-table"></table>
+                    <div class="table-responsive" id="currentState-table-container">
+                      <table id="currentState-table"></table>
+                    </div>
                   </div>
 
                   <div class="col-md-5 col-md-offset-1">
@@ -89,18 +91,15 @@
                         <button id="moduleAdd" class="btn btn-primary" aria-label="Add"><i class="glyphicon glyphicon-plus"></i></button>
                       </div>
                     </h4>
-                    <div class="table-responsive" id="plannedState-table-container">
+                    <div class="table-responsive" id="plannedState-table-container" style="position:relative">
                       <table id="plannedState-table"></table>
-                      <!--<div id="plannedStateActions" class="btn-group btn-group-sm" role="group" aria-label="Actions" style="position:absolute;top:0;right:0;">-->
-                        <!--<button id="moduleActionEdit" class="btn" aria-label="Edit"><i class="glyphicon glyphicon-edit"></i></button>-->
-                        <!--<button id="moduleActionDelete" class="btn" aria-label="Delete"><i class="glyphicon glyphicon-remove"></i></button>-->
-                      <!--</div>-->
                     </div>
                   </div>
 
                 </div>
               </div>
-            </div>
+                </div>
+            </section>
           </div>
         </div>
       </div>
@@ -118,23 +117,28 @@
           <div class="modal-body">
             <form>
               <div class="form-group">
-                <label for="edit-module-name" class="control-label">Name:</label>
+                <h5>Name</h5>
                 <input type="text" class="form-control" id="edit-module-name">
               </div>
               <div class="form-group">
-                <label for="edit-module-version" class="control-label">Version:</label>
+                <h5>Version</h5>
                 <input type="text" class="form-control" id="edit-module-version">
               </div>
-              <div class="form-group">
-                <label for="edit-module-configuration" class="control-label">Configuration:</label>
-                <textarea class="form-control" id="edit-module-configuration"></textarea>
-              </div>
+              <!--<div class="form-group">-->
+                <!--&lt;!&ndash;<label for="edit-module-configuration" class="control-label">Configuration:</label>&ndash;&gt;-->
+                <!--&lt;!&ndash;<textarea class="form-control" id="edit-module-configuration"></textarea>&ndash;&gt;-->
+              <!--</div>-->
               <div class="checkbox">
                 <label>
-                  <input id="edit-module-started" type="checkbox"> Started?
+                  <input id="edit-module-started" type="checkbox"> Started Module
                 </label>
               </div>
             </form>
+            <div>
+              <h5>Configuration</h5>
+              <form id="moduleform"></form>
+            </div>
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -149,7 +153,9 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="bower/jquery/dist/jquery.min.js"></script>
     <script src="bower/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="bower/bootstrap-table/dist/bootstrap-table.min.js"></script>
+    <script src="bower/bootstrap-table/dist/bootstrap-table.js"></script>
+    <script src="javascripts/jsonform/deps/underscore.js"></script>
+    <script src="javascripts/jsonform/jsonform.js"></script>
     <script src="javascripts/node.js"></script>
     <script src="javascripts/main.js"></script>
   </body>
