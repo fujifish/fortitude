@@ -5,7 +5,8 @@
     "jquery": "~2.1.4",
     "bootstrap": "~3.3.4",
     "components-font-awesome": "~4.3.0",
-    "bootstrap-table": "~1.8.1"
+    "bootstrap-table": "~1.8.1",
+    "json-form": "git+https://github.com/capriza/jsonform.git#dev"
   },
   "private": true
 }
