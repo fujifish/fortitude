@@ -38,8 +38,6 @@
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Settings</a></li>
       </ul>
       <form class="navbar-form navbar-right">
         <input type="text" class="form-control" placeholder="Search...">
@@ -50,18 +48,20 @@
 
 <div class="container-fluid">
   <div class="row">
+
     <div class="col-sm-3 col-md-2 sidebar">
-      <ul class="nav nav-sidebar">
-        <li class="active"><a href="#">Nodes <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Configurations</a></li>
+      <ul id="sidebar" class="nav nav-sidebar">
+        <li class="active"><a href="#">Nodes</a></li>
+        <li><a href="#">Modules</a></li>
       </ul>
     </div>
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+
+    <div id="nodes-page" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
       <div class="container-fluid">
-        <h1 class="page-header">Dashboard</h1>
+        <h1 class="page-header">Nodes</h1>
 
         <section>
-          <h2>Nodes</h2>
           <i id="load_spinner" class="fa fa-circle-o-notch fa-spin" style="display: none;"></i>
 
           <div class="table-responsive">
@@ -118,6 +118,12 @@
         </section>
       </div>
     </div>
+    <div id="modules-page" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <div class="container-fluid">
+        <h1 class="page-header">Modules</h1>
+        <section>
+        </section>
+      </div>
   </div>
 </div>
 
@@ -162,7 +168,7 @@
 <script src="bower/bootstrap-table/dist/bootstrap-table.js"></script>
 <script src="bower/json-form/deps/underscore.js"></script>
 <script src="bower/json-form/lib/jsonform.js"></script>
-<script src="javascripts/node.js"></script>
+<script src="javascripts/api.js"></script>
 <script src="javascripts/main.js"></script>
 </body>
 </html>
