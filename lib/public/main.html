@@ -24,6 +24,7 @@
 
 <body>
 
+<!-- HEADER BAR -->
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -46,19 +47,29 @@
   </div>
 </nav>
 
+<!-- MAIN CONTENT -->
 <div class="container-fluid">
+
   <div class="row">
 
-    <div class="col-sm-3 col-md-2 sidebar">
-      <ul id="sidebar" class="nav nav-sidebar">
-        <li class="active"><a href="#">Nodes</a></li>
-        <li><a href="#">Modules</a></li>
+    <!-- SIDE NAV -->
+    <div id="sidebar" class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li data-nav="nodes-page"><a href="#">Nodes</a></li>
+        <li data-nav="modules-page"><a href="#">Modules</a></li>
       </ul>
     </div>
 
+    <!-- PAGES -->
+    <div id="pages" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-    <div id="nodes-page" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-      <div class="container-fluid">
+      <div id="main-alert" class="alert alert-warning alert-dismissible" role="alert" style="display:none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <span id="main-alert-content"></span>
+      </div>
+
+      <!-- NODES PAGE -->
+      <div id="nodes-page"  class="container-fluid">
         <h1 class="page-header">Nodes</h1>
 
         <section>
@@ -74,14 +85,15 @@
 
             <div id="node-details">
               <section>
-              <div class="row">
-                <div class="col-md-12">
-                  <h4>Commands</h4>
-                  <div class="table-responsive" id="commands-table-container">
-                    <table id="commands-table"></table>
+                <div class="row">
+                  <div class="col-md-12">
+                    <h4>Commands</h4>
+
+                    <div class="table-responsive" id="commands-table-container">
+                      <table id="commands-table"></table>
+                    </div>
                   </div>
                 </div>
-              </div>
               </section>
 
               <div class="row">
@@ -89,7 +101,7 @@
                 <div class="col-md-5">
                   <h4>Current State
                     <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
-                      <button id="copyState" class="btn btn-default" aria-label="Copy" aria-hidden="true"><i
+                      <button id="copt-current-to-planned-button" class="btn btn-default" aria-label="Copy" aria-hidden="true"><i
                           class="glyphicon glyphicon-forward"></i></button>
                     </div>
                   </h4>
@@ -101,9 +113,9 @@
                 <div class="col-md-5 col-md-offset-1">
                   <h4>Planned State
                     <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
-                      <button id="applyState" class="btn btn-default" aria-label="Apply"><i
+                      <button id="apply-state-button" class="btn btn-default" aria-label="Apply"><i
                           class="glyphicon glyphicon-save"></i></button>
-                      <button id="moduleAdd" class="btn btn-default" aria-label="Add"><i
+                      <button id="module-add-button" class="btn btn-default" aria-label="Add"><i
                           class="glyphicon glyphicon-plus"></i></button>
                     </div>
                   </h4>
@@ -117,44 +129,86 @@
           </div>
         </section>
       </div>
+
+    <!-- MODULES PAGE -->
+    <div id="modules-page"  class="container-fluid">
+      <h1 class="page-header">Modules
+        <div class="btn-group" role="group" aria-label="Actions">
+          <button id="new-module-button" class="btn btn-default" aria-label="New" aria-hidden="true"><i
+              class="glyphicon glyphicon-plus"></i></button>
+        </div>
+      </h1>
+      <section>
+        <div class="table-responsive">
+          <table id="modules-table"></table>
+        </div>
+      </section>
+      <section>
+        <div class="container-fluid">
+          <div id="module-details" class="table-responsive">
+            <table id="module-details-table"></table>
+          </div>
+        </div>
+      </section>
     </div>
-    <div id="modules-page" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-      <div class="container-fluid">
-        <h1 class="page-header">Modules</h1>
-        <section>
-        </section>
-      </div>
+
   </div>
 </div>
 
 
-<!-- Module edit modal -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="Edit Module">
+<!-- NEW MODULE DIALOG -->
+<div class="modal fade" id="new-module-dialog" tabindex="-1" role="dialog" aria-labelledby="New Module">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel"><span
             aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="edit-module-title"></h4>
+        <h4 class="modal-title" id="new-module-title">New Module</h4>
       </div>
       <div class="modal-body">
-        <form>
-          <div class="checkbox">
-            <label>
-              <input id="edit-module-started" type="checkbox"> Started Module
-            </label>
-          </div>
-        </form>
-        <h5>Configuration</h5>
+        <h5>Module JSON</h5>
 
-        <form id="edit-module-configuration">
-            <!--<textarea class="form-control" id="edit-module-configuration"></textarea>-->
+        <form id="edit-module-json">
+          <textarea class="form-control" id="new-module-json-textarea"></textarea>
         </form>
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="edit-module-save">Save</button>
+        <button type="button" class="btn btn-primary" id="new-module-save">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- EDIT NODE MODULE DIALOG -->
+<div class="modal fade" id="edit-node-module-dialog" tabindex="-1" role="dialog" aria-labelledby="Edit Module">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel"><span
+            aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="edit-node-module-title"></h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="checkbox">
+            <label>
+              <input id="edit-node-module-started" type="checkbox"> Started Module
+            </label>
+          </div>
+        </form>
+        <h5>Configuration</h5>
+
+        <form id="edit-node-module-configuration">
+          <!--<textarea class="form-control" id="edit-node-module-configuration"></textarea>-->
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="edit-node-module-save">Save</button>
       </div>
     </div>
   </div>
