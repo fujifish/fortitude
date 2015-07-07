@@ -115,7 +115,7 @@
                     <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
                       <button id="apply-state-button" class="btn btn-default" aria-label="Apply"><i
                           class="glyphicon glyphicon-save"></i></button>
-                      <button id="module-add-button" class="btn btn-default" aria-label="Add"><i
+                      <button id="node-module-add-button" class="btn btn-default" aria-label="Add"><i
                           class="glyphicon glyphicon-plus"></i></button>
                     </div>
                   </h4>
@@ -175,14 +175,39 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="new-module-save">Save</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="new-module-save">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD NODE MODULE DIALOG -->
+<div class="modal fade" id="node-module-add-dialog" tabindex="-1" role="dialog" aria-labelledby="Add Module">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel"><span
+            aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Add Module</h4>
+      </div>
+      <div class="modal-body">
+
+        <form id="node-module-add-form">
+          <select class="form-control" id="node-module-add-name"></select>
+          <select class="form-control" id="node-module-add-version"></select>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="node-module-add-save">Save</button>
       </div>
     </div>
   </div>
 </div>
 
 
-<!-- EDIT NODE MODULE DIALOG -->
+  <!-- EDIT NODE MODULE DIALOG -->
 <div class="modal fade" id="edit-node-module-dialog" tabindex="-1" role="dialog" aria-labelledby="Edit Module">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -208,7 +233,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="edit-node-module-save">Save</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="edit-node-module-save">Save</button>
       </div>
     </div>
   </div>
