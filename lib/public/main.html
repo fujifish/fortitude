@@ -115,7 +115,7 @@
                     <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
                       <button id="apply-state-button" class="btn btn-default" aria-label="Apply"><i
                           class="glyphicon glyphicon-save"></i></button>
-                      <button id="node-module-add-button" class="btn btn-default" aria-label="Add"><i
+                      <button id="add-node-module-button" class="btn btn-default" aria-label="Add"><i
                           class="glyphicon glyphicon-plus"></i></button>
                     </div>
                   </h4>
@@ -156,6 +156,25 @@
 </div>
 
 
+<!-- CONFIRM DIALOG -->
+<div class="modal fade" id="confirm-dialog" tabindex="-1" role="dialog" aria-labelledby="Confirm Action">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm Action</h4>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-text" class="lead"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirm-yes">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- NEW MODULE DIALOG -->
 <div class="modal fade" id="new-module-dialog" tabindex="-1" role="dialog" aria-labelledby="New Module">
   <div class="modal-dialog" role="document">
@@ -182,7 +201,7 @@
 </div>
 
 <!-- ADD NODE MODULE DIALOG -->
-<div class="modal fade" id="node-module-add-dialog" tabindex="-1" role="dialog" aria-labelledby="Add Module">
+<div class="modal fade" id="add-node-module-dialog" tabindex="-1" role="dialog" aria-labelledby="Add Module">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -192,15 +211,26 @@
       </div>
       <div class="modal-body">
 
-        <form id="node-module-add-form">
-          <select class="form-control" id="node-module-add-name"></select>
-          <select class="form-control" id="node-module-add-version"></select>
+        <form id="add-node-module">
+          <h5>Name</h5>
+          <select class="form-control" id="add-node-module-name"></select>
+          <h5>Version</h5>
+          <select class="form-control" id="add-node-module-version"></select>
+          <h5>State</h5>
+          <div class="checkbox">
+            <label>
+              <input id="add-node-module-started" type="checkbox"> Started
+            </label>
+          </div>
         </form>
+
+        <h5>Configuration</h5>
+        <form id="add-node-module-configuration" class="jsform-section"></form>
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" id="node-module-add-save">Save</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="add-node-module-save">Save</button>
       </div>
     </div>
   </div>
@@ -217,16 +247,17 @@
         <h4 class="modal-title" id="edit-node-module-title"></h4>
       </div>
       <div class="modal-body">
+        <h5>Status</h5>
         <form>
           <div class="checkbox">
             <label>
-              <input id="edit-node-module-started" type="checkbox"> Started Module
+              <input id="edit-node-module-started" type="checkbox"> Started
             </label>
           </div>
         </form>
         <h5>Configuration</h5>
 
-        <form id="edit-node-module-configuration">
+        <form id="edit-node-module-configuration" class="jsform-section">
           <!--<textarea class="form-control" id="edit-node-module-configuration"></textarea>-->
         </form>
 
@@ -247,6 +278,7 @@
 <script src="bower/bootstrap-table/dist/bootstrap-table.js"></script>
 <script src="bower/json-form/deps/underscore.js"></script>
 <script src="bower/json-form/lib/jsonform.js"></script>
+<script src="javascripts/state.js"></script>
 <script src="javascripts/api.js"></script>
 <script src="javascripts/main.js"></script>
 </body>
