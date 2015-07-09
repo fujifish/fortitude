@@ -101,7 +101,8 @@
                 <div class="col-md-5">
                   <h4>Current State
                     <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
-                      <button id="copt-current-to-planned-button" class="btn btn-default" aria-label="Copy" aria-hidden="true"><i
+                      <button id="copy-current-to-planned-button" class="btn btn-default" aria-label="Copy"
+                              data-toggle="tooltip" data-placement="auto" title="Set as Planned"><i
                           class="glyphicon glyphicon-forward"></i></button>
                     </div>
                   </h4>
@@ -113,9 +114,11 @@
                 <div class="col-md-5 col-md-offset-1">
                   <h4>Planned State
                     <div class="pull-right btn-group btn-group-sm" role="group" aria-label="Actions">
-                      <button id="apply-state-button" class="btn btn-default" aria-label="Apply"><i
+                      <button id="apply-state-button" class="btn btn-default" aria-label="Apply"
+                              data-toggle="tooltip" data-placement="auto" title="Apply Changes"><i
                           class="glyphicon glyphicon-save"></i></button>
-                      <button id="add-node-module-button" class="btn btn-default" aria-label="Add"><i
+                      <button id="add-node-module-button" class="btn btn-default" aria-label="Add"
+                              data-toggle="tooltip" data-placement="auto" title="Add Module"><i
                           class="glyphicon glyphicon-plus"></i></button>
                     </div>
                   </h4>
@@ -164,7 +167,8 @@
         <h4 class="modal-title">Confirm Action</h4>
       </div>
       <div class="modal-body">
-        <p id="confirm-text" class="lead"></p>
+        <p id="confirm-text" style="font-size: larger"></p>
+        <p id="confirm-subtext" ></p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
