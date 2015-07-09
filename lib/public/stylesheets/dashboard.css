@@ -32,10 +32,11 @@ textarea {
   overflow: auto;
 }
 
-.code-snippet {
-  max-height: 300px;
+#module-details-view {
+  max-height: 640px;
   overflow: auto;
 }
+
 /*
  * Global add-ons
  */
