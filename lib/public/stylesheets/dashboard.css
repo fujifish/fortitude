@@ -37,6 +37,11 @@ textarea {
   overflow: auto;
 }
 
+#command-details-log {
+  max-height: 600px;
+  overflow: auto;
+}
+
 /*
  * Global add-ons
  */
