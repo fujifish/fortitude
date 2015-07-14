@@ -1,90 +1,83 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
-var app = require('./homebase');
-var debug = require('debug')('homebase:server');
 var http = require('http');
+var passport = require('passport');
+var LocalAPIKeyStrategy = require('passport-localapikey').Strategy;
+var UsernamePasswordStrategy = require('passport-local').Strategy;
+var fortitude = require('./fortitude');
 
-/**
- * Get port from environment and store in Express.
- */
+passport.use(new LocalAPIKeyStrategy(
+  function(apikey, done) {
+    //User.findOne({ apikey: apikey }, function (err, user) {
+    //  if (err) { return done(err); }
+    //  if (!user) { return done(null, false); }
+    //  return done(null, user);
+    //});
+  }
+));
 
-var port = normalizePort(process.env.PORT || '3005');
-app.set('port', port);
+passport.use(new UsernamePasswordStrategy(
+  function(username, password, done) {
 
-/**
- * Create HTTP server.
- */
+    //User.findOne({ username: username }, function(err, user) {
+    //  if (err) { return done(err); }
+    //  if (!user) {
+    //    return done(null, false, { message: 'Incorrect username.' });
+    //  }
+    //  if (!user.validPassword(password)) {
+    //    return done(null, false, { message: 'Incorrect password.' });
+    //  }
+    //  return done(null, user);
+    //});
+  }
+));
+
+
+// initialize the fortitude express app
+var app = fortitude({
+  authConfig: function(app) {
+    app.use(passport.initialize());
+    app.use('/api', authenticateUser);
+    app.use('/agent', authenticateApi);
+  }
+});
+
+function authenticateUser(req, res, next) {
+  next();
+}
+
+function authenticateApi(req, res, next) {
+  next();
+}
 
 var server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
+var port = parseInt(process.env.FORTITUDE_PORT || '3005');
 
 server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-/**
- * Event listener for HTTP server "error" event.
- */
-
-function onError(error) {
+server.on('error', function(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
-
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      console.error(port + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      console.error(port + ' is already in use');
       process.exit(1);
       break;
     default:
       throw error;
   }
-}
+});
 
-/**
- * Event listener for HTTP server "listening" event.
- */
+server.on('listening', function() {
+  console.log('Listening on port ' + port);
+});
 
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
-}
+
