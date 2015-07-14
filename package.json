@@ -1,6 +1,6 @@
 {
   "name": "fortitude",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "The outpost server",
   "author": "Capriza Inc. <backend@capriza.com>",
   "maintainers": [
@@ -44,11 +44,15 @@
   },
   "main": "index.js",
   "files": [
+    "LICENSE",
+    "README",
+    "bower.json",
     "index.js",
     "lib"
   ],
   "license": "MIT",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test",
+    "install": "bower install"
   }
 }
