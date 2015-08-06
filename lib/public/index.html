@@ -57,6 +57,7 @@
       <ul class="nav nav-sidebar">
         <li data-nav="nodes-page"><a href="#">Nodes</a></li>
         <li data-nav="modules-page"><a href="#">Modules</a></li>
+        <li data-nav="agents-page"><a href="#">Agents</a></li>
       </ul>
     </div>
 
@@ -153,28 +154,64 @@
       </div>
     </div>
 
+    <!-- AGENTS PAGE -->
+    <div id="agents-page"  class="container-fluid">
+      <h2 class="page-header">Modules
+        <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
+          <button id="new-agent-button" class="btn btn-default" aria-label="New" aria-hidden="true"><i
+              class="glyphicon glyphicon-plus"></i></button>
+        </div>
+      </h2>
+      <div class="row">
+        <div class="table-responsive col-md-4" style="max-height:600px;overflow: auto;">
+          <table id="agents-table"></table>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 
-<!-- CONFIRM DIALOG -->
-<div class="modal fade" id="confirm-dialog" tabindex="-1" role="dialog" aria-labelledby="Confirm Action">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Confirm Action</h4>
-      </div>
-      <div class="modal-body">
-        <p id="confirm-text" style="font-size: larger"></p>
-        <p id="confirm-subtext" ></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirm-yes">Yes</button>
+  <!-- CONFIRM DIALOG -->
+  <div class="modal fade" id="confirm-dialog" tabindex="-1" role="dialog" aria-labelledby="Confirm Action">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Confirm Action</h4>
+        </div>
+        <div class="modal-body">
+          <p id="confirm-text" style="font-size: larger"></p>
+          <p id="confirm-subtext" ></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="confirm-yes">Yes</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- UPDATE AGENT VERSION DIALOG -->
+  <div class="modal fade" id="update-agent-version-dialog" tabindex="-1" role="dialog" aria-labelledby="Update Agent Version">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Update Agent Version</h4>
+        </div>
+        <div class="modal-body">
+          <form id="update-agent-version-form">
+            <h5>Select Version</h5>
+            <select class="form-control" id="update-agent-version-select"></select>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="update-agent-version-yes">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- COMMAND DETAILS -->
   <div class="modal fade" id="command-details-dialog" tabindex="-1" role="dialog" aria-labelledby="Command Details">
