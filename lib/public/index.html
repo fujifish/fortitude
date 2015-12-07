@@ -17,6 +17,51 @@
   <link href="bower/components-font-awesome/css/font-awesome.min.css" rel="stylesheet">
   <link href="bower/bootstrap-table/dist/bootstrap-table.min.css" rel="stylesheet">
 
+  <style>
+    #form select { width: auto; }
+    #form .add-on {
+      border: none;
+      background-color: inherit;
+    }
+
+    .expandable > legend:before {
+      content: '\25B8';
+      padding-right: 5px;
+    }
+    .expanded > legend:before {
+      content: '\25BE';
+    }
+
+    ._jsonform-array-buttons {
+      margin-left: 25px;
+    }
+
+    /*.jsonform-required > label:after {*/
+      /*content: ' *';*/
+      /*color: red;*/
+    /*}*/
+
+    /*form.jsonform-hasrequired:after {*/
+      /*content: '* Required field';*/
+      /*display: block;*/
+      /*color: red;*/
+      /*padding-top: 1em;*/
+    /*}*/
+    .inline-other-field > .other-field-content,
+    .inline-other-field > label > .other-field-content {
+      display: inline-block;
+      margin: 0;
+    }
+    .inline-other-field > input[type=checkbox],
+    .inline-other-field > label > input[type=checkbox] {
+      margin-top: 8px;
+    }
+    .other-field-content > .control-group,
+    .other-field-content > .control-group > .controls > input[type=text] {
+      margin: 0;
+    }
+  </style>
+
 
   <!-- Custom styles for this template -->
   <link href="stylesheets/dashboard.css" rel="stylesheet">
@@ -276,7 +321,9 @@
 
           <h5>Configuration</h5>
 
-          <form id="add-node-module-configuration" class="jsform-section"></form>
+          <div id="add-node-module-configuration-div">
+            <form id="add-node-module-configuration" class="jsform-section"></form>
+          </div>
 
         </div>
         <div class="modal-footer">
@@ -309,9 +356,9 @@
           </form>
           <h5>Configuration</h5>
 
-          <form id="edit-node-module-configuration" class="jsform-section">
-            <!--<textarea class="form-control" id="edit-node-module-configuration"></textarea>-->
-          </form>
+          <div id="edit-node-module-configuration-div">
+            <form id="edit-node-module-configuration" class="jsform-section"></form>
+          </div>
 
         </div>
         <div class="modal-footer">
