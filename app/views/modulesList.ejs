@@ -1,0 +1,22 @@
+<div class="box-header">
+  <div class="box-tools pull-right">
+    <button id="moduleListAddButton" class="btn btn-box-tool glyphicon glyphicon-plus" data-toggle="tooltip" title="Add"></button>
+  </div>
+</div>
+<div class="box-body">
+  <table class="table table-striped">
+    <tbody>
+    <% for (var index = 0; index < modules.length; index++ ){
+        var module = modules[index];
+    %>
+    <tr>
+      <td><input name="btSelectItemModules" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
+      <td><%= module.name %></td>
+      <td><%= module.version %></td>
+      <td><a href="#" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="" data-original-title="Remove"
+             ><i class="glyphicon glyphicon-remove"></i></a></td>
+    </tr>
+    <% } %>
+    </tbody>
+  </table>
+</div>

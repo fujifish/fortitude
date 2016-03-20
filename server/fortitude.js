@@ -18,7 +18,7 @@ function fortitude(config) {
   config = config || {};
   config.csrfSecret = config.csrfSecret || randomHex();
 
-  var log = config.logger || bunyan.createLogger();
+  var log = config.logger || bunyan.createLogger({name: "fortitude"});
   var logger = log.child({module: 'main'});
 
   store.init(config.db, log);
@@ -26,6 +26,16 @@ function fortitude(config) {
   agent.init(log);
 
   var app = config.app || express();
+
+  if(process.env['NODE_ENV']==='DEV'){
+    var webpack = require('webpack');
+    var webpackConfig = require('../webpack.config');
+    var compiler = webpack(webpackConfig);
+
+    app.use(require("webpack-dev-middleware")(compiler, {
+      noInfo: true, publicPath: webpackConfig.output.publicPath
+    }));
+  }
 
   app.use(cookieParser());
   app.use(bodyParser.json({reviver: function(k, v) { return (typeof v === "string")? sanitize(v) : v }}));
@@ -44,17 +54,16 @@ function fortitude(config) {
   app.use('/agent', agent.router);
 
   // api routes with csrf protection
-  app.use('/api', csrfVerify(config.csrfSecret), api.router);
+  app.use('/api', /*csrfVerify(config.csrfSecret), */api.router);
 
   // fortitude ui
-  app.use('/bower', express.static(path.resolve(__dirname, '../bower_components')));
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.resolve(__dirname, '../public')));
   app.use('/', function(req, res, next) {
     var rpath = url.parse(req.url).path;
     if (rpath === '/') {
       var salt = randomHex();
       res.setHeader('Set-Cookie', '_csrf=' + salt+';HttpOnly');
-      ejs.renderFile(path.join(__dirname, 'public/index.ejs'), {csrfToken: csrfToken(salt, config.csrfSecret)}, function(err, html) {
+      ejs.renderFile(path.resolve(__dirname, '../app/index.ejs'), {csrfToken: csrfToken(salt, config.csrfSecret)}, function(err, html) {
         res.end(html);
       });
       // no next continuation

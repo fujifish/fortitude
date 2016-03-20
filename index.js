@@ -1,1 +1,1 @@
-exports = module.exports = require('./lib/fortitude');
+exports = module.exports = require('./server/fortitude');
