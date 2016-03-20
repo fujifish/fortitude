@@ -1,4 +1,4 @@
-import template from "../views/navigation.ejs";
+import template from "views/navigation";
 
 export default class Navigation {
   initialView() {

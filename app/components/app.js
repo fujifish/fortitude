@@ -7,10 +7,10 @@ import fontawesome from 'font-awesome/css/font-awesome.css';
 import bootstrapjs from 'admin-lte/bootstrap/js/bootstrap'
 import adminltejs from 'admin-lte/dist/js/app'
 
-import template from "../views/app.ejs";
-import Navigation from "./navigation"
-import SideBar from './sidebar'
-import Modules from './modules'
+import template from "views/app";
+import Navigation from "components/Navigation"
+import SideBar from 'components/Sidebar'
+import Modules from 'components/modules/Modules'
 
 class App{
   initialView(){

@@ -1,5 +1,5 @@
-import Component from './component';
-import template from '../views/dialog.ejs'
+import Component from 'components/relax/Component';
+import template from 'views/dialog'
 
 export default class Dialog extends Component {
   constructor(name){

@@ -1,10 +1,10 @@
-import Dialog from './dialog';
-import modulesStore from '../store/modulesStore';
-import body from '../views/addModuleDialog/body.ejs'
+import Dialog from 'components/Dialog';
+import modulesStore from 'store/ModulesStore';
+import body from 'views/modules/addModuleDialog/body'
 
 export default class AddModuleDialog extends Dialog {
   constructor() {
-    super('addModuleDialog');
+    super('AddModuleDialog');
     modulesStore.on('addingModule', addingModule =>{
       addingModule ? this.show() : this.hide();
     });

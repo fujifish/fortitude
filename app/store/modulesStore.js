@@ -1,4 +1,4 @@
-import Store from './store'
+import Store from 'store/relax/Store'
 
 class ModulesStore extends Store {
   constructor() {

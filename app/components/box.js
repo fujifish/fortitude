@@ -1,5 +1,5 @@
-import Component from './component';
-import template from "../views/box.ejs";
+import Component from 'components/relax/Component';
+import template from "views/box";
 
 export default class Box extends Component{
   constructor(name){

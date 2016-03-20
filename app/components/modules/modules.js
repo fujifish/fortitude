@@ -1,8 +1,8 @@
-  import template from "../views/modules.ejs";
-  import ModulesList from './modulesList';
-  import AddModuleDialog from './addModuleDialog';
-  import Component from './component';
-  import ModuleDetails from './moduleDetails';
+  import template from "views/modules/modules";
+  import ModulesList from 'components/modules/ModulesList';
+  import AddModuleDialog from 'components/modules/AddModuleDialog';
+  import Component from 'components/relax/Component';
+  import ModuleDetails from 'components/modules/ModuleDetails';
 
   export default class Modules extends Component {
     constructor(){

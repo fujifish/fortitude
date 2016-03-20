@@ -1,6 +1,6 @@
-import Box from './box'
-import template from '../views/moduleDetails.ejs';
-import modulesStore from '../store/modulesStore';
+import Box from 'components/Box'
+import template from 'views/modules/moduleDetails';
+import modulesStore from 'store/ModulesStore';
 
 export default class ModuleDetails extends Box {
   constructor() {

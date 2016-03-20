@@ -67,7 +67,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf public",
-    "build:webpack": "webpack --progress --colors",
+    "build:webpack": "webpack --progress --colors --display-error-details",
     "build": "npm run clean && npm run build:webpack",
     "dev": "NODE_ENV=DEV node server/www"
   }

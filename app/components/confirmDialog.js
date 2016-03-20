@@ -1,5 +1,5 @@
-import Dialog from './dialog';
-import body from '../views/confirmDialog/body.ejs';
+import Dialog from 'components/Dialog';
+import body from 'views/confirmDialog/body';
 
 export default class ConfirmDialog extends Dialog {
   constructor(name) {

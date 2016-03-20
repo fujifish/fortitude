@@ -1,7 +1,7 @@
-import template from "../views/modulesList.ejs";
-import modulesStore from '../store/modulesStore';
-import Box from './box';
-import ConfirmDialog from './confirmDialog';
+import template from "views/modules/modulesList";
+import modulesStore from 'store/ModulesStore';
+import Box from 'components/Box';
+import ConfirmDialog from 'components/ConfirmDialog';
 
 export default class ModulesList extends Box {
   constructor(deleteModuleConfirmDialog){
