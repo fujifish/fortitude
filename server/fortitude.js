@@ -60,7 +60,7 @@ function fortitude(config) {
   app.use(express.static(path.resolve(__dirname, '../public')));
   app.use('/', function(req, res, next) {
     var rpath = url.parse(req.url).path;
-    if (rpath === '/') {
+    if (rpath.indexOf('/assets') == -1) {
       var salt = randomHex();
       res.setHeader('Set-Cookie', '_csrf=' + salt+';HttpOnly');
       ejs.renderFile(path.resolve(__dirname, '../app/index.ejs'), {csrfToken: csrfToken(salt, config.csrfSecret)}, function(err, html) {

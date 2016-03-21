@@ -3,7 +3,17 @@
     <%- navigation %>
     <%- sidebar %>
     <div class="content-wrapper">
-      <%- content %>
+      <div class="content-header" >
+        <h1 id="header-name">
+        </h1>
+      </div>
+      <div class="content body">
+        <% for(var index = 0; index < content.length; index++){ %>
+          <section data-index="<%= index %>">
+            <%- content[index] %>
+          </section>
+        <% } %>
+      </div>
     </div>
     <%- footer %>
   </div>

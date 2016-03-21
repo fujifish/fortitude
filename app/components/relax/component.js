@@ -25,7 +25,7 @@ export default class Component {
 
   }
 
-  initialView(){
+    initialView(){
     return `<div id="${this.componentId}">${this.view()}</div>`;
   }
 
