@@ -18,13 +18,13 @@ class App extends Component{
   constructor(){
     super("App");
     this.routerStore = new RouterStore([
-      {title: "Modules", component: new Modules(), path: "/modules"},
-      {title: "Nodes", component: new Nodes(), path: "/nodes"}
+      {title: "Nodes", component: new Nodes(), path: "/nodes"},
+      {title: "Modules", component: new Modules(), path: "/modules"}
     ]);
     this.routerStore.on('selected', selected => {
       this._makeVisible(selected);
     });
-    }
+  }
 
   _makeVisible(index){
     if(index != -1){
@@ -32,6 +32,10 @@ class App extends Component{
       $(`.wrapper .content section[data-index!=${index}]`).hide();
       $('#header-name').text(this.routerStore.state.routes[index].title);
     }
+  }
+
+  viewMounted(){
+    this._makeVisible(0);
   }
 
   initialView(){

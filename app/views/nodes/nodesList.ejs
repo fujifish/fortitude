@@ -1,0 +1,46 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Metadata</th>
+      <th>Id</th>
+      <th>Platform</th>
+      <th>Last Sync</th>
+      <th>Agent Version</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%
+
+  function formatNodeMetadata(meta) {
+    if (!meta) {
+      return null;
+    }
+
+    var data = [];
+    Object.keys(meta).forEach(function(key) {
+      data.push(key + ': ' + meta[key]);
+    });
+    return data.join(', ');
+  }
+
+  for (var index = 0; index < nodes.length; index++ ){
+    var node = nodes[index];
+
+  %>
+  <tr>
+    <td><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
+    <td><%= node.name %></td>
+    <td><%= formatNodeMetadata(node.metadata) %></td>
+    <td><%= node.id %></td>
+    <td><%= node.info.platform %></td>
+    <td><%= node.lastSync %></td>
+    <td><%= node.info.agentVersion %></td>
+    <td><a href="#" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="" data-original-title="Remove"
+      ><i class="glyphicon glyphicon-remove"></i></a></td>
+  </tr>
+  <% } %>
+  </tbody>
+</table>
