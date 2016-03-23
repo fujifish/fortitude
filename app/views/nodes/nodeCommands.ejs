@@ -1,0 +1,44 @@
+<div class="box-header with-border">
+  <h3 class="box-title">Commands</h3>
+</div>
+<div class="box-body">
+  <table class="table table-striped">
+    <tbody>
+    <%
+    function commandStatus(status) {
+      status = status || 'none';
+      var statusIcons = {
+        'pending': {
+          icon: 'glyphicon-time', color: 'text-primary'
+        },
+        'error': {
+          icon: 'glyphicon-remove-circle', color: 'text-danger'
+        },
+        'success': {
+          icon: 'glyphicon-ok-circle', color: 'text-success'
+        },
+        'skipped': {
+          icon: 'glyphicon-exclamation-sign', color: 'text-primary'
+        },
+        'none': {
+          icon: '', color: 'text-muted'
+        }
+      }
+      return '<div><i class="glyphicon ' + statusIcons[status].icon + ' '  + statusIcons[status].color + '" style="font-size:20px;" aria-hidden="true"></i></div>';
+    }
+
+
+    for (var index = 0; index < commands.length; index++) {
+        var command = commands[index];
+    %>
+      <tr>
+        <td><%= command.created %></td>
+        <td><%= command.type %></td>
+        <td><%= command.action %></td>
+        <td><%- commandStatus(command.status) %></td>
+      </tr>
+    <% } %>
+    </tbody>
+  </table>
+</div>
+
