@@ -13,7 +13,7 @@
       const data = {
         modulesList: new ModulesList().initialView(),
         moduleDetails: new ModuleDetails().initialView(),
-        addModuleDialog: new AddModuleDialog().initialView(),
+        addModuleDialog: new AddModuleDialog().initialView()
       };
       return template(data);
     }

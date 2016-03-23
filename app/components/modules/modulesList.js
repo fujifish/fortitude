@@ -5,7 +5,7 @@ import ConfirmDialog from 'components/ConfirmDialog';
 
 export default class ModulesList extends Box {
   constructor(deleteModuleConfirmDialog){
-    super('ModulesList', modulesStore);
+    super('ModulesList', {style: 'primary'});
     modulesStore.on('modules', modules => {
       this.render();
     });

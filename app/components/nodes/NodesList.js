@@ -4,7 +4,7 @@ import nodesStore from 'store/NodesStore';
 
 export default class NodesList extends Box {
   constructor(){
-    super("NodesList");
+    super("NodesList", {style: 'primary'});
     nodesStore.on('nodes', nodes => {
       this.render();
     });

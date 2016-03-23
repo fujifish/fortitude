@@ -4,39 +4,36 @@
       <th></th>
       <th>Name</th>
       <th>Metadata</th>
+      <th>Last Synced (UTC)</th>
       <th>Id</th>
       <th>Platform</th>
-      <th>Last Sync</th>
       <th>Agent Version</th>
-      <th>Actions</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
   <%
-
-  function formatNodeMetadata(meta) {
-    if (!meta) {
-      return null;
-    }
-
-    var data = [];
-    Object.keys(meta).forEach(function(key) {
-      data.push(key + ': ' + meta[key]);
-    });
-    return data.join(', ');
-  }
-
+  const warningTime = 1000*60*60*24;
   for (var index = 0; index < nodes.length; index++ ){
     var node = nodes[index];
-
+    var lastSynced = Date.parse(node.lastSync);
+    var bgColor = Date.now() - lastSynced > warningTime ? 'bg-yellow' : '';
   %>
-  <tr>
+  <tr class="<%= bgColor %>">
     <td><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
     <td><%= node.name %></td>
-    <td><%= formatNodeMetadata(node.metadata) %></td>
+    <td>
+      <%
+        var meta = node.metadata || {org: 'blddda', kuku: 'kakasss', koko: 'sdsdsdsd'};
+        var keys = Object.keys(meta);
+        for (var j = 0; j < keys.length; ++j) {
+      %>
+        <small class="label bg-blue"><%= keys[j] %>:<%= meta[keys[j]] %></small>
+      <% } %>
+    </td>
+    <td><%= node.lastSync.replace('T', ' ').replace('Z', ''); %></td>
     <td><%= node.id %></td>
     <td><%= node.info.platform %></td>
-    <td><%= node.lastSync %></td>
     <td><%= node.info.agentVersion %></td>
     <td><a href="#" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="" data-original-title="Remove"
       ><i class="glyphicon glyphicon-remove"></i></a></td>
