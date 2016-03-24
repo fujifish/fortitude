@@ -9,22 +9,22 @@
       status = status || 'none';
       var statusIcons = {
         'pending': {
-          icon: 'glyphicon-time', color: 'text-primary'
+          icon: 'fa-clock-o', color: 'text-primary'
         },
         'error': {
-          icon: 'glyphicon-remove-circle', color: 'text-danger'
+          icon: 'fa-remove', color: 'text-danger'
         },
         'success': {
-          icon: 'glyphicon-ok-circle', color: 'text-success'
+          icon: 'fa-check', color: 'text-success'
         },
         'skipped': {
-          icon: 'glyphicon-exclamation-sign', color: 'text-primary'
+          icon: 'fa-circle-o', color: 'text-primary'
         },
         'none': {
           icon: '', color: 'text-muted'
         }
-      }
-      return '<div><i class="glyphicon ' + statusIcons[status].icon + ' '  + statusIcons[status].color + '" style="font-size:20px;" aria-hidden="true"></i></div>';
+      };
+      return '<div><i class="fa ' + statusIcons[status].icon + ' '  + statusIcons[status].color + '" style="font-size:20px;" aria-hidden="true"></i></div>';
     }
 
 
@@ -32,10 +32,10 @@
         var command = commands[index];
     %>
       <tr>
+        <td><%- commandStatus(command.status) %></td>
         <td><%= command.created %></td>
         <td><%= command.type %></td>
         <td><%= command.action %></td>
-        <td><%- commandStatus(command.status) %></td>
       </tr>
     <% } %>
     </tbody>

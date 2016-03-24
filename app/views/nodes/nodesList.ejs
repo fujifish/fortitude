@@ -1,43 +1,59 @@
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th></th>
-      <th>Name</th>
-      <th>Metadata</th>
-      <th>Last Synced (UTC)</th>
-      <th>Id</th>
-      <th>Platform</th>
-      <th>Agent Version</th>
-      <th></th>
+<div class="box-body no-padding">
+  <div class="" style="margin: 8px 8px 46px 8px;">
+    <div class="input-group input-group-sm pull-left">
+      <input type="text" name="nodesFilterBy" id="nodesFilterBy" class="form-control pull-left" placeholder="Filter" style="width: 48em;">
+      <div class="input-group-btn pull-left">
+        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+      </div>
+    </div>
+    <ul class="pagination pagination-sm no-margin pull-right">
+      <li><a href="#">&laquo;</a></li>
+      <li><a href="#">1</a></li>
+      <li><a href="#">2</a></li>
+      <li><a href="#">3</a></li>
+      <li><a href="#">&raquo;</a></li>
+    </ul>
+  </div>
+  <table class="table table-condensed">
+    <tbody>
+    <%
+    const warningTime = 1000*60*60*24;
+    for (var index = 0; index < nodes.length; index++ ){
+      var node = nodes[index];
+      var lastSynced = Date.parse(node.lastSync);
+      var lastSeenAt = node.lastSync.replace('T', ' ').replace('Z', '');
+      var warning = Date.now() - lastSynced > warningTime;
+    %>
+    <tr class="">
+      <td><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
+      <td>
+        <% if (warning) { %>
+        <span data-toggle="tooltip" data-placement="top" title="Last seen at <%= lastSeenAt %>"><i class="fa fa-warning text-yellow"></i></span>
+        <% } %>
+        &nbsp;
+        <%= node.name %>
+      </td>
+      <td>
+        <%
+          var meta = node.metadata || {org: 'blddda', kuku: 'kakasss', koko: 'sdsdsdsd'};
+          var keys = Object.keys(meta);
+          for (var j = 0; j < keys.length; ++j) {
+        %>
+          <small class="label bg-blue"><%= keys[j] %>:<%= meta[keys[j]] %></small>
+        <% } %>
+      </td>
+      <td><%= node.id %></td>
+      <td><%= node.info.platform %></td>
+      <td><%= node.info.agentVersion %></td>
+      <td style="vertical-align: middle;" >
+        <div class="input-group-btn pull-left">
+          <button class="btn btn-sm btn-default" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="Remove">
+            <i class="fa fa-remove"></i>
+          </button>
+        </div>
+      </td>
     </tr>
-  </thead>
-  <tbody>
-  <%
-  const warningTime = 1000*60*60*24;
-  for (var index = 0; index < nodes.length; index++ ){
-    var node = nodes[index];
-    var lastSynced = Date.parse(node.lastSync);
-    var bgColor = Date.now() - lastSynced > warningTime ? 'bg-yellow' : '';
-  %>
-  <tr class="<%= bgColor %>">
-    <td><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
-    <td><%= node.name %></td>
-    <td>
-      <%
-        var meta = node.metadata || {org: 'blddda', kuku: 'kakasss', koko: 'sdsdsdsd'};
-        var keys = Object.keys(meta);
-        for (var j = 0; j < keys.length; ++j) {
-      %>
-        <small class="label bg-blue"><%= keys[j] %>:<%= meta[keys[j]] %></small>
-      <% } %>
-    </td>
-    <td><%= node.lastSync.replace('T', ' ').replace('Z', ''); %></td>
-    <td><%= node.id %></td>
-    <td><%= node.info.platform %></td>
-    <td><%= node.info.agentVersion %></td>
-    <td><a href="#" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="" data-original-title="Remove"
-      ><i class="glyphicon glyphicon-remove"></i></a></td>
-  </tr>
-  <% } %>
-  </tbody>
-</table>
+    <% } %>
+    </tbody>
+  </table>
+</div>

@@ -5,8 +5,7 @@ class NodesStore extends Store {
     super({nodes: [], selectedIndex: -1, nodesLoading: false, nodeDetails: {commandsLoading: false, commands: []}});
   }
 
-
-  _handleNodesResult(promise){
+  _handleNodesResult(promise) {
     promise
       .then(nodes => {
         this.state.nodes = nodes;
@@ -14,15 +13,15 @@ class NodesStore extends Store {
         this.state.nodesLoading = false;
         this.commit();
       }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
-    })
+        throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+      });
   }
 
-  getSelectedNode(){
+  getSelectedNode() {
     return (this.state.nodes && this.state.selectedIndex > -1) ? this.state.nodes[this.state.selectedIndex] : null;
   }
 
-  fetchCommands(){
+  fetchCommands() {
     let selected = this.getSelectedNode();
     if(!selected) return;
     this.state.nodeDetails.commandsLoading = true;
@@ -34,7 +33,7 @@ class NodesStore extends Store {
         this.state.nodeDetails.commandsLoading = false;
         this.commit();
       }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+        throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
     });
   }
 
