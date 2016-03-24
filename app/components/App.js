@@ -14,8 +14,8 @@ import Nodes from 'components/nodes/Nodes';
 import Component from 'components/relax/Component';
 import RouterStore from 'store/relax/RouterStore';
 
-class App extends Component{
-  constructor(){
+class App extends Component {
+  constructor() {
     super("App");
     this.routerStore = new RouterStore([
       {title: "Nodes", component: new Nodes(), path: "/nodes"},
@@ -26,23 +26,25 @@ class App extends Component{
     });
   }
 
-  _makeVisible(index){
-    if(index != -1){
+  _makeVisible(index) {
+    if (index != -1) {
       $(`.wrapper .content section[data-index=${index}]`).show();
       $(`.wrapper .content section[data-index!=${index}]`).hide();
       $('#header-name').text(this.routerStore.state.routes[index].title);
     }
   }
 
-  viewMounted(){
+  viewMounted() {
     this._makeVisible(0);
   }
 
-  initialView(){
+  initialView() {
     let data = {
       navigation: new Navigation().initialView(),
       sidebar: new SideBar(this.routerStore).initialView(),
-      content: this.routerStore.state.routes.map(function(e){return e.component.initialView();}),
+      content: this.routerStore.state.routes.map(function(e) {
+        return e.component.initialView();
+      }),
       footer: ""
     };
     return template(data);

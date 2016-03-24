@@ -4,12 +4,12 @@ import NodeCommands from 'components/nodes/NodeCommands';
 import NodeState from 'components/nodes/NodeState';
 
 export default class NodeDetails extends Component {
-  constructor(){
+  constructor() {
     super("NodeDetails");
   }
 
 
-  initialView(){
+  initialView() {
     const data = {
       commands: new NodeCommands().initialView(),
       currentState: new NodeState({title: "Current", style: "info"}).initialView(),

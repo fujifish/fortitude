@@ -4,7 +4,7 @@ import Box from 'components/Box';
 import ConfirmDialog from 'components/ConfirmDialog';
 
 export default class ModulesList extends Box {
-  constructor(deleteModuleConfirmDialog){
+  constructor() {
     super('ModulesList', {style: 'primary'});
     modulesStore.on('modules', modules => {
       this.render();
@@ -15,8 +15,8 @@ export default class ModulesList extends Box {
     this.deleteModuleConfirmDialog = new ConfirmDialog('deleteModule');
   }
 
-  _handlers(){
-    $("#moduleListAddButton").click(()=>{
+  _handlers() {
+    $("#moduleListAddButton").click(()=> {
       modulesStore.openAddModuleDialog();
     });
     $(`#${this.componentId} input:radio[name='btSelectItemModules']`).on('change', ()=> {
@@ -28,34 +28,40 @@ export default class ModulesList extends Box {
     $(`#${this.componentId} a[name='RemoveModule']`).click(function() {
       let index = parseInt($(this).data('index'));
       let module = modulesStore.state.modules[index];
-      _this.deleteModuleConfirmDialog.show({ok: ()=>{
-        modulesStore.deleteModule(module.name, module.version);
-      }, text: 'Remove module ' + module.name + '@' + module.version + '?'});
+      _this.deleteModuleConfirmDialog.show({
+        ok: ()=> {
+          modulesStore.deleteModule(module.name, module.version);
+        },
+        text: `Remove module ${module.name}@${module.version}?`
+      });
     });
   }
 
-  viewMounted(){
+  viewMounted() {
     super.viewMounted();
     this._handlers();
     modulesStore.fetchModules();
   }
 
-  beforeRender(){
+  beforeRender() {
     super.beforeRender();
     $("#moduleListAddButton").off();
     $(`#${this.componentId} input:radio[name='btSelectItemModules']`).off();
   }
 
-  afterRender(){
+  afterRender() {
     super.afterRender();
     this._handlers();
   }
 
-  initialView(){
+  initialView() {
     return `${super.initialView()}${this.deleteModuleConfirmDialog.initialView()}`;
   }
 
   view() {
-    return this.viewWithContent(template({modules: modulesStore.state.modules, selectedIndex: modulesStore.state.selectedIndex}));
+    return this.viewWithContent(template({
+      modules: modulesStore.state.modules,
+      selectedIndex: modulesStore.state.selectedIndex
+    }));
   }
 }

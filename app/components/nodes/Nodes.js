@@ -4,11 +4,11 @@ import NodesList from 'components/nodes/NodesList';
 import NodeDetails from 'components/nodes/NodeDetails';
 
 export default class Nodes extends Component {
-  constructor(){
+  constructor() {
     super('nodes');
   }
 
-  initialView(){
+  initialView() {
     const data = {
       nodesList: new NodesList().initialView(),
       nodeDetails: new NodeDetails().initialView()

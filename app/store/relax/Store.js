@@ -16,32 +16,34 @@ function parseJSON(response) {
   return response.json();
 }
 
-class EventEmitter{
-  constructor(){
+class EventEmitter {
+  constructor() {
     this.listeners = {};
   }
 
-  on(type, listener){
-    if(this.listeners[type] === undefined){
+  on(type, listener) {
+    if (this.listeners[type] === undefined) {
       this.listeners[type] = [];
     }
     this.listeners[type].push(listener);
   }
 
-  off(type, listener){
-    if(this.listeners[type] !== undefined){
+  off(type, listener) {
+    if (this.listeners[type] !== undefined) {
       let index = this.listeners[type].indexOf(listener);
-      if(index != -1) return !!this.listeners[type].splice(index, 1);
+      if (index != -1) {
+        return !!this.listeners[type].splice(index, 1);
+      }
     }
     return false;
   }
 
-  emit(type, ...data){
-    if(this.listeners[type] !== undefined) {
-      this.listeners[type].forEach(function(l){
-        try{
+  emit(type, ...data) {
+    if (this.listeners[type] !== undefined) {
+      this.listeners[type].forEach(function(l) {
+        try {
           l(...data);
-        }catch(e){
+        } catch (e) {
           console.error("exception on listener emit", e);
         }
       });
@@ -59,11 +61,11 @@ export default class Store extends EventEmitter {
   commit() {
     let _this = this;
     var diffs = {};
-    deep_diff.observableDiff(this.commitedState, this.state, function(diff){
+    deep_diff.observableDiff(this.commitedState, this.state, function(diff) {
       deep_diff.applyChange(_this.commitedState, _this.state, diff);
       diffs[(diff.path.join('.'))] = 1;
     });
-    Object.keys(diffs).forEach(function(diff){
+    Object.keys(diffs).forEach(function(diff) {
       _this.emit(diff, _this.state[diff]);
     });
     this.emit('*');
@@ -71,18 +73,18 @@ export default class Store extends EventEmitter {
   }
 
   makeRequest(method, extraUrl, data) {
-  return fetch(API_ENDPOINT + (extraUrl ? extraUrl : ''), {
-    method: method,
-    credentials: 'same-origin',
-    mode: 'cors',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: data
-  })
-  .then(checkStatus)
-  .then(parseJSON);
+    return fetch(API_ENDPOINT + (extraUrl ? extraUrl : ''), {
+      method: method,
+      credentials: 'same-origin',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: data
+    })
+        .then(checkStatus)
+        .then(parseJSON);
   }
 
 

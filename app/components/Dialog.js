@@ -2,21 +2,21 @@ import Component from 'components/relax/Component';
 import template from 'views/dialog'
 
 export default class Dialog extends Component {
-  constructor(name){
+  constructor(name) {
     super(name);
     this.dialogId = `${this.componentId}-dialog`;
   }
 
-  _viewHandlers(){
-    $(`#${this.dialogId}-cancel`).click(()=>{
+  _viewHandlers() {
+    $(`#${this.dialogId}-cancel`).click(()=> {
       this.cancel();
     });
-    $(`#${this.dialogId}-ok`).click(()=>{
+    $(`#${this.dialogId}-ok`).click(()=> {
       this.ok();
     });
   }
 
-  viewMounted(){
+  viewMounted() {
     super.viewMounted();
     $(`#${this.dialogId}`).modal('hide');
     this._viewHandlers();
@@ -27,14 +27,13 @@ export default class Dialog extends Component {
     $(`#${this.dialogId}-ok`).off();
   }
 
-  afterRender(){
+  afterRender() {
     super.afterRender();
     this._viewHandlers();
   }
 
 
-
-  viewWithContent(content){
+  viewWithContent(content) {
     content.title = content.title || "New Dialog";
     content.okLabel = content.okLabel || "OK";
     content.dialogId = this.dialogId;
@@ -43,19 +42,19 @@ export default class Dialog extends Component {
     return template(content);
   }
 
-  show(){
+  show() {
     $(`#${this.dialogId}`).modal('show');
   }
 
-  hide(){
+  hide() {
     $(`#${this.dialogId}`).modal('hide');
   }
 
-  cancel(){
+  cancel() {
 
   }
 
-  ok(){
+  ok() {
 
   }
 

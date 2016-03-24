@@ -1,8 +1,8 @@
 import template from "views/sidebar";
 import Component from 'components/relax/Component';
 
-export default class SideBar extends Component{
-  constructor(routerStore){
+export default class SideBar extends Component {
+  constructor(routerStore) {
     super('SideBar');
     this.routerStore = routerStore;
     this.routerStore.on('selected', selected => {
@@ -12,9 +12,9 @@ export default class SideBar extends Component{
 
   }
 
-  viewMounted(){
+  viewMounted() {
     let _this = this;
-    $(`#${this.componentId} a`).click(function(e){
+    $(`#${this.componentId} a`).click(function(e) {
       var href = $(this).attr("href");
       _this.routerStore.changeRoute(href);
       return false;

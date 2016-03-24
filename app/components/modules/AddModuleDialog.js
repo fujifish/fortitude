@@ -5,27 +5,27 @@ import body from 'views/modules/addModuleDialog/body'
 export default class AddModuleDialog extends Dialog {
   constructor() {
     super('AddModuleDialog');
-    modulesStore.on('addingModule', addingModule =>{
+    modulesStore.on('addingModule', addingModule => {
       addingModule ? this.show() : this.hide();
     });
   }
 
-  viewMounted(){
+  viewMounted() {
     super.viewMounted();
   }
 
-  ok(){
+  ok() {
     modulesStore.addModule($(`#${this.dialogId}-data`).val());
     $(`#${this.dialogId}-data`).val("");
     modulesStore.closeAddModuleDialog();
   }
 
-  cancel(){
+  cancel() {
     $(`#${this.dialogId}-data`).val("");
     modulesStore.closeAddModuleDialog();
   }
 
-  view(){
+  view() {
     return this.viewWithContent({title: "Add Module", body: body({dialogId: this.dialogId})});
   }
 }

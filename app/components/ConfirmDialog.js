@@ -7,23 +7,26 @@ export default class ConfirmDialog extends Dialog {
     this.options = {};
   }
 
-  show(options){
+  show(options) {
     this.options = options || {};
     this.render();
     super.show();
   }
 
-  ok(){
+  ok() {
     this.hide();
     this.options.ok && this.options.ok();
   }
 
-  cancel(){
+  cancel() {
     this.hide();
   }
 
-  view(){
-    return this.viewWithContent({title: "Confirm Action", body: body({text: this.options.text || "", subtext: this.options.subtext || ""})});
+  view() {
+    return this.viewWithContent({
+      title: "Confirm Action",
+      body: body({text: this.options.text || "", subtext: this.options.subtext || ""})
+    });
   }
 
 }

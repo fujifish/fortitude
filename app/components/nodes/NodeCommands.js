@@ -3,7 +3,7 @@ import template from 'views/nodes/nodeCommands';
 import nodesStore from 'store/NodesStore';
 
 export default class NodeCommands extends Box {
-  constructor(){
+  constructor() {
     super("NodeCommands");
     nodesStore.on('selectedIndex', index => {
       nodesStore.fetchCommands();

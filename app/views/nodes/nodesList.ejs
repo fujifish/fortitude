@@ -17,22 +17,32 @@
   <table class="table table-condensed">
     <tbody>
     <%
-    const warningTime = 1000*60*60*24;
+    const maxLastSeen = 1000*60*60*24;
     for (var index = 0; index < nodes.length; index++ ){
       var node = nodes[index];
+      var problems = [];
       var lastSynced = Date.parse(node.lastSync);
-      var lastSeenAt = node.lastSync.replace('T', ' ').replace('Z', '');
-      var warning = Date.now() - lastSynced > warningTime;
+      if (Date.now() - lastSynced > maxLastSeen) {
+        problems.push("Last seen at " + node.lastSync.replace('T', ' ').replace('Z', ''));
+      }
+
     %>
     <tr class="">
-      <td><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
-      <td>
-        <% if (warning) { %>
-        <span data-toggle="tooltip" data-placement="top" title="Last seen at <%= lastSeenAt %>"><i class="fa fa-warning text-yellow"></i></span>
+      <td style="width: 16px;"><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
+      <td style="width: 16px; vertical-align: middle">
+        <% if (problems.length > 0) { %>
+        <a href="#" data-trigger="focus" data-container="body" data-html="true" data-toggle="popover" data-placement="top" title="Problems"
+           data-content="
+              <% for (var p = 0; p < problems.length; p++) { %>
+              <p><%= problems[p] %></p>
+              <% } %>
+           "
+        >
+          <i class="fa fa-warning text-yellow"></i>
+        </a>
         <% } %>
-        &nbsp;
-        <%= node.name %>
       </td>
+      <td><%= node.name %></td>
       <td>
         <%
           var meta = node.metadata || {org: 'blddda', kuku: 'kakasss', koko: 'sdsdsdsd'};
@@ -47,7 +57,7 @@
       <td><%= node.info.agentVersion %></td>
       <td style="vertical-align: middle;" >
         <div class="input-group-btn pull-left">
-          <button class="btn btn-sm btn-default" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="Remove">
+          <button class="btn btn-sm btn-default" data-index="<%= index %>" name="btRemoveNode" data-toggle="tooltip" data-placement="top" title="Remove">
             <i class="fa fa-remove"></i>
           </button>
         </div>

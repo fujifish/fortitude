@@ -14,53 +14,54 @@ class ModulesStore extends Store {
     return result;
   }
 
-  _handleModulesResult(promise){
-      promise
-      .then(this._flattenModulesData)
-      .then(modules => {
-        this.state.modules = modules;
-        this.state.selectedIndex = 0;
-        this.state.modulesLoading = false;
-        this.commit();
-      }).catch(ex => {
-        throw new Error("Oops! Something went wrong and we couldn't create your modules. Ex: " + ex.message);
-      })
+  _handleModulesResult(promise) {
+    promise
+        .then(this._flattenModulesData)
+        .then(modules => {
+          this.state.modules = modules;
+          this.state.selectedIndex = 0;
+          this.state.modulesLoading = false;
+          this.commit();
+        }).catch(ex => {
+      throw new Error("Oops! Something went wrong and we couldn't create your modules. Ex: " + ex.message);
+    })
   }
 
 
   fetchModules() {
     this.state.modulesLoading = true;
     this.commit();
-    return this._handleModulesResult(this.makeRequest('get','/modules'));
+    return this._handleModulesResult(this.makeRequest('get', '/modules'));
   }
 
-  openAddModuleDialog(){
+  openAddModuleDialog() {
     this.state.addingModule = true;
     this.commit();
   }
 
-  closeAddModuleDialog(){
+  closeAddModuleDialog() {
     this.state.addingModule = false;
     this.commit();
   }
 
-  setSelectedIndex(selectedIndex){
+  setSelectedIndex(selectedIndex) {
     this.state.selectedIndex = selectedIndex;
     this.commit();
   }
 
-  addModule(module){
-    if(module == null || module.length == 0)
+  addModule(module) {
+    if (module == null || module.length == 0) {
       throw new Error("Empty input for new module.");
+    }
     this.state.modulesLoading = true;
     this.commit();
-    return this._handleModulesResult(this.makeRequest('post','/modules', module));
+    return this._handleModulesResult(this.makeRequest('post', '/modules', module));
   }
 
-  deleteModule(name, version){
+  deleteModule(name, version) {
     this.state.modulesLoading = true;
     this.commit();
-    return this._handleModulesResult(this.makeRequest('delete','/modules/'+ encodeURIComponent(name) + '/' + encodeURIComponent(version)));
+    return this._handleModulesResult(this.makeRequest('delete', '/modules/' + encodeURIComponent(name) + '/' + encodeURIComponent(version)));
   }
 
 }

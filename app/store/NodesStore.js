@@ -7,14 +7,14 @@ class NodesStore extends Store {
 
   _handleNodesResult(promise) {
     promise
-      .then(nodes => {
-        this.state.nodes = nodes;
-//        this.state.selectedIndex = 0;
-        this.state.nodesLoading = false;
-        this.commit();
-      }).catch(ex => {
-        throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
-      });
+        .then(nodes => {
+          this.state.nodes = nodes;
+          //        this.state.selectedIndex = 0;
+          this.state.nodesLoading = false;
+          this.commit();
+        }).catch(ex => {
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+    });
   }
 
   getSelectedNode() {
@@ -23,35 +23,37 @@ class NodesStore extends Store {
 
   fetchCommands() {
     let selected = this.getSelectedNode();
-    if(!selected) return;
+    if (!selected) {
+      return;
+    }
     this.state.nodeDetails.commandsLoading = true;
     this.state.nodeDetails.commands = [];
     this.commit();
-    this.makeRequest('get',`/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands`)
-      .then(commands => {
-        this.state.nodeDetails.commands = commands;
-        this.state.nodeDetails.commandsLoading = false;
-        this.commit();
-      }).catch(ex => {
-        throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+    this.makeRequest('get', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands`)
+        .then(commands => {
+          this.state.nodeDetails.commands = commands;
+          this.state.nodeDetails.commandsLoading = false;
+          this.commit();
+        }).catch(ex => {
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
     });
   }
 
   fetchNodes() {
     this.state.nodesLoading = true;
     this.commit();
-    return this._handleNodesResult(this.makeRequest('get','/nodes'));
+    return this._handleNodesResult(this.makeRequest('get', '/nodes'));
   }
 
-  setSelectedIndex(selectedIndex){
+  setSelectedIndex(selectedIndex) {
     this.state.selectedIndex = selectedIndex;
     this.commit();
   }
 
-  deleteNode(id){
+  deleteNode(id) {
     this.state.nodesLoading = true;
     this.commit();
-    return this._handleNodesResult(this.makeRequest('delete','/nodes/'+ encodeURIComponent(id)));
+    return this._handleNodesResult(this.makeRequest('delete', '/nodes/' + encodeURIComponent(id)));
   }
 
 }
