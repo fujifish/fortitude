@@ -3,15 +3,15 @@
     <%- navigation %>
     <%- sidebar %>
     <div class="content-wrapper">
-      <div class="content-header" >
+      <div class="content-header">
         <h1 id="header-name">
         </h1>
       </div>
       <div class="content body">
         <% for(var index = 0; index < content.length; index++){ %>
-          <section data-index="<%= index %>">
-            <%- content[index] %>
-          </section>
+        <section data-index="<%= index %>">
+          <%- content[index] %>
+        </section>
         <% } %>
       </div>
     </div>

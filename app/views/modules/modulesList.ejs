@@ -1,5 +1,5 @@
-<div class="box-header with-border">
-  <h3 class="box-title">Available</h3>
+<div class="box-header">
+  <h3 class="box-title">&nbsp;</h3>
   <div class="box-tools pull-right">
     <button type="button" id="moduleListAddButton" class="btn btn-small btn-default" data-toggle="tooltip" title="Add"><i class="fa fa-plus"></i></button>
   </div>
@@ -14,7 +14,7 @@
       <td><input name="btSelectItemModules" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
       <td><%= module.name %></td>
       <td><%= module.version %></td>
-      <td><a href="#" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="" data-original-title="Remove"
+      <td><a href="#" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="Remove"
              ><i class="glyphicon glyphicon-remove"></i></a></td>
     </tr>
     <% } %>

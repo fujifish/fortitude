@@ -45,6 +45,7 @@ export default class NodesList extends Box {
     super.afterRender();
     $(`[data-toggle="popover"]`).popover();
     this._handlers();
+    nodesStore.resetSelectedIndex();
   }
 
   viewMounted() {

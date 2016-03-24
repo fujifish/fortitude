@@ -45,6 +45,12 @@ class NodesStore extends Store {
     return this._handleNodesResult(this.makeRequest('get', '/nodes'));
   }
 
+  resetSelectedIndex() {
+    if (this.state.selectedIndex === -1 && this.state.nodes.length > 0) {
+      this.setSelectedIndex(0);
+    }
+  }
+
   setSelectedIndex(selectedIndex) {
     this.state.selectedIndex = selectedIndex;
     this.commit();

@@ -28,10 +28,18 @@
 
     %>
     <tr class="">
+      <% if (selectedIndex === -1) { selectedIndex = 0; } %>
       <td style="width: 16px;"><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
       <td style="width: 16px; vertical-align: middle">
         <% if (problems.length > 0) { %>
         <a href="#" data-trigger="focus" data-container="body" data-html="true" data-toggle="popover" data-placement="top" title="Problems"
+           data-template='
+           <div class="popover" style="width: 512px;" role="tooltip">
+              <div class="arrow"></div>
+              <h3 class="popover-title bg-yellow"></h3>
+              <div class="popover-content"></div>
+            </div>
+           '
            data-content="
               <% for (var p = 0; p < problems.length; p++) { %>
               <p><%= problems[p] %></p>
@@ -57,7 +65,7 @@
       <td><%= node.info.agentVersion %></td>
       <td style="vertical-align: middle;" >
         <div class="input-group-btn pull-left">
-          <button class="btn btn-sm btn-default" data-index="<%= index %>" name="btRemoveNode" data-toggle="tooltip" data-placement="top" title="Remove">
+          <button class="btn btn-sm btn-default " data-index="<%= index %>" name="btRemoveNode" data-toggle="tooltip" data-placement="top" title="Remove">
             <i class="fa fa-remove"></i>
           </button>
         </div>
