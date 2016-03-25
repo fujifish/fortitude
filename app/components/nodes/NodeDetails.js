@@ -1,11 +1,11 @@
-import Box from 'components/Box';
+import Component from 'components/relax/Component';
 import template from 'views/nodes/nodeDetails';
 import NodeCommands from 'components/nodes/NodeCommands';
 import NodeState from 'components/nodes/NodeState';
 import NodeSummary from 'components/nodes/NodeSummary';
 import nodesStore from 'store/NodesStore';
 
-export default class NodeDetails extends Box {
+export default class NodeDetails extends Component {
   constructor() {
     super("NodeDetails");
   }
@@ -17,7 +17,7 @@ export default class NodeDetails extends Box {
       currentState: new NodeState({title: "Current", style: "info"}).initialView(),
       plannedState: new NodeState({title: "Planned", style: "primary"}).initialView()
     };
-    return this.viewWithContent(template(data));
+    return template(data);
   }
 
 }

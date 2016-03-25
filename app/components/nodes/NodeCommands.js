@@ -1,8 +1,8 @@
-import Box from 'components/Box';
+import Component from 'components/relax/Component';
 import template from 'views/nodes/nodeCommands';
 import nodesStore from 'store/NodesStore';
 
-export default class NodeCommands extends Box {
+export default class NodeCommands extends Component {
   constructor() {
     super("NodeCommands");
     nodesStore.on('selectedIndex', index => {
@@ -20,7 +20,7 @@ export default class NodeCommands extends Box {
     const data = {
       commands: nodesStore.state.nodeDetails.commands
     };
-    return this.viewWithContent(template(data));
+    return template(data);
   }
 
 }

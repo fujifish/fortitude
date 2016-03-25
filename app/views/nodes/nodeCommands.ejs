@@ -2,42 +2,66 @@
   <h3 class="box-title">Commands</h3>
 </div>
 <div class="box-body">
-  <table class="table table-condensed">
-    <tbody>
+  <ul class="timeline">
     <%
     function commandStatus(status) {
       status = status || 'none';
       var statusIcons = {
         'pending': {
-          icon: 'fa-spinner fa-spin', color: 'text-blue'
+          icon: 'fa-spinner fa-spin', color: 'bg-blue'
         },
         'error': {
-          icon: 'fa-remove-circle', color: 'text-red'
+          icon: 'fa-remove', color: 'bg-red'
         },
         'success': {
-          icon: 'fa-check-circle', color: 'text-green'
+          icon: 'fa-check', color: 'bg-green'
         },
         'skipped': {
-          icon: 'fa-circle-o', color: 'text-aqua'
+          icon: 'fa-circle-o', color: 'bg-aqua'
         },
         'none': {
           icon: '', color: 'text-muted'
         }
       };
-      return '<span><i class="pull-left fa ' + statusIcons[status].icon + ' '  + statusIcons[status].color + '" style="line-height:26px; font-size:20px;" ></i></span>';
+      return statusIcons[status].icon + ' '  + statusIcons[status].color ;
     }
 
-
     for (var index = 0; index < commands.length; index++) {
-        var command = commands[index];
+      var command = commands[index];
+      var time = new Date(Date.parse(command.created));
     %>
-      <tr>
-        <td>
-          <%- commandStatus(command.status) %>
-          <a class="pull-left" href="#" title="Details" data-toggle="tooltip"><%= command.type %> <%= command.action %></a></td>
-      </tr>
+
+      <% if (index === 0) { %>
+      <li class="time-label">
+        <span class="bg-blue">Latest Command</span>
+      </li>
+      <% } else if (index === 1) { %>
+      <li class="time-label">
+        <span class="bg-blue">Previous Commands</span>
+      </li>
+      <% } %>
+
+      <li>
+        <i class="fa <%= commandStatus(command.status) %>"></i>
+        <div class="timeline-item">
+          <span class="time">
+            <i class="fa fa-clock-o"></i> <%= time.getUTCDate() %>.<%= time.getUTCMonth() %>.<%= time.getUTCFullYear() %>, <%= time.getUTCHours() %>:<%= time.getUTCMinutes() %>
+          </span>
+          <h3 class="timeline-header"><a href="#" class="text-capitalize"><%= command.type %> <%= command.action %></a></h3>
+        </div>
+      </li>
     <% } %>
-    </tbody>
-  </table>
+
+    <% if (commands.length === 0) { %>
+    <li class="time-label">
+      <span class="bg-blue">No Commands</span>
+    </li>
+    <% } %>
+
+    <li>
+      <i class="fa fa-circle"></i>
+    </li>
+  </ul>
+
 </div>
 
