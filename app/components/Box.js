@@ -5,7 +5,7 @@ export default class Box extends Component {
   constructor(name, options) {
     super(name);
     this.options = options || {};
-    this.options.style = this.options.style || 'default';
+    this.options.style = this.options.style || 'solid';
   }
 
   viewWithContent(content) {

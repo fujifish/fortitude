@@ -22,14 +22,14 @@ class App extends Component {
       {title: "Modules", component: new Modules(), path: "/modules"}
     ]);
     this.routerStore.on('selected', selected => {
-      this._makeVisible(selected);
+      this._makeVisible(selected.rhs);
     });
   }
 
   _makeVisible(index) {
     if (index != -1) {
+      $(`.wrapper .content section`).hide();
       $(`.wrapper .content section[data-index=${index}]`).show();
-      $(`.wrapper .content section[data-index!=${index}]`).hide();
       $('#header-name').text(this.routerStore.state.routes[index].title);
     }
   }

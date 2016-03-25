@@ -1,8 +1,8 @@
-import Box from 'components/Box';
+import Component from 'components/relax/Component';
 import template from 'views/nodes/nodeState';
 import nodesStore from 'store/NodesStore';
 
-export default class NodeState extends Box {
+export default class NodeState extends Component {
   constructor(options) {
     super("NodeState-"+options.title, options);
     this.options = options;
@@ -29,7 +29,7 @@ export default class NodeState extends Box {
       title: this.options.title || "",
       states: node ? node.state[this.options.title.toLowerCase()] || [] : []
     };
-    return this.viewWithContent(template(data));
+    return template(data);
   }
 
 }

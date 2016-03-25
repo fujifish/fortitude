@@ -6,8 +6,8 @@ export default class SideBar extends Component {
     super('SideBar');
     this.routerStore = routerStore;
     this.routerStore.on('selected', selected => {
-      $(`.sidebar-menu li[data-index!=${selected}]`).removeClass('active');
-      $(`.sidebar-menu li[data-index=${selected}]`).addClass('active');
+      $(`.sidebar-menu li`).removeClass('active');
+      $(`.sidebar-menu li[data-index=${selected.rhs}]`).addClass('active');
     });
 
   }

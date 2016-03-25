@@ -10,7 +10,7 @@ export default class NodesList extends Box {
       this.render();
     });
     nodesStore.on('nodesLoading', loading => {
-      this.renderLoading(loading);
+      this.renderLoading(loading.rhs);
     });
     this.deleteNodeConfirmDialog = new ConfirmDialog('deleteNode');
   }

@@ -24,7 +24,7 @@
           icon: '', color: 'text-muted'
         }
       };
-      return '<span><i class="pull-right fa ' + statusIcons[status].icon + ' '  + statusIcons[status].color + '" style="line-height:26px; font-size:20px;" ></i></span>';
+      return '<span><i class="pull-left fa ' + statusIcons[status].icon + ' '  + statusIcons[status].color + '" style="line-height:26px; font-size:20px;" ></i></span>';
     }
 
 
@@ -32,8 +32,9 @@
         var command = commands[index];
     %>
       <tr>
-        <td><a href="#" title="Details" data-toggle="tooltip"><%= command.type %> <%= command.action %></a></td>
-        <td><%- commandStatus(command.status) %></td>
+        <td>
+          <%- commandStatus(command.status) %>
+          <a class="pull-left" href="#" title="Details" data-toggle="tooltip"><%= command.type %> <%= command.action %></a></td>
       </tr>
     <% } %>
     </tbody>

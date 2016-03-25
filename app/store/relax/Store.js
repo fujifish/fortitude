@@ -63,10 +63,10 @@ export default class Store extends EventEmitter {
     var diffs = {};
     deep_diff.observableDiff(this.commitedState, this.state, function(diff) {
       deep_diff.applyChange(_this.commitedState, _this.state, diff);
-      diffs[(diff.path.join('.'))] = 1;
+      diffs[(diff.path.join('.'))] = diff;
     });
-    Object.keys(diffs).forEach(function(diff) {
-      _this.emit(diff, _this.state[diff]);
+    Object.keys(diffs).forEach(function(d) {
+      _this.emit(d, diffs[d]);
     });
     this.emit('*');
     this.commitedState = JSON.parse(JSON.stringify(this.state));
@@ -82,9 +82,7 @@ export default class Store extends EventEmitter {
         'Content-Type': 'application/json'
       },
       body: data
-    })
-        .then(checkStatus)
-        .then(parseJSON);
+    }).then(checkStatus).then(parseJSON);
   }
 
 

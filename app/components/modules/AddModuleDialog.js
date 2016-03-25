@@ -6,7 +6,7 @@ export default class AddModuleDialog extends Dialog {
   constructor() {
     super('AddModuleDialog');
     modulesStore.on('addingModule', addingModule => {
-      addingModule ? this.show() : this.hide();
+      addingModule.rhs ? this.show() : this.hide();
     });
   }
 

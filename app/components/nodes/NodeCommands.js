@@ -12,7 +12,7 @@ export default class NodeCommands extends Box {
       this.render();
     });
     nodesStore.on('nodeDetails.commandsLoading', loading => {
-      this.renderLoading(loading);
+      this.renderLoading(loading.rhs);
     });
   }
 

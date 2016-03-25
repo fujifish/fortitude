@@ -3,17 +3,17 @@
 </div>
 <div class="box-body">
   <%
-
     for (var i = 0; i < states.length; ++i) {
       var state = states[i];
   %>
   <div class="info-box" style="position: relative" name="StateOfModuleInfoBox" data-index="<%= i %>">
     <span class="info-box-icon bg-blue">
-      <!-- "line-height: 90px" is required because of a bug in chrome -->
-      <i style="line-height: 90px;" class="fa <%= state.icon || 'fa-cube' %>"></i>
+      <div style="line-height: 20px;padding-top: 25px">
+        <span class="info-box-text"><b><%= state.name %></b></span>
+        <span class="info-box-text"><%= state.version %></span>
+      </div>
     </span>
     <div class="info-box-content">
-      <span class="info-box-text"><%= state.name %> <%= state.version %></span>
       <span class="info-box-text">
         <% if (state.state.start && state.state.start.data && state.state.start.data.started) { %>
         <span class="text-green"><i class="fa fa-play"></i> Started</span>

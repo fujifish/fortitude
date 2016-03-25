@@ -10,7 +10,7 @@ export default class ModulesList extends Box {
       this.render();
     });
     modulesStore.on('modulesLoading', loading => {
-      this.renderLoading(loading);
+      this.renderLoading(loading.rhs);
     });
     this.deleteModuleConfirmDialog = new ConfirmDialog('deleteModule');
   }
