@@ -46,9 +46,7 @@ class NodesStore extends Store {
   }
 
   resetSelectedIndex() {
-    if (this.state.selectedIndex === -1 && this.state.nodes.length > 0) {
-      this.setSelectedIndex(0);
-    }
+    this.setSelectedIndex(-1);
   }
 
   setSelectedIndex(selectedIndex) {

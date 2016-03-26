@@ -1,8 +1,8 @@
-import Component from 'components/relax/Component';
+import Box from 'components/Box';
 import template from 'views/nodes/nodeState';
 import nodesStore from 'store/NodesStore';
 
-export default class NodeState extends Component {
+export default class NodeState extends Box {
   constructor(options) {
     super("NodeState-"+options.title, options);
     this.options = options;
@@ -21,15 +21,18 @@ export default class NodeState extends Component {
         $(`#${_this.componentId} div.btn-group`).hide();
       }
     );
+    $(`#${_this.componentId} div.btn-group`).hide();
   }
+
 
   view() {
     let node = nodesStore.getSelectedNode();
     const data = {
       title: this.options.title || "",
+      editable: this.options.editable,
       states: node ? node.state[this.options.title.toLowerCase()] || [] : []
     };
-    return template(data);
+    return this.viewWithContent(template(data));
   }
 
 }

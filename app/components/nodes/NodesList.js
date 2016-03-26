@@ -6,25 +6,33 @@ import ConfirmDialog from 'components/ConfirmDialog';
 export default class NodesList extends Box {
   constructor() {
     super("NodesList", {style: 'primary'});
-    nodesStore.on('nodes', nodes => {
+    nodesStore.on('nodes', diff => {
+      nodesStore.resetSelectedIndex();
       this.render();
     });
-    nodesStore.on('nodesLoading', loading => {
-      this.renderLoading(loading.rhs);
+    nodesStore.on('nodesLoading', diff => {
+      this.renderLoading(diff.rhs);
+    });
+    nodesStore.on('selectedIndex', diff => {
+      if (diff.rhs !== -1) {
+        this.hide();
+      } else {
+        this.show();
+      }
     });
     this.deleteNodeConfirmDialog = new ConfirmDialog('deleteNode');
   }
 
   _handlers() {
-    $(`#${this.componentId} input:radio[name='btSelectItemNodes']`).on('change', ()=> {
-      let radioButtons = $(`#${this.componentId} input:radio[name='btSelectItemNodes']`);
-      var selectedIndex = radioButtons.index(radioButtons.filter(':checked'));
-      nodesStore.setSelectedIndex(selectedIndex);
+    $(`#${this.componentId} a[name='btSelectItemNodes']`).click(event => {
+      //let radioButtons = $(`#${this.componentId} input:radio[name='btSelectItemNodes']`);
+      //var selectedIndex = radioButtons.index(radioButtons.filter(':checked'));
+      nodesStore.setSelectedIndex(parseInt($(event.target).data('index')));
     });
 
     let _this = this;
-    $(`#${this.componentId} button[name='btRemoveNode']`).click(function() {
-      let index = parseInt($(this).data('index'));
+    $(`#${this.componentId} button[name='btRemoveNode']`).click(event => {
+      let index = parseInt($(event.target).data('index'));
       let node = nodesStore.state.nodes[index];
       _this.deleteNodeConfirmDialog.show({
         ok: ()=> {
@@ -37,7 +45,7 @@ export default class NodesList extends Box {
 
   beforeRender() {
     super.beforeRender();
-    $(`#${this.componentId} input:radio[name='btSelectItemNodes']`).off();
+    $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
     $(`#${this.componentId} button[name='btRemoveNode']`).off();
   }
 
@@ -45,7 +53,6 @@ export default class NodesList extends Box {
     super.afterRender();
     $(`[data-toggle="popover"]`).popover();
     this._handlers();
-    nodesStore.resetSelectedIndex();
   }
 
   viewMounted() {
@@ -63,4 +70,5 @@ export default class NodesList extends Box {
       selectedIndex: nodesStore.state.selectedIndex
     }));
   }
+
 }

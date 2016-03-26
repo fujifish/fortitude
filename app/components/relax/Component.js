@@ -40,4 +40,12 @@ export default class Component {
     throw new Error(`${this.componentId} view not implemented`);
   }
 
+  show() {
+    $(`#${this.componentId}`).show();
+  }
+
+  hide() {
+    $(`#${this.componentId}`).hide();
+  }
+
 }

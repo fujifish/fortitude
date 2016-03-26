@@ -28,8 +28,8 @@
 
     %>
     <tr class="">
-      <% if (selectedIndex === -1) { selectedIndex = 0; } %>
-      <td style="width: 16px;"><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
+      <!--<% if (selectedIndex === -1) { selectedIndex = 0; } %>-->
+      <!--<td style="width: 16px;"><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>-->
       <td style="width: 16px; vertical-align: middle">
         <% if (problems.length > 0) { %>
         <a href="#" data-trigger="focus" data-container="body" data-html="true" data-toggle="popover" data-placement="top" title="Problems"
@@ -50,7 +50,7 @@
         </a>
         <% } %>
       </td>
-      <td><%= node.name %></td>
+      <td><a role="button" href="#" name="btSelectItemNodes" data-index="<%= index %>" ><%= node.name %></a></td>
       <td>
         <%
           var meta = node.metadata || {org: 'blddda', kuku: 'kakasss', koko: 'sdsdsdsd'};

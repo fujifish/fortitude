@@ -5,14 +5,16 @@ import nodesStore from 'store/NodesStore';
 export default class NodeSummary extends Component {
   constructor() {
     super("NodeSummary");
-    nodesStore.on('selectedIndex', index => {
+    nodesStore.on('selectedIndex', diff => {
       this.render();
     });
   }
 
   view() {
+    let node = nodesStore.getSelectedNode() || {info:{}};
     return template({
-      node: nodesStore.getSelectedNode()
+      name: node.name || 'N/A',
+      version: node.info.agentVersion || '0.0.0'
     });
   }
 

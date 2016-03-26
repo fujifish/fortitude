@@ -1,18 +1,18 @@
-import Component from 'components/relax/Component';
+import Box from 'components/Box';
 import template from 'views/nodes/nodeCommands';
 import nodesStore from 'store/NodesStore';
 
-export default class NodeCommands extends Component {
+export default class NodeCommands extends Box {
   constructor() {
     super("NodeCommands");
-    nodesStore.on('selectedIndex', index => {
+    nodesStore.on('selectedIndex', diff => {
       nodesStore.fetchCommands();
     });
-    nodesStore.on('nodeDetails.commands', commands => {
+    nodesStore.on('nodeDetails.commands', diff => {
       this.render();
     });
-    nodesStore.on('nodeDetails.commandsLoading', loading => {
-      this.renderLoading(loading.rhs);
+    nodesStore.on('nodeDetails.commandsLoading', diff => {
+      this.renderLoading(diff.rhs);
     });
   }
 
@@ -20,7 +20,7 @@ export default class NodeCommands extends Component {
     const data = {
       commands: nodesStore.state.nodeDetails.commands
     };
-    return template(data);
+    return this.viewWithContent(template(data));
   }
 
 }

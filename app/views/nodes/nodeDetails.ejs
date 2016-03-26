@@ -1,13 +1,23 @@
-<div class="box-body">
+<div class="box-header no-padding">
   <div class="row">
-    <div class="col-md-3">
-      <%- commands %>
+    <div class="col-md-10">
+      <h3>
+        <button name="btBackToNodesList" class="btn btn-default pull-left" style="margin-right: 8px"><i class="fa fa-arrow-left"></i></button>
+        <%- summary %>
+      </h3>
     </div>
-    <div class="col-md-3">
+  </div>
+</div>
+<div class="box-body no-padding">
+  <div class="row">
+    <div class="col-md-2">
+      <%- plannedState %>
+    </div>
+    <div class="col-md-2">
       <%- currentState %>
     </div>
     <div class="col-md-3">
-      <%- plannedState %>
+      <%- commands %>
     </div>
   </div>
 </div>
