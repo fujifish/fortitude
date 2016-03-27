@@ -1,3 +1,6 @@
+import jqueryui from 'admin-lte/plugins/jQueryUI/jquery-ui';
+
+
 let components = [];
 $(() => {
   components.forEach(function(component) {
@@ -40,12 +43,12 @@ export default class Component {
     throw new Error(`${this.componentId} view not implemented`);
   }
 
-  show() {
-    $(`#${this.componentId}`).show();
+  show(args) {
+    $(`#${this.componentId}`).show(args);
   }
 
-  hide() {
-    $(`#${this.componentId}`).hide();
+  hide(args) {
+    $(`#${this.componentId}`).hide(args);
   }
 
 }
