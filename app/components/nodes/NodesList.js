@@ -17,7 +17,7 @@ export default class NodesList extends Box {
       if (diff.rhs !== -1) {
         this.hide();
       } else {
-        this.show({effect: 'slide', duration: 300, easing: 'easeOutQuad', direction: 'left'});
+        this.show({effect: 'slide', duration: 400, easing: 'easeOutQuad', direction: 'left'});
       }
     });
     this.deleteNodeConfirmDialog = new ConfirmDialog('deleteNode');
