@@ -11,7 +11,13 @@ export default class NodeState extends Box {
     });
   }
 
-  afterRender() {
+
+  _handlers() {
+    if(this.options.editable){
+      $("#btnAddModuleToState").click(()=> {
+        nodesStore.openConfigureModuleDialog();
+      });
+    }
     let _this = this;
     $(`#${this.componentId} div[name="StateOfModuleInfoBox"]`).hover(
       function() {
@@ -22,6 +28,24 @@ export default class NodeState extends Box {
       }
     );
     $(`#${_this.componentId} div.btn-group`).hide();
+  }
+
+  viewMounted() {
+    super.viewMounted();
+    this._handlers();
+  }
+
+  beforeRender() {
+    super.beforeRender();
+    if(this.options.editable) {
+      $("#btnAddModuleToState").off();
+    }
+    $(`#${this.componentId} div[name="StateOfModuleInfoBox"]`).off();
+  }
+
+  afterRender() {
+    super.afterRender();
+    this._handlers();
   }
 
 

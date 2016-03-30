@@ -1,5 +1,3 @@
-import jqueryui from 'admin-lte/plugins/jQueryUI/jquery-ui';
-
 
 let components = [];
 $(() => {

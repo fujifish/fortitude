@@ -5,6 +5,9 @@ class ModulesStore extends Store {
     super({modules: [], selectedIndex: -1, modulesLoading: false, addingModule: false});
   }
 
+  flatModules(){
+    return this._flattenModulesData(this.state.modules);
+  }
 
   _flattenModulesData(modules) {
     let result = [];
@@ -16,7 +19,6 @@ class ModulesStore extends Store {
 
   _handleModulesResult(promise) {
     promise
-        .then(this._flattenModulesData)
         .then(modules => {
           this.state.modules = modules;
           this.state.selectedIndex = 0;

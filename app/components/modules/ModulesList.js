@@ -6,7 +6,7 @@ import ConfirmDialog from 'components/ConfirmDialog';
 export default class ModulesList extends Box {
   constructor() {
     super('ModulesList', {style: 'primary'});
-    modulesStore.on('modules', modules => {
+    modulesStore.on('modules*', modules => {
       this.render();
     });
     modulesStore.on('modulesLoading', loading => {
@@ -27,7 +27,7 @@ export default class ModulesList extends Box {
     let _this = this;
     $(`#${this.componentId} a[name='RemoveModule']`).click(function() {
       let index = parseInt($(this).data('index'));
-      let module = modulesStore.state.modules[index];
+      let module = modulesStore.flatModules()[index];
       _this.deleteModuleConfirmDialog.show({
         ok: ()=> {
           modulesStore.deleteModule(module.name, module.version);
@@ -60,7 +60,7 @@ export default class ModulesList extends Box {
 
   view() {
     return this.viewWithContent(template({
-      modules: modulesStore.state.modules,
+      modules: modulesStore.flatModules(),
       selectedIndex: modulesStore.state.selectedIndex
     }));
   }

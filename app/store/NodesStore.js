@@ -2,7 +2,7 @@ import Store from 'store/relax/Store'
 
 class NodesStore extends Store {
   constructor() {
-    super({nodes: [], selectedIndex: -1, nodesLoading: false, nodeDetails: {commandsLoading: false, commands: []}});
+    super({nodes: [], selectedIndex: -1, nodesLoading: false, nodeDetails: {commandsLoading: false, commands: [], configureModuleDialog: false, plannedStateLoading: false}});
   }
 
   _handleNodesResult(promise) {
@@ -59,6 +59,41 @@ class NodesStore extends Store {
     this.commit();
     return this._handleNodesResult(this.makeRequest('delete', '/nodes/' + encodeURIComponent(id)));
   }
+
+  openConfigureModuleDialog() {
+    this.state.nodeDetails.configureModuleDialog = true;
+    this.commit();
+  }
+
+  closeConfigureModuleDialog() {
+    this.state.nodeDetails.configureModuleDialog = false;
+    this.commit();
+  }
+
+  addNodeModule(module){
+    var node = this.getSelectedNode();
+    let planned = JSON.parse(JSON.stringify(node.state.planned || []));
+    planned.push(module);
+    this.updateNodePlannedState(node.id, planned);
+  }
+
+  updateNodePlannedState(nodeId, state) {
+    this.state.nodeDetails.plannedStateLoading = true;
+    this.commit();
+    this.makeRequest('PUT', `/nodes/${encodeURIComponent(nodeId)}`, JSON.stringify({"state.planned": state}))
+      .then(node => {
+        this.state.nodeDetails.plannedStateLoading = false;
+        let index = this.state.nodes.findIndex(function(n){ return n.id == node.id});
+        if(index > -1){
+          this.state.nodes[index] = node;
+        }
+        this.commit();
+      }).catch(ex => {
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+    });
+};
+
+
 
 }
 

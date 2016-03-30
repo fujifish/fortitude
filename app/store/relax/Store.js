@@ -23,31 +23,37 @@ class EventEmitter {
 
   on(type, listener) {
     if (this.listeners[type] === undefined) {
-      this.listeners[type] = [];
+      this.listeners[type] = {
+        regexp: new RegExp(`^${type.replace(/[.]/g, '[.]').replace(/[*]/g, '.*')}$`),
+        callbacks: []
+      };
     }
-    this.listeners[type].push(listener);
+    this.listeners[type].callbacks.push(listener);
   }
 
   off(type, listener) {
     if (this.listeners[type] !== undefined) {
-      let index = this.listeners[type].indexOf(listener);
+      let index = this.listeners[type].callbacks.indexOf(listener);
       if (index != -1) {
-        return !!this.listeners[type].splice(index, 1);
+        return !!this.listeners[type].callbacks.splice(index, 1);
       }
     }
     return false;
   }
 
-  emit(type, ...data) {
-    if (this.listeners[type] !== undefined) {
-      this.listeners[type].forEach(function(l) {
-        try {
-          l(...data);
-        } catch (e) {
-          console.error("exception on listener emit", e);
-        }
-      });
-    }
+  emit(event, ...data) {
+    Object.keys(this.listeners).forEach(type => {
+      let listener = this.listeners[type];
+      if (listener.regexp.test(event)) {
+        listener.callbacks.forEach(function(l) {
+          try {
+            l(...data);
+          } catch (e) {
+            console.error(`exception on listener emit: ${e.message}\n${e.stack}`);
+          }
+        });
+      }
+    });
   }
 }
 
@@ -68,7 +74,6 @@ export default class Store extends EventEmitter {
     Object.keys(diffs).forEach(function(d) {
       _this.emit(d, diffs[d]);
     });
-    this.emit('*');
     this.commitedState = JSON.parse(JSON.stringify(this.state));
   }
 

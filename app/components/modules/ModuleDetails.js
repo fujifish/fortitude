@@ -11,7 +11,7 @@ export default class ModuleDetails extends Box {
   }
 
   view() {
-    let content = modulesStore.state.modules.length > 0 ? modulesStore.state.modules[modulesStore.state.selectedIndex] : null;
+    let content = modulesStore.state.modules.length > 0 ? modulesStore.flatModules()[modulesStore.state.selectedIndex] : null;
     return this.viewWithContent(template({content: content}));
   }
 }
