@@ -4,13 +4,14 @@ import nodesStore from 'store/NodesStore';
 import ConfirmDialog from 'components/ConfirmDialog';
 
 export default class NodeState extends Box {
-  constructor(options) {
+  constructor(configureDialog, options) {
     super("NodeState-"+options.title, options);
     this.options = options;
     nodesStore.on('selectedIndex', index => {
       this.render();
     });
     this.removeNodeModuleConfirmDialog = new ConfirmDialog('removeNodeModule'+options.title);
+    this.configureDialog = configureDialog;
   }
 
 
@@ -18,6 +19,13 @@ export default class NodeState extends Box {
     let _this = this;
     if(this.options.editable){
       $("#btnAddModuleToState").click(()=> {
+        this.configureDialog.setConfiguredModule(null);
+        nodesStore.openConfigureModuleDialog();
+      });
+      $("button[name='btnEditModuleInState']").click(function(){
+        let index = parseInt($(this).data('index'));
+        let module = nodesStore.getSelectedNode().state.planned[index];
+        _this.configureDialog.setConfiguredModule({module: module, index: index});
         nodesStore.openConfigureModuleDialog();
       });
       $("button[name='btnRemoveModuleFromState']").click(function(){

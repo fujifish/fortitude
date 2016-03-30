@@ -84,6 +84,13 @@ class NodesStore extends Store {
     this.updateNodePlannedState(node.id, planned);
   }
 
+  updateSelectedNodeModule(index, module){
+    var node = this.getSelectedNode();
+    let planned = JSON.parse(JSON.stringify(node.state.planned || []));
+    planned[index] = module;
+    this.updateNodePlannedState(node.id, planned);
+  }
+
   updateNodePlannedState(nodeId, state) {
     this.state.nodeDetails.plannedStateLoading = true;
     this.commit();

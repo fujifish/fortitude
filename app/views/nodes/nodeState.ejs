@@ -31,7 +31,7 @@
       </span>
       <div class="btn-group btn-group-sm" style="position: absolute; bottom: 4px;" data-index="<%= i %>">
         <% if (editable) { %>
-        <button type="button" class="btn btn-default" data-index="<%= i %>" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></button>
+        <button type="button" name="btnEditModuleInState" class="btn btn-default" data-index="<%= i %>" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></button>
         <button type="button" name="btnRemoveModuleFromState" data-index="<%= i %>" class="btn btn-default" data-toggle="tooltip" title="Remove"><i class="fa fa-remove"></i></button>
         <% } else { %>
         <button type="button" class="btn btn-default" data-index="<%= i %>" data-toggle="tooltip" title="Details"><i class="fa fa-eye"></i></button>

@@ -8,8 +8,8 @@ import nodesStore from 'store/NodesStore';
 import ConfigureModuleDialog from 'components/nodes/ConfigureModuleDialog'
 
 export default class NodeDetails extends Component {
-  constructor() {
-    super("NodeDetails");
+  constructor(configureDialog) {
+    super(configureDialog, "NodeDetails");
     nodesStore.on('selectedIndex', diff => {
       if (diff.rhs === -1) {
         this.hide();
@@ -43,12 +43,13 @@ export default class NodeDetails extends Component {
   }
 
   view() {
+    let configureModuleDialog = new ConfigureModuleDialog();
     const data = {
       summary: new NodeSummary().initialView(),
       commands: new NodeCommands().initialView(),
-      currentState: new NodeState({title: "Current", editable: false}).initialView(),
-      plannedState: new NodePlannedState().initialView(),
-      configureModuleDialog: new ConfigureModuleDialog().initialView()
+      currentState: new NodeState(configureModuleDialog, {title: "Current", editable: false}).initialView(),
+      plannedState: new NodePlannedState(configureModuleDialog).initialView(),
+      configureModuleDialog: configureModuleDialog.initialView()
     };
     return template(data);
   }

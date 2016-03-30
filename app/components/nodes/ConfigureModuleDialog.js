@@ -11,10 +11,15 @@ export default class ConfigureModuleDialog extends Dialog {
     });
   }
 
+  setConfiguredModule(context){
+    this.context = context;
+  }
+
 
   _handlers(){
-    let selectName = $('#addNodeModuleName');
-    selectName.change(function() {
+    let _this = this;
+    let selectName = $('#nodeModuleName');
+    selectName.change(()=> {
       selectVersion.empty();
       // populate available versions
       var module = selectName.find(':selected').data();
@@ -22,39 +27,48 @@ export default class ConfigureModuleDialog extends Dialog {
       module.versions.sort(function(a,b){return a.version < b.version;}).forEach(function(v) {
         selectVersion.append($('<option>', {text: v.version, data: v}));
       });
+      if(this.context) {
+        selectVersion.find('option').filter(function() {
+          return $(this).text() == _this.context.module.version;
+        }).attr('selected', true);
+      }
       selectVersion.trigger('change');
     });
 
     // populate configuration of the selected version
-    let selectVersion = $('#addNodeModuleVersion');
-    selectVersion.change(function() {
+    let selectVersion = $('#nodeModuleVersion');
+    selectVersion.change(()=> {
       let version = selectVersion.find(':selected').data();
       let schema = version.schema && version.schema.configure;
       let form = (version.form && version.form.configure) || ['*'];
+      let module = this.context && this.context.module;
+      var values = module && module.state && module.state.configure && module.state.configure.data;
       if (!schema) {
         schema = {config: {type: "string", title: "Raw JSON Configuration"}, default: "{}"};
         form = [{key: 'config', type: 'textarea'}];
+        values = {config: values && JSON.stringify(values, null, 2)};
       }
 
-      var configElementCont = $('#addNodeModuleConfiguration');
+      var configElementCont = $('#nodeModuleConfiguration');
       configElementCont.empty();
       configElementCont.jsonForm({
         schema: schema,
-        form: form
+        form: form ,
+        value: values
       });
     });
-    selectName.trigger('change');
   }
 
   _clearHandlers(){
-    $('#addNodeModuleName').off();
-    $('#addNodeModuleVersion').off();
+    $('#nodeModuleName').off();
+    $('#nodeModuleVersion').off();
 
   }
 
   show(){
     super.show();
-    let selectName = $('#addNodeModuleName');
+    let _this = this;
+    let selectName = $('#nodeModuleName');
     selectName.empty();
     // populate available modules (filter out 'outpost' modules)
     modulesStore.state.modules.forEach(function(m) {
@@ -63,8 +77,26 @@ export default class ConfigureModuleDialog extends Dialog {
       }
     });
 
-    selectName.trigger('change');
     this._handlers();
+    if(this.context) {
+      selectName.find('option').filter(function() {
+        return $(this).text() == _this.context.module.name;
+      }).attr('selected', true);
+      selectName.prop('disabled', true);
+    }else{
+      selectName.removeAttr('disabled');
+    }
+
+    let module = this.context && this.context.module;
+    if (module && module.state && module.state.start && module.state.start.data) {
+      if (module.state.start.data.started) {
+        $('#nodeModuleStarted').prop("checked", module.state.start.data.started);
+      } else {
+        $('#nodeModuleStarted').removeProp("checked");
+      }
+    }
+
+    selectName.trigger('change');
   }
 
   viewMounted() {
@@ -72,10 +104,10 @@ export default class ConfigureModuleDialog extends Dialog {
   }
 
   _getModuleConfig(){
-    let selectVersion = $('#addNodeModuleVersion');
+    let selectVersion = $('#nodeModuleVersion');
     var module = JSON.parse(JSON.stringify(selectVersion.find(':selected').data()));
     var schema = module.schema;
-    var config = $('#addNodeModuleConfiguration').jsonFormValue();
+    var config = $('#nodeModuleConfiguration').jsonFormValue();
     if (!schema) {
       config = config.config;
     }
@@ -90,7 +122,7 @@ export default class ConfigureModuleDialog extends Dialog {
     module.state = {};
     module.state.configure = {data: config, time: new Date().toISOString()};
     module.state.start = {
-      data: {started: $('#addNodeModuleStarted').prop('checked')},
+      data: {started: $('#nodeModuleStarted').prop('checked')},
       time: new Date().toISOString()
     };
     return module;
@@ -100,7 +132,11 @@ export default class ConfigureModuleDialog extends Dialog {
 //    modulesStore.addModule($(`#${this.dialogId}-data`).val());
 //    $(`#${this.dialogId}-data`).val("");
     nodesStore.closeConfigureModuleDialog();
-    nodesStore.addSelectedNodeModule(this._getModuleConfig());
+    if(this.context){
+      nodesStore.updateSelectedNodeModule(this.context.index, this._getModuleConfig());
+    }else{
+      nodesStore.addSelectedNodeModule(this._getModuleConfig());
+    }
     this._clearHandlers();
   }
 
