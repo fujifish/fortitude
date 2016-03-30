@@ -69,17 +69,10 @@ export default class NodeState extends Box {
     $(`#${_this.componentId} div.btn-group`).hide();
   }
 
-  viewMounted() {
-    super.viewMounted();
-    this._handlers();
-  }
-
   beforeRender() {
     super.beforeRender();
-    if(this.options.editable) {
-      $("#btnAddModuleToState").off();
-      $("#btnApplyState").off();
-    }
+    $("#btnAddModuleToState").off();
+    $("#btnApplyState").off();
     $("button[name='btnEditModuleInState']").off();
     $("button[name='btnRemoveModuleFromState']").off();
     $(`#${this.componentId} div[name="StateOfModuleInfoBox"]`).off();

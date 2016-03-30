@@ -194,6 +194,32 @@ router.route('/nodes/:node_id/commands')
 
   });
 
+router.route('nodes/:node_id/commands/:created')
+  .delete(function(req, res) {
+    var node_id = req.params.node_id;
+    var created = req.params.created;
+    logger.info('Deleting command: ' + created);
+    store.db().collection('commands', function(err, collection) {
+      if (err) {
+        return res.status(500).json({error: err});
+      }
+      collection.remove({'created': created, 'status': 'pending'}, {safe: true}, function(err, result) {
+        if (err) {
+          return res.status(500).json({error: err});
+        }
+        logger.info(result, 'document(s) deleted');
+        collection.find({node_id: node_id}).limit(limit).sort({_id: -1}).toArray(function(err, items) {
+          if (err) {
+            return res.status(500).json({error: err});
+          }
+          items.forEach(function(i) {
+            delete i._id
+          });
+          res.json(items);
+        });
+      });
+    });
+  });
 
 router.route('/nodes/:node_id/modules/:name/:version')
 

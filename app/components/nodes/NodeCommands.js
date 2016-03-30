@@ -16,6 +16,22 @@ export default class NodeCommands extends Box {
     });
   }
 
+  _handlers() {
+    $(`button[name='btnCancelPendingCommand']`).click(() => {
+      nodesStore.cancelPendingCommand();
+    });
+  }
+
+  beforeRender() {
+    super.beforeRender();
+    $(`button[name='btnCancelPendingCommand']`).off();
+  }
+
+  afterRender() {
+    super.afterRender();
+    this._handlers();
+  }
+
   view() {
     const data = {
       commands: nodesStore.state.nodeDetails.commands

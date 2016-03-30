@@ -46,8 +46,13 @@
         <div class="timeline-item">
           <span class="time">
             <i class="fa fa-clock-o"></i> <%= time.getUTCDate() %>.<%= time.getUTCMonth() %>.<%= time.getUTCFullYear() %>, <%= time.getUTCHours() %>:<%= time.getUTCMinutes() %>
+            <% if (command.status === 'pending') { %>
+            <button class="btn btn-xs btn-default" style="margin-left: 4px;" name="btnCancelPendingCommand" data-toggle="tooltip" title="Cancel"><i class="fa fa-remove"></i></button>
+            <% } %>
           </span>
-          <h3 class="timeline-header"><a href="#" class="text-capitalize"><%= command.type %> <%= command.action %></a></h3>
+          <h3 class="timeline-header">
+            <a href="#" class="text-capitalize"><%= command.type %> <%= command.action %></a>
+          </h3>
         </div>
       </li>
     <% } %>

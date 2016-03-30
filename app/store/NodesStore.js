@@ -9,7 +9,6 @@ class NodesStore extends Store {
     promise
         .then(nodes => {
           this.state.nodes = nodes;
-          //        this.state.selectedIndex = 0;
           this.state.nodesLoading = false;
           this.commit();
         }).catch(ex => {
@@ -38,6 +37,30 @@ class NodesStore extends Store {
       throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
     });
   }
+
+  cancelPendingCommand() {
+    let selected = this.getSelectedNode();
+    if (!selected) {
+      return;
+    }
+    let commands = this.state.nodeDetails.commands;
+    let command = commands && commands.length > 0 && commands[0];
+    if (!command) {
+      return;
+    }
+
+    this.state.nodeDetails.commandsLoading = true;
+    this.commit();
+    this.makeRequest('delete', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands/${encodeURIComponent(command.created)}`)
+        .then(commands => {
+          this.state.nodeDetails.commands = commands;
+          this.state.nodeDetails.commandsLoading = false;
+          this.commit();
+        }).catch(ex => {
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+    });
+  }
+
 
   fetchNodes() {
     this.state.nodesLoading = true;
