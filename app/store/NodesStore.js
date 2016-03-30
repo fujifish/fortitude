@@ -91,6 +91,12 @@ class NodesStore extends Store {
     this.updateNodePlannedState(node.id, planned);
   }
 
+  copySelectedNodeCurrentStateToPlanned(){
+    var node = this.getSelectedNode();
+    let planned = JSON.parse(JSON.stringify(node.state.current || []));
+    this.updateNodePlannedState(node.id, planned);
+  }
+
   updateNodePlannedState(nodeId, state) {
     this.state.nodeDetails.plannedStateLoading = true;
     this.commit();
@@ -105,9 +111,33 @@ class NodesStore extends Store {
       }).catch(ex => {
       throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
     });
-};
+  }
 
+  _addNodeCommand(command){
+    this.state.nodeDetails.commandsLoading = true;
+    this.commit();
+    var node = this.getSelectedNode();
+    this.makeRequest('POST', `/nodes/${encodeURIComponent(node.id)}/commands`, JSON.stringify(command))
+      .then(commands => {
+        this.state.nodeDetails.commands = commands;
+        this.state.nodeDetails.commandsLoading = false;
+        this.commit();
+      }).catch(ex => {
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+    });
+  }
 
+  updateNodeAgentVersion(version) {
+    this._addNodeCommand({type: 'update', version: version});
+  };
+
+  applyNodePlannedState() {
+    this._addNodeCommand({type: 'state', action: 'apply'});
+  };
+
+  resetNodeContents() {
+    this._addNodeCommand({type: 'reset', action: 'all'});
+  };
 
 }
 

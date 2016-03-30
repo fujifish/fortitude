@@ -10,7 +10,7 @@ export default class NodeState extends Box {
     nodesStore.on('selectedIndex', index => {
       this.render();
     });
-    this.removeNodeModuleConfirmDialog = new ConfirmDialog('removeNodeModule'+options.title);
+    this.confirmDialog = new ConfirmDialog('removeNodeModule'+options.title);
     this.configureDialog = configureDialog;
   }
 
@@ -22,6 +22,15 @@ export default class NodeState extends Box {
         this.configureDialog.setConfiguredModule(null);
         nodesStore.openConfigureModuleDialog();
       });
+      $("#btnApplyState").click(()=> {
+        _this.confirmDialog.show({
+          ok: ()=> {
+            nodesStore.applyNodePlannedState();
+          },
+          text: 'Apply the current planned state to the agent?',
+          subtext: 'These changes will be applied next time the agent performs a sync.'
+        });
+      });
       $("button[name='btnEditModuleInState']").click(function(){
         let index = parseInt($(this).data('index'));
         let module = nodesStore.getSelectedNode().state.planned[index];
@@ -31,11 +40,21 @@ export default class NodeState extends Box {
       $("button[name='btnRemoveModuleFromState']").click(function(){
         let index = parseInt($(this).data('index'));
         let module = nodesStore.getSelectedNode().state.planned[index];
-        _this.removeNodeModuleConfirmDialog.show({
+        _this.confirmDialog.show({
           ok: ()=> {
             nodesStore.removeSelectedNodeModule(index);
           },
           text: `Remove module ${module.name}@${module.version}?`
+        });
+      });
+    }else{
+      $("#btnCopyCurrentToPlannedState").click(()=> {
+        _this.confirmDialog.show({
+          ok: ()=> {
+            nodesStore.copySelectedNodeCurrentStateToPlanned();
+          },
+          text: 'Set current state as planned state?',
+          subtext: 'Clicking "Yes" will override the entire planned state with the current state.'
         });
       });
     }
@@ -59,7 +78,10 @@ export default class NodeState extends Box {
     super.beforeRender();
     if(this.options.editable) {
       $("#btnAddModuleToState").off();
+      $("#btnApplyState").off();
     }
+    $("button[name='btnEditModuleInState']").off();
+    $("button[name='btnRemoveModuleFromState']").off();
     $(`#${this.componentId} div[name="StateOfModuleInfoBox"]`).off();
   }
 
@@ -69,7 +91,7 @@ export default class NodeState extends Box {
   }
 
   initialView() {
-    return `${super.initialView()}${this.removeNodeModuleConfirmDialog.initialView()}`;
+    return `${super.initialView()}${this.confirmDialog.initialView()}`;
   }
 
   view() {
