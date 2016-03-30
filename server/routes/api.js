@@ -194,7 +194,7 @@ router.route('/nodes/:node_id/commands')
 
   });
 
-router.route('nodes/:node_id/commands/:created')
+router.route('/nodes/:node_id/commands/:created')
   .delete(function(req, res) {
     var node_id = req.params.node_id;
     var created = req.params.created;
@@ -208,6 +208,7 @@ router.route('nodes/:node_id/commands/:created')
           return res.status(500).json({error: err});
         }
         logger.info(result, 'document(s) deleted');
+        var limit = parseInt(req.query.limit || 10);
         collection.find({node_id: node_id}).limit(limit).sort({_id: -1}).toArray(function(err, items) {
           if (err) {
             return res.status(500).json({error: err});

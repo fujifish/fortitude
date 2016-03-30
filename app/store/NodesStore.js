@@ -34,7 +34,7 @@ class NodesStore extends Store {
           this.state.nodeDetails.commandsLoading = false;
           this.commit();
         }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message + '\n'+ex.stack);
     });
   }
 
@@ -57,7 +57,9 @@ class NodesStore extends Store {
           this.state.nodeDetails.commandsLoading = false;
           this.commit();
         }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+      this.state.nodeDetails.commandsLoading = false;
+      this.commit();
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message + '\n'+ex.stack);
     });
   }
 
