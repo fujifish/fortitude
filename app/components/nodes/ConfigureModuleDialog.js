@@ -100,7 +100,7 @@ export default class ConfigureModuleDialog extends Dialog {
 //    modulesStore.addModule($(`#${this.dialogId}-data`).val());
 //    $(`#${this.dialogId}-data`).val("");
     nodesStore.closeConfigureModuleDialog();
-    nodesStore.addNodeModule(this._getModuleConfig());
+    nodesStore.addSelectedNodeModule(this._getModuleConfig());
     this._clearHandlers();
   }
 

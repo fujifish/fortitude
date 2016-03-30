@@ -1,6 +1,7 @@
 import Box from 'components/Box';
 import template from 'views/nodes/nodeState';
 import nodesStore from 'store/NodesStore';
+import ConfirmDialog from 'components/ConfirmDialog';
 
 export default class NodeState extends Box {
   constructor(options) {
@@ -9,16 +10,27 @@ export default class NodeState extends Box {
     nodesStore.on('selectedIndex', index => {
       this.render();
     });
+    this.removeNodeModuleConfirmDialog = new ConfirmDialog('removeNodeModule'+options.title);
   }
 
 
   _handlers() {
+    let _this = this;
     if(this.options.editable){
       $("#btnAddModuleToState").click(()=> {
         nodesStore.openConfigureModuleDialog();
       });
+      $("button[name='btnRemoveModuleFromState']").click(function(){
+        let index = parseInt($(this).data('index'));
+        let module = nodesStore.getSelectedNode().state.planned[index];
+        _this.removeNodeModuleConfirmDialog.show({
+          ok: ()=> {
+            nodesStore.removeSelectedNodeModule(index);
+          },
+          text: `Remove module ${module.name}@${module.version}?`
+        });
+      });
     }
-    let _this = this;
     $(`#${this.componentId} div[name="StateOfModuleInfoBox"]`).hover(
       function() {
         $(`#${_this.componentId} div.btn-group[data-index="${$(this).data('index')}"]`).show();
@@ -48,6 +60,9 @@ export default class NodeState extends Box {
     this._handlers();
   }
 
+  initialView() {
+    return `${super.initialView()}${this.removeNodeModuleConfirmDialog.initialView()}`;
+  }
 
   view() {
     let node = nodesStore.getSelectedNode();

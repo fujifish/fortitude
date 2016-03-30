@@ -70,7 +70,14 @@ class NodesStore extends Store {
     this.commit();
   }
 
-  addNodeModule(module){
+  removeSelectedNodeModule(index){
+    var node = this.getSelectedNode();
+    let planned = JSON.parse(JSON.stringify(node.state.planned || []));
+    planned.splice(index, 1);
+    this.updateNodePlannedState(node.id, planned);
+  }
+
+  addSelectedNodeModule(module){
     var node = this.getSelectedNode();
     let planned = JSON.parse(JSON.stringify(node.state.planned || []));
     planned.push(module);
