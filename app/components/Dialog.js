@@ -39,6 +39,7 @@ export default class Dialog extends Component {
     content.dialogId = this.dialogId;
     content.header = content.header || "";
     content.body = content.body || "";
+    content.style = content.style || "";
     return template(content);
   }
 

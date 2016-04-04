@@ -3,7 +3,7 @@ import template from 'views/nodes/nodeCommands';
 import nodesStore from 'store/NodesStore';
 
 export default class NodeCommands extends Box {
-  constructor() {
+  constructor(commandDetailsDialog) {
     super("NodeCommands");
     nodesStore.on('selectedIndex', diff => {
       nodesStore.fetchCommands();
@@ -14,17 +14,26 @@ export default class NodeCommands extends Box {
     nodesStore.on('nodeDetails.commandsLoading', diff => {
       this.renderLoading(diff.rhs);
     });
+    this.commandDetailsDialog = commandDetailsDialog;
   }
 
   _handlers() {
+    let _this = this;
     $(`button[name='btnCancelPendingCommand']`).click(() => {
       nodesStore.cancelPendingCommand();
     });
+    $("a[name='nodeCommandDetails']").click(function(){
+      let index = parseInt($(this).data('index'));
+      let command = nodesStore.state.nodeDetails.commands[index];
+      _this.commandDetailsDialog.show(command.log);
+    });
+
   }
 
   beforeRender() {
     super.beforeRender();
     $(`button[name='btnCancelPendingCommand']`).off();
+    $("a[name='nodeCommandDetails']").off();
   }
 
   afterRender() {

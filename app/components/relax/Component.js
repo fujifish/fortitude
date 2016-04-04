@@ -25,7 +25,7 @@ export default class Component {
   }
 
   initialView() {
-    return `<div id="${this.componentId}">${this.view()}</div>`;
+    return `<span id="${this.componentId}">${this.view()}</span>`;
   }
 
   render() {

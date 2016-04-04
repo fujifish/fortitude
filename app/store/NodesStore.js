@@ -74,7 +74,7 @@ class NodesStore extends Store {
     this.setSelectedIndex(-1);
   }
 
-  setSelectedIndex(selectedIndex) {
+    setSelectedIndex(selectedIndex) {
     this.state.selectedIndex = selectedIndex;
     this.commit();
   }
@@ -138,11 +138,11 @@ class NodesStore extends Store {
     });
   }
 
-  _addNodeCommand(command){
+  _addNodeCommand(command, nodeId){
     this.state.nodeDetails.commandsLoading = true;
     this.commit();
-    var node = this.getSelectedNode();
-    this.makeRequest('POST', `/nodes/${encodeURIComponent(node.id)}/commands`, JSON.stringify(command))
+    var nodeId = nodeId || this.getSelectedNode().id;
+    this.makeRequest('POST', `/nodes/${encodeURIComponent(nodeId)}/commands`, JSON.stringify(command))
       .then(commands => {
         this.state.nodeDetails.commands = commands;
         this.state.nodeDetails.commandsLoading = false;

@@ -1,7 +1,7 @@
 import Box from 'components/Box';
 import template from 'views/nodes/nodesList';
 import nodesStore from 'store/NodesStore';
-import ConfirmDialog from 'components/ConfirmDialog';
+import ConfirmDialog from 'components/ConfirmDialog'
 
 export default class NodesList extends Box {
   constructor() {
@@ -20,7 +20,7 @@ export default class NodesList extends Box {
         this.show(/*{effect: 'slide', duration: 400, easing: 'easeOutQuad', direction: 'left'}*/);
       }
     });
-    this.deleteNodeConfirmDialog = new ConfirmDialog('deleteNode');
+    this.confirmDialog = new ConfirmDialog('nodeListConfirmDialog');
   }
 
   _handlers() {
@@ -34,7 +34,7 @@ export default class NodesList extends Box {
     $(`#${this.componentId} button[name='btRemoveNode']`).click(event => {
       let index = parseInt($(event.target).data('index'));
       let node = nodesStore.state.nodes[index];
-      _this.deleteNodeConfirmDialog.show({
+      _this.confirmDialog.show({
         ok: ()=> {
           nodesStore.deleteNode(node.id);
         },
@@ -61,7 +61,7 @@ export default class NodesList extends Box {
   }
 
   initialView() {
-    return `${super.initialView()}${this.deleteNodeConfirmDialog.initialView()}`;
+    return `${super.initialView()}${this.confirmDialog.initialView()}`;
   }
 
   view() {

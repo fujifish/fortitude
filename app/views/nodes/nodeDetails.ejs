@@ -1,12 +1,16 @@
-<div class="box-header no-padding">
-  <div class="row">
-    <div class="col-md-10">
-      <h3>
-        <button name="btBackToNodesList" class="btn btn-default pull-left" style="margin-right: 8px"><i class="fa fa-arrow-left"></i></button>
-        <%- summary %>
-      </h3>
+<div class="box-header no-padding" xmlns="http://www.w3.org/1999/html">
+  <h3>
+    <button name="btBackToNodesList" class="btn btn-default pull-left" style="margin-right: 8px"><i class="fa fa-arrow-left"></i></button>
+    <%- summary %>
+    <div class="input-group-btn">
+      <button class="btn btn-sm btn-default " name="btUpdateNode" data-toggle="tooltip" data-placement="top" title="Update">
+        <i class="fa fa-arrow-circle-o-up"></i>
+      </button>
+      <button class="btn btn-sm btn-default " name="btResetNode" data-toggle="tooltip" data-placement="top" title="Reset">
+        <i class="fa fa-step-backward"></i>
+      </button>
     </div>
-  </div>
+  </h3>
 </div>
 <div class="box-body no-padding">
   <div class="row">
@@ -22,3 +26,6 @@
   </div>
 </div>
 <%- configureModuleDialog %>
+<%- commandDetailsDialog %>
+<%- updateAgentVersionDialog %>
+<%- confirmDialog %>
