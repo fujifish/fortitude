@@ -14,7 +14,8 @@ export default class NodeSummary extends Component {
     let node = nodesStore.getSelectedNode() || {info:{}};
     return template({
       name: node.name || 'N/A',
-      version: node.info.agentVersion || '0.0.0'
+      version: node.info.agentVersion || '0.0.0',
+      tags: node.info.tags || {}
     });
   }
 

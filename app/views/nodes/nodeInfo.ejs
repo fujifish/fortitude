@@ -1,7 +1,7 @@
 <% var info = node.info;
    var problems = node.problems || [];
 %>
-<div class="box-header bg-blue-gradient">
+<div class="box-header bg-blue">
   <h3 class="box-title">Agent Details</h3>
   <div class="box-tools">
   </div>
@@ -32,16 +32,13 @@
     <dd><%= info.pid %></dd>
     <dt>Agent Memory Usage</dt>
     <dd><%= info.memUsage ? (Math.round(info.memUsage.heapUsed / 1024 / 1024)) : 0 %> MB</dd>
-    <dt>Tags</dt>
-    <dd>
-      <%
-        var tags = info.tags || {};
-        var keys = Object.keys(tags);
-        keys.forEach(function(tag) {
-      %>
-        <span class="label label-default"><%= tag %>:<%= tags[tag] %></span>
-      <% }); %>
-    </dd>
   </dl>
+  <%
+  var tags = info.tags || {};
+  var keys = Object.keys(tags);
+  keys.forEach(function(tag) {
+  %>
+  <span class="label label-default"><%= tag %>:<%= tags[tag] %></span>
+  <% }); %>
 </div>
 
