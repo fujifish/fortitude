@@ -25,6 +25,6 @@ export default class CommandDetailsDialog extends Dialog {
   }
 
   view() {
-    return this.viewWithContent({title: "Command Details", body: body({dialogId: this.dialogId}), style: "width: 90%"});
+    return this.viewWithContent({title: "Command Details", body: body({dialogId: this.dialogId}), style: "width: 80%; max-height: 80%"});
   }
 }

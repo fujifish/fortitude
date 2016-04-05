@@ -52,6 +52,7 @@
       </td>
       <td><a role="button" href="#" name="btSelectItemNodes" data-index="<%= index %>" ><%= node.name %></a></td>
       <td>
+
         <%
           var meta = node.metadata || {};
           var keys = Object.keys(meta);
@@ -59,13 +60,15 @@
         %>
           <small class="label bg-orange"><%= keys[j] %>:<%= meta[keys[j]] %></small>
         <% } %>
+
         <%
           var tags = node.info.tags || {};
-          var keys = Object.keys(tags);
+          keys = Object.keys(tags);
         for (var j = 0; j < keys.length; ++j) {
         %>
         <small class="label bg-blue"><%= keys[j] %>:<%= tags[keys[j]] %></small>
         <% } %>
+
       </td>
       <td><%= node.id %></td>
       <td><%= node.info.platform %></td>

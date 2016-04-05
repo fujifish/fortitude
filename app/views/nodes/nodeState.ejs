@@ -1,15 +1,15 @@
-<div class="box-header">
+<div class="box-header bg-black-gradient">
   <h3 class="box-title"><%= title %> State</h3>
     <div class="box-tools pull-right">
       <% if (editable) { %>
-      <button class="btn btn-default" id="btnAddModuleToState" title="Add Module" data-toggle="tooltip"><i class="fa fa-plus"></i></button>
+      <button class="btn btn-outline" id="btnAddModuleToState" title="Add Module" data-toggle="tooltip"><i class="fa fa-plus"></i></button>
       <button class="btn btn-primary" id="btnApplyState" title="Apply State" data-toggle="tooltip"><i class="fa fa-save"></i></button>
       <% } else { %>
-      <button class="btn btn-default" id="btnCopyCurrentToPlannedState" title="Set as Planned" data-toggle="tooltip"><i class="fa fa-clone"></i></button>
+      <button class="btn btn-outline" id="btnCopyCurrentToPlannedState" title="Set as Planned" data-toggle="tooltip"><i class="fa fa-clone"></i></button>
       <% } %>
     </div>
 </div>
-<div class="box-body">
+<div class="box-body bg-gray-light">
   <% if (states.length === 0) { %>
   <h5 class="text-uppercase text-gray">No Entries</h5>
   <% } else { %>
@@ -18,20 +18,21 @@
       var state = states[i];
   %>
   <div class="info-box" style="position: relative" name="StateOfModuleInfoBox" data-index="<%= i %>">
-    <span class="info-box-icon bg-blue">
-      <div style="line-height: 20px;padding-top: 25px">
-        <span class="info-box-text"><b><%= state.name %></b></span>
-        <span class="info-box-text"><%= state.version %></span>
-      </div>
+    <span class="info-box-icon bg-light-blue-gradient">
+      <!--<div style="line-height: 90px;">-->
+        <!--<span class="info-box-text">-->
+          <% if (state.state.start && state.state.start.data && state.state.start.data.started) { %>
+          &nbsp;<i class="fa fa-play-circle"></i>&nbsp;
+          <% } else { %>
+          &nbsp;<i class="fa fa-stop-circle"></i>&nbsp;
+          <% } %>
+        <!--</span>-->
+      <!--</div>-->
     </span>
     <div class="info-box-content">
-      <span class="info-box-text">
-        <% if (state.state.start && state.state.start.data && state.state.start.data.started) { %>
-        <span class="text-green"><i class="fa fa-play"></i> Started</span>
-        <% } else { %>
-        <span class="text-red"> <i class="fa fa-stop"></i> Stopped</span>
-        <% } %>
-      </span>
+      <span class="info-box-text"><b><%= state.name %></b></span>
+      <span class="info-box-text"><%= state.version %></span>
+
       <div class="btn-group btn-group-sm" style="position: absolute; bottom: 4px;" data-index="<%= i %>">
         <% if (editable) { %>
         <button type="button" name="btnEditModuleInState" class="btn btn-default" data-index="<%= i %>" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></button>

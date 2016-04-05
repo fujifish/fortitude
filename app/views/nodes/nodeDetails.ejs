@@ -1,18 +1,19 @@
-<div class="box-header no-padding" xmlns="http://www.w3.org/1999/html">
+<div>
   <h3>
-    <button name="btBackToNodesList" class="btn btn-default pull-left" style="margin-right: 8px"><i class="fa fa-arrow-left"></i></button>
+    <button name="btBackToNodesList" class="btn btn-link text-black"><i class="fa fa-arrow-left"></i></button>
     <%- summary %>
-    <div class="input-group-btn">
-      <button class="btn btn-sm btn-default " name="btUpdateNode" data-toggle="tooltip" data-placement="top" title="Update">
-        <i class="fa fa-arrow-circle-o-up"></i>
+    <span class="btn-group" style="float: right">
+      <button class="btn btn-default " name="btUpdateNode" data-toggle="tooltip" data-placement="top" title="Update Agent">
+        <i class="fa fa-upload"></i>
       </button>
-      <button class="btn btn-sm btn-default " name="btResetNode" data-toggle="tooltip" data-placement="top" title="Reset">
-        <i class="fa fa-step-backward"></i>
+      <button class="btn btn-default" name="btResetNode" data-toggle="tooltip" data-placement="top" title="Reset Agent">
+        <i class="fa fa-eraser text-danger"></i>
       </button>
-    </div>
+    </span>
+    <hr class="bg-gray" style="height: 1px"/>
   </h3>
 </div>
-<div class="box-body no-padding">
+<div class="">
   <div class="row">
     <div class="col-md-3">
       <%- plannedState %>
@@ -20,7 +21,7 @@
     <div class="col-md-3">
       <%- currentState %>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <%- commands %>
     </div>
   </div>

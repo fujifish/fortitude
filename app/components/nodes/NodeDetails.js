@@ -40,7 +40,8 @@ export default class NodeDetails extends Component {
         ok: ()=> {
           nodesStore.resetNodeContents();
         },
-        text: `Are you sure you want to reset node "${node.name}"?`
+        text: `Are you sure you want to reset node "${node.name}"?`,
+        subtext: 'This action will remove all currently installed modules.'
       });
     });
 

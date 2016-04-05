@@ -1,7 +1,7 @@
-<div class="box-header">
+<div class="box-header bg-black-gradient">
   <h3 class="box-title">Commands</h3>
 </div>
-<div class="box-body">
+<div class="box-body bg-gray-light">
   <ul class="timeline">
     <%
     function commandStatus(status) {
@@ -46,13 +46,15 @@
         <div class="timeline-item">
           <span class="time">
             <i class="fa fa-clock-o"></i> <%= time.getUTCDate() %>.<%= time.getUTCMonth() %>.<%= time.getUTCFullYear() %>, <%= time.getUTCHours() %>:<%= time.getUTCMinutes() %>
-            <% if (command.status === 'pending') { %>
-            <button class="btn btn-xs btn-default" style="margin-left: 4px;" name="btnCancelPendingCommand" data-toggle="tooltip" title="Cancel"><i class="fa fa-remove"></i></button>
-            <% } %>
           </span>
-          <h3 class="timeline-header">
+          <h4 class="timeline-header">
             <a href="#" name="nodeCommandDetails" data-index="<%= index %>" class="text-capitalize"><%= command.type %> <%= command.action %></a>
-          </h3>
+          </h4>
+          <% if (command.status === 'pending') { %>
+          <div class="timeline-body">
+          <button class="btn btn-xs btn-default btn-flat" name="btnCancelPendingCommand" data-toggle="tooltip" title="Cancel"><i class="fa fa-remove"></i> Cancel</button>
+          </div>
+          <% } %>
         </div>
       </li>
     <% } %>
