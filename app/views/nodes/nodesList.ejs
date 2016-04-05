@@ -17,21 +17,21 @@
   <table class="table table-condensed">
     <tbody>
     <%
-    const maxLastSeen = 1000*60*60*24;
+//    const maxLastSeen = 1000*60*60*24;
     for (var index = 0; index < nodes.length; index++ ){
       var node = nodes[index];
-      var problems = [];
-      var lastSynced = Date.parse(node.lastSync);
-      if (Date.now() - lastSynced > maxLastSeen) {
-        problems.push("Last seen at " + node.lastSync.replace('T', ' ').replace('Z', ''));
-      }
+//      var problems = [];
+//      var lastSynced = Date.parse(node.lastSync);
+//      if (Date.now() - lastSynced > maxLastSeen) {
+//        problems.push("Last seen at " + node.lastSync.replace('T', ' ').replace('Z', ''));
+//      }
 
     %>
     <tr class="">
       <!--<% if (selectedIndex === -1) { selectedIndex = 0; } %>-->
       <!--<td style="width: 16px;"><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>-->
       <td style="width: 16px; vertical-align: middle">
-        <% if (problems.length > 0) { %>
+        <% if (node.problems.length > 0) { %>
         <a href="#" data-trigger="focus" data-container="body" data-html="true" data-toggle="popover" data-placement="top" title="Problems"
            data-template='
            <div class="popover" style="width: 512px;" role="tooltip">
@@ -41,8 +41,8 @@
             </div>
            '
            data-content="
-              <% for (var p = 0; p < problems.length; p++) { %>
-              <p><%= problems[p] %></p>
+              <% for (var p = 0; p < node.problems.length; p++) { %>
+              <p><%= node.problems[p] %></p>
               <% } %>
            "
         >

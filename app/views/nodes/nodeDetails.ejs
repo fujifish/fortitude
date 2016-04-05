@@ -2,11 +2,11 @@
   <h3>
     <button name="btBackToNodesList" class="btn btn-link text-black"><i class="fa fa-arrow-left"></i></button>
     <%- summary %>
-    <span class="btn-group" style="float: right">
+    <span class="btn-group btn-group-lg" style="float: right">
       <button class="btn btn-default " name="btUpdateNode" data-toggle="tooltip" data-placement="top" title="Update Agent">
         <i class="fa fa-upload"></i>
       </button>
-      <button class="btn btn-default" name="btResetNode" data-toggle="tooltip" data-placement="top" title="Reset Agent">
+      <button class="btn btn-default " name="btResetNode" data-toggle="tooltip" data-placement="top" title="Reset Agent">
         <i class="fa fa-eraser text-danger"></i>
       </button>
     </span>
@@ -15,6 +15,9 @@
 </div>
 <div class="">
   <div class="row">
+    <div class="col-md-3">
+      <%- info %>
+    </div>
     <div class="col-md-3">
       <%- plannedState %>
     </div>

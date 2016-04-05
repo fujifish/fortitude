@@ -1,0 +1,47 @@
+<% var info = node.info;
+   var problems = node.problems || [];
+%>
+<div class="box-header bg-blue-gradient">
+  <h3 class="box-title">Agent Details</h3>
+  <div class="box-tools">
+  </div>
+</div>
+<div class="box-body bg-gray-light">
+    <% if (problems.length > 0) { %>
+    <div class="alert alert-warning">
+      <h4><i class="icon fa fa-warning"></i> Problems</h4>
+      <ul class="list-unstyled">
+      <% problems.forEach(function(problem) { %>
+        <li><%= problem %></li>
+      <% }); %>
+      </ul>
+    </div>
+    <% } %>
+  <dl>
+    <dt>Last Seen</dt>
+    <dd><%= node.lastSync %></dd>
+    <dt>Agent Version</dt>
+    <dd><%= info.agentVersion %></dd>
+    <dt>Nodejs Version</dt>
+    <dd><%= info.nodeVersion %></dd>
+    <dt>Platform</dt>
+    <dd><%= info.platform %></dd>
+    <dt>Architecture</dt>
+    <dd><%= info.arch %></dd>
+    <dt>Agent PID</dt>
+    <dd><%= info.pid %></dd>
+    <dt>Agent Memory Usage</dt>
+    <dd><%= info.memUsage ? (Math.round(info.memUsage.heapUsed / 1024 / 1024)) : 0 %> MB</dd>
+    <dt>Tags</dt>
+    <dd>
+      <%
+        var tags = info.tags || {};
+        var keys = Object.keys(tags);
+        keys.forEach(function(tag) {
+      %>
+        <span class="label label-default"><%= tag %>:<%= tags[tag] %></span>
+      <% }); %>
+    </dd>
+  </dl>
+</div>
+

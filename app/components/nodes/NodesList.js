@@ -66,7 +66,7 @@ export default class NodesList extends Box {
 
   view() {
     return this.viewWithContent(template({
-      nodes: nodesStore.state.nodes,
+      nodes: nodesStore.state.nodes.map(n => {return nodesStore.enrich(n)}),
       selectedIndex: nodesStore.state.selectedIndex
     }));
   }

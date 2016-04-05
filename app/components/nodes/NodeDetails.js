@@ -4,6 +4,7 @@ import NodeCommands from 'components/nodes/NodeCommands';
 import NodeState from 'components/nodes/NodeState';
 import NodePlannedState from 'components/nodes/NodePlannedState';
 import NodeSummary from 'components/nodes/NodeSummary';
+import NodeInfo from 'components/nodes/NodeInfo';
 import nodesStore from 'store/NodesStore';
 import ConfigureModuleDialog from 'components/nodes/ConfigureModuleDialog'
 import CommandDetailsDialog from 'components/nodes/CommandDetailsDialog'
@@ -72,6 +73,7 @@ export default class NodeDetails extends Component {
     let commandDetailsDialog = new CommandDetailsDialog();
 
     const data = {
+      info: new NodeInfo().initialView(),
       summary: new NodeSummary().initialView(),
       commands: new NodeCommands(commandDetailsDialog).initialView(),
       currentState: new NodeState(configureModuleDialog, {title: "Current", editable: false}).initialView(),

@@ -1,5 +1,7 @@
 import Store from 'store/relax/Store'
 
+const maxLastSeen = 1000*60*60*24;
+
 class NodesStore extends Store {
   constructor() {
     super({nodes: [], selectedIndex: -1, nodesLoading: false, nodeDetails: {commandsLoading: false, commands: [], configureModuleDialog: false, plannedStateLoading: false}});
@@ -16,8 +18,22 @@ class NodesStore extends Store {
     });
   }
 
+  enrich(node) {
+    if (!node) {
+       return node;
+    }
+    node.problems = [];
+    var lastSynced = Date.parse(node.lastSync);
+    var timeSinceSeen = Date.now() - lastSynced;
+    if (timeSinceSeen > maxLastSeen) {
+      node.problems.push(`Last seen ${Math.round((timeSinceSeen / maxLastSeen))} days ago`);
+    }
+    return node;
+  }
+
   getSelectedNode() {
-    return (this.state.nodes && this.state.selectedIndex > -1) ? this.state.nodes[this.state.selectedIndex] : null;
+    let node = (this.state.nodes && this.state.selectedIndex > -1) ? this.state.nodes[this.state.selectedIndex] : null;
+    return this.enrich(node);
   }
 
   fetchCommands() {
