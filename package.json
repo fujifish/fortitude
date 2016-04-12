@@ -65,7 +65,8 @@
     "README",
     "app",
     "server",
-    "webpack.config.js"
+    "webpack.config.js",
+    ".babelrc"
   ],
   "license": "MIT",
   "scripts": {
