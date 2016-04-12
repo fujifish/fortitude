@@ -1,4 +1,4 @@
-<div class="box-header bg-blue-gradient">
+<div class="box-header bg-blue">
   <h3 class="box-title">Commands</h3>
 </div>
 <div class="box-body bg-gray-light">
@@ -33,11 +33,11 @@
 
       <% if (index === 0) { %>
       <li class="time-label">
-        <span class="bg-blue">Latest Command</span>
+        <span class="bg-light-blue text-uppercase">Latest</span>
       </li>
       <% } else if (index === 1) { %>
       <li class="time-label">
-        <span class="bg-blue">Previous Commands</span>
+        <span class="bg-light-blue text-uppercase">Previous</span>
       </li>
       <% } %>
 
@@ -61,7 +61,7 @@
 
     <% if (commands.length === 0) { %>
     <li class="time-label">
-      <span class="bg-blue">No Commands</span>
+      <span class="bg-light-blue text-uppercase">No Commands</span>
     </li>
     <% } %>
 
