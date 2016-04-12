@@ -64,7 +64,8 @@
     "LICENSE",
     "README",
     "app",
-    "server"
+    "server",
+    "webpack.config.js"
   ],
   "license": "MIT",
   "scripts": {
