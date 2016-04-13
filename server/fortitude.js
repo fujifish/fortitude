@@ -63,7 +63,7 @@ function fortitude(config) {
     if (rpath.indexOf('/assets') == -1) {
       var salt = randomHex();
       res.setHeader('Set-Cookie', '_csrf=' + salt+';HttpOnly');
-      ejs.renderFile(path.resolve(__dirname, '../app/index.ejs'), {csrfToken: csrfToken(salt, config.csrfSecret)}, function(err, html) {
+      ejs.renderFile(path.resolve(__dirname, '../index.ejs'), {csrfToken: csrfToken(salt, config.csrfSecret)}, function(err, html) {
         res.end(html);
       });
       // no next continuation
