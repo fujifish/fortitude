@@ -1,6 +1,6 @@
 import deep_diff from 'deep-diff/releases/deep-diff-0.3.3.min'
 
-let API_ENDPOINT = 'http://local.capriza.com:3005/api';
+let API_ENDPOINT = '/api';
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {

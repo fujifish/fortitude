@@ -1,6 +1,6 @@
 {
   "name": "fortitude",
-  "version": "0.0.27",
+  "version": "0.1.1",
   "description": "The outpost server",
   "author": "Capriza Inc. <backend@capriza.com>",
   "maintainers": [
@@ -44,6 +44,7 @@
     "css-loader": "^0.23.1",
     "deep-diff": "^0.3.3",
     "ejs-compiled-loader": "^2.1.1",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "font-awesome": "^4.5.0",
     "imports-loader": "^0.6.5",
@@ -63,16 +64,16 @@
   "files": [
     "LICENSE",
     "README",
-    "app",
+    "public",
     "server",
-    "webpack.config.js",
-    ".babelrc"
+    "index.js"
   ],
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf public",
     "build:webpack": "webpack --progress --colors --display-error-details",
     "build": "npm run clean && npm run build:webpack",
-    "dev": "NODE_ENV=DEV node server/www"
+    "dev": "NODE_ENV=DEV node server/www",
+    "prepublish": "BUILD=true npm run build"
   }
 }
