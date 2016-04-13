@@ -57,6 +57,12 @@ export default class NodeState extends Box {
           subtext: 'Clicking "Yes" will override the entire planned state with the current state.'
         });
       });
+      $("button[name='btnViewModuleInState']").click(function(){
+        let index = parseInt($(this).data('index'));
+        let module = nodesStore.getSelectedNode().state.current[index];
+        _this.configureDialog.setConfiguredModule({module: module, index: index, readOnly: true});
+        nodesStore.openConfigureModuleDialog();
+      });
     }
     $(`#${this.componentId} div[name="StateOfModuleInfoBox"]`).hover(
       function() {
@@ -78,6 +84,7 @@ export default class NodeState extends Box {
       $("button[name='btnRemoveModuleFromState']").off();
     }else{
       $("#btnCopyCurrentToPlannedState").off();
+      $("button[name='btnViewModuleInState']").off();
     }
     $(`#${this.componentId} div[name="StateOfModuleInfoBox"]`).off();
   }

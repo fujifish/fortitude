@@ -13,6 +13,7 @@ export default class ConfigureModuleDialog extends Dialog {
 
   setConfiguredModule(context){
     this.context = context;
+    this.readOnly = context && !!context.readOnly;
   }
 
 
@@ -32,7 +33,12 @@ export default class ConfigureModuleDialog extends Dialog {
           return $(this).text() == _this.context.module.version;
         }).attr('selected', true);
       }
+
       selectVersion.trigger('change');
+
+      if(this.readOnly) selectVersion.attr('disabled', 'disabled');
+      else selectVersion.removeAttr("disabled");
+
     });
 
     // populate configuration of the selected version
@@ -56,13 +62,15 @@ export default class ConfigureModuleDialog extends Dialog {
         form: form ,
         value: values
       });
+      if(this.readOnly) $('#nodeModuleConfiguration').find('input, textarea, button, select').attr('disabled','disabled');
+      else $('#nodeModuleConfiguration').find('input, textarea, button, select').removeAttr("disabled");
     });
   }
 
   _clearHandlers(){
     $('#nodeModuleName').off();
     $('#nodeModuleVersion').off();
-
+    this.readOnly = false;
   }
 
   show(){
@@ -95,6 +103,8 @@ export default class ConfigureModuleDialog extends Dialog {
         $('#nodeModuleStarted').removeProp("checked");
       }
     }
+    if(this.readOnly) $('#nodeModuleStarted').prop('disabled', true);
+    else $('#nodeModuleStarted').removeAttr("disabled");
 
     selectName.trigger('change');
   }
