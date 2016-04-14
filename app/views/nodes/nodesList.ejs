@@ -2,13 +2,14 @@
   <table class="table table-condensed table-hover">
     <thead>
     <tr>
+      <th class="hidden_last_seen">Hidden Last Seen field</th>
       <th></th>
       <th>Name</th>
       <th>Tags</th>
       <th>Id</th>
       <th>Platform</th>
       <th>Agent Version</th>
-      <th>Last Seen</th>
+      <th class="last_seen">Last Seen</th>
       <th></th>
     </tr>
     </thead>
@@ -54,6 +55,7 @@
 
     %>
     <tr class="">
+      <td><%= node.lastSync %></td>
       <!--<% if (selectedIndex === -1) { selectedIndex = 0; } %>-->
       <!--<td style="width: 16px;"><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>-->
       <td style="width: 16px; vertical-align: middle">

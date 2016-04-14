@@ -46,6 +46,22 @@ export default class NodesList extends Box {
       "dom": "<'row'<'col-sm-9'<'pull-left'f>><'col-sm-3'<'pull-right'l>>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+      "order": [[ 2, "desc" ]],
+      "columnDefs": [
+        {
+          "targets": "hidden_last_seen", // index 0
+          "visible": false,
+          "searchable": false
+        },
+        {
+          "targets": [1, -1],
+          "sortable": false,
+        },
+        {
+          // Sort column 1 (formatted date) by column 6 (hidden seconds)
+          "orderData": [0] ,   "targets": "last_seen"
+        }
+      ]
     });
   }
 
