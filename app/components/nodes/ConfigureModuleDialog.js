@@ -57,6 +57,7 @@ export default class ConfigureModuleDialog extends Dialog {
 
       var configElementCont = $('#nodeModuleConfiguration');
       configElementCont.empty();
+      configElementCont.off();
       configElementCont.jsonForm({
         schema: schema,
         form: form ,
