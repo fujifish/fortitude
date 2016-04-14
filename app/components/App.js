@@ -3,10 +3,13 @@ import adminlte from 'admin-lte/dist/css/AdminLTE.css';
 import adminlteskin from 'admin-lte/dist/css/skins/skin-blue.css';
 import fontawesome from 'font-awesome/css/font-awesome.css';
 import appcss from 'css/app.css'
+import datatables_bs_css from 'datatables.net-bs/css/dataTables.bootstrap.css';
 
 import bootstrapjs from 'admin-lte/bootstrap/js/bootstrap';
 import adminltejs from 'admin-lte/dist/js/app';
 import jsonform from 'json-form/lib/jsonform';
+import datatables from 'datatables.net/js/jquery.dataTables';
+import datatables_bs from 'datatables.net-bs/js/dataTables.bootstrap';
 
 
 import template from "views/app";

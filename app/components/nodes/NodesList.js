@@ -41,6 +41,12 @@ export default class NodesList extends Box {
         text: `Remove node "${node.name}"?`
       });
     });
+    $(`#${this.componentId} table`).DataTable({
+      "pagingType": "full_numbers",
+      "dom": "<'row'<'col-sm-9'<'pull-left'f>><'col-sm-3'<'pull-right'l>>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+    });
   }
 
   beforeRender() {
