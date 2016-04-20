@@ -76,6 +76,16 @@ module.exports.init = function(config, log) {
             });
           }
         });
+        db.collection('nodesArchive', {strict: true}, function(err, collection) {
+          if (err) {
+            logger.info("The nodesArchive collection doesn't exist. Creating it.");
+            db.createCollection('nodesArchive', function(err, result) {
+              if (err) {
+                logger.error(err, "failed to create collection nodesArchive");
+              }
+            });
+          }
+        });
       } else {
         logger.error(err, 'Unable to establish MongoDB connection. Retrying (#' + retriesCounter + ')');
         setTimeout(function() {

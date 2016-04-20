@@ -59,6 +59,62 @@ router.route('/commands/:command_id')
     });
   });
 
+router.route('/unregister')
+  .post(function(req, res, next) {
+    var input = req.body;
+    logger.info(input, 'Unregister input');
+    var authHash = agentAuthHash(req);
+    if (!authHash) {
+      return res.status(403).json({error: 'invalid agent auth'});
+    }
+    var nodeCollection, nodesArchiveCollection;
+    async.waterfall([
+      function(callback) {
+        store.db().collection('nodes', callback);
+      },
+      function(collection, callback) {
+        nodeCollection = collection;
+        callback();
+      },
+      function(callback) {
+        store.db().collection('nodesArchive', callback);
+      },
+      function(collection, callback) {
+        nodesArchiveCollection = collection;
+        callback();
+      },
+      function(callback) {
+        nodeCollection.findOne({id: input.id}, callback);
+      },
+      function(node, callback) {
+        if(!node){
+          logger.info({input: input}, 'node not found');
+          callback('node not found');
+          return;
+        }
+        if (node && node.authHash && node.authHash !== authHash) {
+          logger.info('invalid agent id and auth combination: ' + JSON.stringify(input));
+          callback('invalid agent authentication');
+          return;
+        }
+        logger.info({node_id: node.id}, 'adding node to archive');
+        nodesArchiveCollection.insertOne(node, function(err, result){
+          callback(err, node);
+        });
+      },
+      function(node, callback) {
+        logger.info({node_id: node.id}, 'deleting node');
+        nodeCollection.deleteOne({_id: node._id}, callback);
+      }
+    ], function(err) {
+      if (err) {
+        return res.status(500).json({error: err});
+      }
+      res.json({});
+    });
+  });
+
+
 router.route('/nodes/sync')
 
   // sync a node (accessed at POST http://localhost:8080/api/public/nodes/sync)
