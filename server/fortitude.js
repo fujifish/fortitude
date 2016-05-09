@@ -54,8 +54,7 @@ function fortitude(config) {
   app.use('/agent', agent.router);
 
   // api routes with csrf protection
-  //TODO: re-enable csrfVerify
-  app.use('/api', /*csrfVerify(config.csrfSecret), */api.router);
+  app.use('/api', csrfVerify(config.csrfSecret), api.router);
 
   // fortitude ui
   app.use(express.static(path.resolve(__dirname, '../public')));

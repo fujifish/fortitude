@@ -84,7 +84,8 @@ export default class Store extends EventEmitter {
       mode: 'cors',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': window.csrfToken
       },
       body: data
     }).then(checkStatus).then(parseJSON);
