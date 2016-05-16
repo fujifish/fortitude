@@ -106,6 +106,9 @@ function csrfVerify(secret) {
     }
 
     var cookie = req.cookies['_csrf'];
+    if (!cookie) {
+      return _done();
+    }
     var token = req.headers['x-csrf-token'];
     if (!token || token.length === 0) {
       return _done('invalid csrf token');
