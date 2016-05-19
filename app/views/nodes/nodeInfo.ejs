@@ -19,19 +19,31 @@
     <% } %>
   <dl>
     <dt>Last Seen</dt>
-    <dd><%= node.lastSync %></dd>
+    <dd><%= node.lastSync ? node.lastSync.replace('T', ', ').replace('Z', '') : ''%> UTC</dd>
     <dt>Agent Version</dt>
     <dd><%= info.agentVersion %></dd>
     <dt>Nodejs Version</dt>
     <dd><%= info.nodeVersion %></dd>
+    <dt>Agent Running As</dt>
+    <dd><%= info.runasName %> (<%= info.runas %>)</dd>
+    <dt>Hostname</dt>
+    <dd><%= info.hostname %></dd>
+    <dt>IP Address</dt>
+    <dd><%= info.ip %></dd>
     <dt>Platform</dt>
     <dd><%= info.platform %></dd>
     <dt>Architecture</dt>
     <dd><%= info.arch %></dd>
+    <dt>CPU's</dt>
+    <dd><%= info.cpus %></dd>
+    <dt>Total Memory</dt>
+    <dd><%= Math.floor(info.totalmem / 1024 /1024) %> MB</dd>
+    <dt>Free Memory</dt>
+    <dd><%= Math.floor(info.freemem  / 1024 /1024) %> MB</dd>
     <dt>Agent PID</dt>
     <dd><%= info.pid %></dd>
     <dt>Agent Memory Usage</dt>
-    <dd><%= info.memUsage ? (Math.round(info.memUsage.heapUsed / 1024 / 1024)) : 0 %> MB</dd>
+    <dd><%= info.memUsage ? (Math.floor(info.memUsage.heapUsed / 1024 / 1024)) : 0 %> MB</dd>
   </dl>
   <%
   var tags = info.tags || {};
