@@ -32,7 +32,15 @@ router.route('/nodes')
       if (err) {
         return res.status(500).json({error: err});
       }
-      collection.find().toArray(function(err, items) {
+
+      // filter results
+      var queryKey, filters = {}, nonTagsPrefix = { 'name' : '', 'id' : '', 'agentVersion' : 'info.' };
+      Object.keys(req.query).forEach(function(k) {
+        queryKey = nonTagsPrefix[k] !== undefined ? nonTagsPrefix[k] + k : 'metadata.' + k;
+        filters[common.mongoSanitize(queryKey)] = common.mongoSanitize(req.query[k]);
+      });
+
+      collection.find(filters).toArray(function(err, items) {
         if (err) {
           return res.status(500).json({error: err});
         }
@@ -43,6 +51,35 @@ router.route('/nodes')
       });
     });
   });
+
+router.route('/nodes/commands')
+    .post(function(req, res) {
+      store.db().collection('nodes', function(err, collection) {
+        if (err) {
+          return res.status(500).json({error: err});
+        }
+        if (req.body.ids.length > 100) {
+          return res.status(500).json({error: 'maximum 100 nodes limit reached'});
+        }
+
+        var command = req.body.command;
+        var nodeIds = req.body.ids.map(function(id) { return common.mongoSanitize(id) });
+
+        buildCmds(command, nodeIds, collection, function(err, cmds) {
+          if (err) {
+            return res.status(500).json({err: err});
+          }
+          saveCommands(cmds, function(err, results) {
+            if (err) {
+              res.status(500).json({err: err});
+            } else {
+              logger.info(JSON.stringify(results), 'commands update');
+              res.json({success: true, nodesUpdated: results.length});
+            }
+          });
+        })
+      });
+    });
 
 // on routes that end in /nodes/:id
 // ----------------------------------------------------
@@ -136,60 +173,46 @@ router.route('/nodes/:node_id/commands')
   })
   .post(function(req, res) {
 
-    function saveCommand(command) {
+    function respondWithCmds(nodeId) {
       store.db().collection('commands', function(err, collection) {
         if (err) {
-          return res.status(500).json({error: err});
+          return res.status(500).json({ error: err });
         }
 
-        collection.update(
-          {node_id: command.node_id, type: command.type, action: command.action, status: command.status},
-          command,
-          {safe: true, upsert: true}, function(err, result) {
-            if (err) {
-              return res.status(500).json({error: err});
-            }
-            logger.info(result, 'command update');
-            var limit = parseInt(req.query.limit || 10);
-            collection.find({node_id: command.node_id}).limit(limit).sort({_id: -1}).toArray(function(err, items) {
-              if (err) {
-                return res.status(500).json({error: err});
-              }
-              items.forEach(function(i) {
-                delete i._id
-              });
-              res.json(items);
-            });
+        var limit = parseInt(req.query.limit || 10);
+        collection.find({ node_id: nodeId }).limit(limit).sort({ _id: -1 }).toArray(function(err, items) {
+          if (err) {
+            return res.status(500).json({ error: err });
           }
-        );
+          items.forEach(function(i) {
+            delete i._id
+          });
+          res.json(items);
+        });
       });
     }
 
-    var command = req.body;
-    command.created = command.created || new Date().toISOString();
-    command.node_id = req.params.node_id;
-    command.status = 'pending';
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return res.status(500).json({ error: err });
       }
 
-      if (command.type === 'state' && command.action === 'apply') {
-        collection.findOne({id: req.params.node_id}, function (err, node) {
+      var command = req.body;
+      var nodeId = [common.mongoSanitize(req.params.node_id)];
+
+      buildCmds(command, nodeId, collection, function(err, cmd) {
+        if (err) {
+          return res.status(500).json({ err: err });
+        }
+        saveCommands(cmd, function(err, results) {
           if (err) {
-            return res.status(500).json({error: err});
+            res.status(500).json({ err: err });
+          } else {
+            logger.info(results[0], 'command update');
+            respondWithCmds(cmd[0].node_id);
           }
-          command.state = node.state.planned && node.state.planned.map(function (s) {
-            var state = s.state;
-            state.name = s.name;
-            state.version = s.version;
-            return state;
-          });
-          saveCommand(command);
         });
-      } else {
-        saveCommand(command);
-      }
+      })
     });
 
   });
@@ -381,3 +404,71 @@ module.exports = {
   router: router,
   init: init
 };
+
+
+// api utilities :
+// ----------------------------------------------------
+
+function saveCommands(commands, cb) {
+  store.db().collection('commands', function(err, collection) {
+    if (err) {
+      return res.status(500).json({error: err});
+    }
+
+    var results = [], last = commands.length - 1;
+    commands.forEach(function(cmd, idx) {
+      collection.update(
+        { node_id: cmd.node_id, type: cmd.type, action: cmd.action, status: cmd.status },
+        cmd,
+        { safe: true, upsert: true }, function(err, result) {
+          if (err) {
+            return cb(err);
+          }
+          results.push(result);
+          if (idx == last) {
+            cb(null, results);
+          }
+        }
+      );
+    });
+  });
+}
+
+
+function nodesQuery(nodeIds) {
+  return { $or: nodeIds.map(function(id){ return { id: id }}) };
+}
+
+function buildCmds(command, nodeIds, collection, cb) {
+  function nodeState(n) {
+    return n.state.planned && n.state.planned.map(function (s) {
+      var state = s.state;
+      state.name = s.name;
+      state.version = s.version;
+      return state;
+    });
+  }
+
+  var cmds;
+  if (command.type === 'state' && command.action === 'apply') {
+    collection.find(nodesQuery(nodeIds), {state: 1, id: 1, _id: 0}).toArray(function(err, nodes) {
+      if (err) cb(err);
+
+      var date = command.created || new Date().toISOString();
+      cmds = nodes.map(function(node) {
+        var c = common.mergeObjects({}, command);
+        return common.mergeObjects(c, { created: date, node_id: node.id, status: 'pending', state: nodeState(node) });
+      });
+
+      cb(null, cmds);
+    });
+
+  } else {
+    var date = command.created || new Date().toISOString();
+    cmds = nodeIds.map(function (id) {
+      var c = common.mergeObjects({}, command);
+      return common.mergeObjects(c, { created: date, node_id: id, status: 'pending' });
+    });
+    cb(null, cmds);
+  }
+}
