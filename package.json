@@ -1,11 +1,12 @@
 {
   "name": "fortitude",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "The outpost server",
   "author": "Capriza Inc. <backend@capriza.com>",
   "maintainers": [
     "Nadav Fischer <nadav.fischver@capriza.com>",
-    "Yuval Carmel <yuval.carmel@capriza.com>"
+    "Yuval Carmel <yuval.carmel@capriza.com>",
+    "Daniel Schwartz <daniel.schwartz@capriza.com>"
   ],
   "homepage": "http://github.com/capriza/fortitude",
   "repository": {
