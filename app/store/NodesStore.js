@@ -4,7 +4,18 @@ const maxLastSeen = 1000*60*60*24;
 
 class NodesStore extends Store {
   constructor() {
-    super({nodes: [], selectedIndex: -1, nodesLoading: false, nodeDetails: {commandsLoading: false, commands: [], configureModuleDialog: false, plannedStateLoading: false}});
+    super({
+      nodes: [],
+      selectedIndex: -1,
+      nodesLoading: false,
+      nodeDetails: {
+        commandsLoading: false,
+        commands: [],
+        configureModuleDialog: false,
+        plannedStateLoading: false,
+        applyStatePending: false
+      }
+    });
   }
 
   _handleNodesResult(promise) {
@@ -140,6 +151,7 @@ class NodesStore extends Store {
 
   updateNodePlannedState(nodeId, state) {
     this.state.nodeDetails.plannedStateLoading = true;
+    this.state.nodeDetails.applyStatePending = true;
     this.commit();
     this.makeRequest('PUT', `/nodes/${encodeURIComponent(nodeId)}`, JSON.stringify({"state.planned": state}))
       .then(node => {
@@ -173,6 +185,7 @@ class NodesStore extends Store {
   };
 
   applyNodePlannedState() {
+    this.state.nodeDetails.applyStatePending = false;
     this._addNodeCommand({type: 'state', action: 'apply'});
   };
 

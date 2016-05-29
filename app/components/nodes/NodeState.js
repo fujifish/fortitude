@@ -10,10 +10,12 @@ export default class NodeState extends Box {
     nodesStore.on('selectedIndex', index => {
       this.render();
     });
+    nodesStore.on('nodeDetails.applyStatePending', pending => {
+      this.render();
+    });
     this.confirmDialog = new ConfirmDialog('removeNodeModule'+options.title);
     this.configureDialog = configureDialog;
   }
-
 
   _handlers() {
     let _this = this;
@@ -22,7 +24,8 @@ export default class NodeState extends Box {
         this.configureDialog.setConfiguredModule(null);
         nodesStore.openConfigureModuleDialog();
       });
-      $("#btnApplyState").click(()=> {
+      var applyStateButton = $("#btnApplyState");
+      applyStateButton.click(()=> {
         _this.confirmDialog.show({
           ok: ()=> {
             nodesStore.applyNodePlannedState();
@@ -31,6 +34,13 @@ export default class NodeState extends Box {
           subtext: 'These changes will be applied next time the agent performs a sync.'
         });
       });
+      if (nodesStore.state.nodeDetails.applyStatePending) {
+        applyStateButton.removeClass('btn-outline');
+        applyStateButton.addClass('btn-warning');
+      } else {
+        applyStateButton.removeClass('btn-warning');
+        applyStateButton.addClass('btn-outline');
+      }
       $("button[name='btnEditModuleInState']").click(function(){
         let index = parseInt($(this).data('index'));
         let module = nodesStore.getSelectedNode().state.planned[index];
