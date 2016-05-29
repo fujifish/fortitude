@@ -2,6 +2,8 @@ import Box from 'components/Box';
 import template from 'views/nodes/nodesList';
 import nodesStore from 'store/NodesStore';
 import ConfirmDialog from 'components/ConfirmDialog'
+import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog'
+import actionsTemplate from 'views/nodes/actions'
 
 export default class NodesList extends Box {
   constructor() {
@@ -13,6 +15,9 @@ export default class NodesList extends Box {
     nodesStore.on('nodesLoading', diff => {
       this.renderLoading(diff.rhs);
     });
+    nodesStore.on('nodeActionLoading', diff => {
+      this.renderLoading(diff.rhs);
+    });
     nodesStore.on('selectedIndex', diff => {
       if (diff.rhs !== -1) {
         this.hide();
@@ -21,16 +26,35 @@ export default class NodesList extends Box {
       }
     });
     this.confirmDialog = new ConfirmDialog('nodeListConfirmDialog');
+    this.updateNodesVersionDialog = new UpdateNodesVersionDialog();
   }
 
   _handlers() {
+    let _this = this;
+
     $(`#${this.componentId} a[name='btSelectItemNodes']`).click(event => {
       //let radioButtons = $(`#${this.componentId} input:radio[name='btSelectItemNodes']`);
       //var selectedIndex = radioButtons.index(radioButtons.filter(':checked'));
       nodesStore.setSelectedIndex(parseInt($(event.target).data('index')));
     });
 
-    let _this = this;
+    $(`#${this.componentId} input:checkbox[name='checkAllNodes']`).on('change', elem => {
+      var checkedIndexs = [];
+      if (elem.target.checked) {
+        $(`#${this.componentId} input:checkbox[name='checkNode']`).iCheck('check').each((i, elem) =>  {
+          checkedIndexs.push(parseInt($(elem).data('index')));
+        });
+        nodesStore.setCheckedIndexes(checkedIndexs);
+      } else {
+        $(`#${this.componentId} input:checkbox[name='checkNode']`).iCheck('uncheck');
+        nodesStore.uncheckAllNodes();
+      }
+    });
+
+    $(`#${this.componentId} input:checkbox[name='checkNode']`).on('change', event => {
+      nodesStore.toggleNode(parseInt($(event.target).data('index')));
+    });
+
     $(`#${this.componentId} button[name='btRemoveNode']`).click(event => {
       let index = parseInt($(event.target).data('index'));
       let node = nodesStore.state.nodes[index];
@@ -41,6 +65,7 @@ export default class NodesList extends Box {
         text: `Remove node "${node.name}"?`
       });
     });
+
     $(`#${this.componentId} table`).DataTable({
       "pagingType": "full_numbers",
       "dom": "<'row'<'col-sm-9'<'pull-left'f>><'col-sm-3'<'pull-right'l>>>" +
@@ -61,7 +86,20 @@ export default class NodesList extends Box {
           // Sort column 1 (formatted date) by column 6 (hidden seconds)
           "orderData": [0] ,   "targets": "last_seen"
         }
-      ]
+      ],
+      "oLanguage": {
+        "sSearch": ''
+      }
+    }).on('draw.dt', () => {
+      nodesStore.uncheckAllNodes();
+      $(`#${this.componentId} input:checkbox`).iCheck('uncheck');
+    });
+
+    // append 'actions' button to table
+    $('.dataTables_filter > label').addClass('input-group').prepend(actionsTemplate);
+
+    $(`#${this.componentId} a[name='aUpdateNode']`).click(() => {
+      _this.updateNodesVersionDialog.show();
     });
   }
 
@@ -69,6 +107,10 @@ export default class NodesList extends Box {
     super.beforeRender();
     $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
     $(`#${this.componentId} button[name='btRemoveNode']`).off();
+    $(`#${this.componentId} input:checkbox[name='checkAllNodes']`).off();
+    $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
+    $(`#${this.componentId} a[name='aUpdateNode']`).off();
+    $(`#${this.componentId} table`).off('draw.dt');
   }
 
   afterRender() {
@@ -83,13 +125,14 @@ export default class NodesList extends Box {
   }
 
   initialView() {
-    return `${super.initialView()}${this.confirmDialog.initialView()}`;
+    return `${super.initialView()}${this.confirmDialog.initialView()}${this.updateNodesVersionDialog.initialView()}`;
   }
 
   view() {
     return this.viewWithContent(template({
       nodes: nodesStore.state.nodes.map(n => {return nodesStore.enrich(n)}),
-      selectedIndex: nodesStore.state.selectedIndex
+      selectedIndex: nodesStore.state.selectedIndex,
+      checkedIndexes: nodesStore.state.checkedIndexes
     }));
   }
 

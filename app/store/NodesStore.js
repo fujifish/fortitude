@@ -7,6 +7,8 @@ class NodesStore extends Store {
     super({
       nodes: [],
       selectedIndex: -1,
+      checkedIndexes: [],
+      nodeActionLoading: false,
       nodesLoading: false,
       nodeDetails: {
         commandsLoading: false,
@@ -23,6 +25,8 @@ class NodesStore extends Store {
         .then(nodes => {
           this.state.nodes = nodes;
           this.state.nodesLoading = false;
+          this.state.checkedIndexes = [];
+          this.state.nodeActionLoading = false;
           this.commit();
         }).catch(ex => {
       throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
@@ -45,6 +49,15 @@ class NodesStore extends Store {
   getSelectedNode() {
     let node = (this.state.nodes && this.state.selectedIndex > -1) ? this.state.nodes[this.state.selectedIndex] : null;
     return this.enrich(node);
+  }
+
+  getCheckedNodes() {
+    if (this.state.nodes && (this.state.checkedIndexes.length > 0)) {
+      let nodes = [];
+      this.state.checkedIndexes.forEach(i => nodes.push(this.state.nodes[i]));
+      return nodes.map(this.enrich);
+    }
+    return [];
   }
 
   fetchCommands() {
@@ -90,7 +103,6 @@ class NodesStore extends Store {
     });
   }
 
-
   fetchNodes() {
     this.state.nodesLoading = true;
     this.commit();
@@ -101,8 +113,27 @@ class NodesStore extends Store {
     this.setSelectedIndex(-1);
   }
 
-    setSelectedIndex(selectedIndex) {
+  setSelectedIndex(selectedIndex) {
     this.state.selectedIndex = selectedIndex;
+    this.commit();
+  }
+
+  toggleNode(checkedIndexe) {
+    if (this.state.checkedIndexes.indexOf(checkedIndexe) != -1) {
+      this.state.checkedIndexes.splice(this.state.checkedIndexes.indexOf(checkedIndexe), 1);
+    } else {
+      this.state.checkedIndexes.push(checkedIndexe);
+    }
+    this.commit();
+  }
+
+  setCheckedIndexes(checkedIndexes) {
+    this.state.checkedIndexes = checkedIndexes;
+    this.commit();
+  }
+
+  uncheckAllNodes() {
+    this.state.checkedIndexes = [];
     this.commit();
   }
 
@@ -180,8 +211,29 @@ class NodesStore extends Store {
     });
   }
 
+  _addNodesCommand(command, nodeIds){
+    var nodeIds = nodeIds || this.getCheckedNodes().map(n => n.id);
+    if (!nodeIds || 0 == nodeIds.length) return;
+
+    this.state.nodeActionLoading = true;
+    this.commit();
+    this.makeRequest('POST', `/nodes/commands`, JSON.stringify({ command: command, ids: nodeIds }))
+      .then(() => {
+        this.state.nodeActionLoading = false;
+        this.commit();
+      }).catch(ex => {
+        throw new Error("Oops! Something went wrong and we couldn't update your nodes. Ex: " + ex.message);
+      });
+  }
+
+  // selected node update
   updateNodeAgentVersion(version) {
     this._addNodeCommand({type: 'update', version: version});
+  };
+
+  // checked nodes update
+  updateNodesAgentVersion(version) {
+    this._addNodesCommand({type: 'update', version: version});
   };
 
   applyNodePlannedState() {

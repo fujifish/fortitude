@@ -3,6 +3,7 @@
     <thead>
     <tr>
       <th class="hidden_last_seen">Hidden Last Seen field</th>
+      <th><input name="checkAllNodes" type="checkbox"/></th>
       <th></th>
       <th>Name</th>
       <th>Tags</th>
@@ -56,6 +57,7 @@
     %>
     <tr class="">
       <td><%= node.lastSync %></td>
+      <td><input name="checkNode" type="checkbox" data-index="<%= index %>" <%= checkedIndexes.indexOf(index) !== -1  ? 'checked' : '' %>/></td>
       <!--<% if (selectedIndex === -1) { selectedIndex = 0; } %>-->
       <!--<td style="width: 16px;"><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>-->
       <td style="width: 16px; vertical-align: middle">
