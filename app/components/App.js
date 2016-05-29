@@ -6,6 +6,7 @@ import appcss from 'css/app.css'
 import datatables_bs_css from 'datatables.net-bs/css/dataTables.bootstrap.css';
 
 import bootstrapjs from 'admin-lte/bootstrap/js/bootstrap';
+import icheck from 'admin-lte/plugins/iCheck/icheck.js';
 import adminltejs from 'admin-lte/dist/js/app';
 import jsonform from 'json-form/lib/jsonform';
 import datatables from 'datatables.net/js/jquery.dataTables';

@@ -99,9 +99,9 @@ export default class ConfigureModuleDialog extends Dialog {
     let module = this.context && this.context.module;
     if (module && module.state && module.state.start && module.state.start.data) {
       if (module.state.start.data.started) {
-        $('#nodeModuleStarted').prop("checked", module.state.start.data.started);
+        $('#nodeModuleStarted').iCheck('check');
       } else {
-        $('#nodeModuleStarted').removeProp("checked");
+        $('#nodeModuleStarted').iCheck('uncheck');
       }
     }
     if(this.readOnly) $('#nodeModuleStarted').prop('disabled', true);
