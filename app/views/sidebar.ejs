@@ -9,9 +9,9 @@
     </div-->
     <ul class="sidebar-menu">
       <li class="header">Menu</li>
-      <% for(var index = 0; index < routes.length; index ++) { %>
-        <li class="<%= index == selected ? 'active' : '' %>" data-index="<%= index %>"><a href="<%= routes[index].path %>"><%= routes[index].title %></a></li>
-      <% } %>
+      <% routes.forEach(function(route){ %>
+        <li class="<%= route.path == selected ? 'active' : '' %>" data-path="<%= route.path %>"><a href="<%= route.path %>"><%= route.title %></a></li>
+      <% }) %>
     </ul>
   </div>
 </div>

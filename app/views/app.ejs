@@ -10,11 +10,11 @@
               </h1>
             </div>
             <div class="content body">
-            <% for(var index = 0; index < content.length; index++){ %>
-            <section data-index="<%= index %>">
-              <%- content[index] %>
+            <% content.forEach(function(content) { %>
+            <section data-path="<%= content.path %>">
+              <%- content.view %>
             </section>
-            <% } %>
+            <% }) %>
           </div>
         </div>
       </div>

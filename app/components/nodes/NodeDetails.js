@@ -14,16 +14,8 @@ import ConfirmDialog from 'components/ConfirmDialog';
 export default class NodeDetails extends Component {
   constructor(configureDialog) {
     super(configureDialog, "NodeDetails");
-    nodesStore.on('selectedIndex', diff => {
-      if (diff.rhs === -1) {
-        this.hide();
-      } else {
-        this.show(/*{effect: 'slide', duration: 400, easing: 'easeOutQuad', direction: 'right'}*/);
-      }
-    });
     this.updateAgentVersionDialog = new UpdateAgentVersionDialog();
     this.confirmDialog = new ConfirmDialog('NodeDetailsConfirm');
-
   }
 
   _handlers() {
@@ -31,11 +23,11 @@ export default class NodeDetails extends Component {
     $(`#${this.componentId} button[name="btBackToNodesList"]`).click(() => {
       nodesStore.resetSelectedIndex();
     });
-    $(`#${this.componentId} button[name='btUpdateNode']`).click(event => {
+    $(`#${this.componentId} button[name='btUpdateNode']`).click(() => {
       let node = nodesStore.getSelectedNode();
       _this.updateAgentVersionDialog.show(node.info.agentVersion);
     });
-    $(`#${this.componentId} button[name='btResetNode']`).click(event => {
+    $(`#${this.componentId} button[name='btResetNode']`).click(() => {
       let node = nodesStore.getSelectedNode();
       _this.confirmDialog.show({
         ok: ()=> {

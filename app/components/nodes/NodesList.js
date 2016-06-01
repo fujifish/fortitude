@@ -4,27 +4,31 @@ import nodesStore from 'store/NodesStore';
 import ConfirmDialog from 'components/ConfirmDialog'
 import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog'
 import actionsTemplate from 'views/nodes/actions'
+import routerStore from 'store/relax/RouterStore';
 
 export default class NodesList extends Box {
   constructor() {
     super("NodesList", {style: 'primary'});
-    nodesStore.on('nodes', diff => {
-      nodesStore.resetSelectedIndex();
+    nodesStore.on('nodes', () => {
+      var path = routerStore.state.path;
+      if (path.indexOf('/nodes#') != -1) {
+        // this is in case the user reloads a node page
+        var nodeId = path.substr(path.indexOf('#') + 1);
+        var index = nodesStore.state.nodes.findIndex(n => n.id == nodeId);
+        nodesStore.setSelectedIndex(index);
+      } else {
+        nodesStore.resetSelectedIndex();
+      }
       this.render();
     });
+
     nodesStore.on('nodesLoading', diff => {
       this.renderLoading(diff.rhs);
     });
     nodesStore.on('nodeActionLoading', diff => {
       this.renderLoading(diff.rhs);
     });
-    nodesStore.on('selectedIndex', diff => {
-      if (diff.rhs !== -1) {
-        this.hide();
-      } else {
-        this.show(/*{effect: 'slide', duration: 400, easing: 'easeOutQuad', direction: 'left'}*/);
-      }
-    });
+
     this.confirmDialog = new ConfirmDialog('nodeListConfirmDialog');
     this.updateNodesVersionDialog = new UpdateNodesVersionDialog();
   }
@@ -117,6 +121,7 @@ export default class NodesList extends Box {
     super.afterRender();
     $(`[data-toggle="popover"]`).popover();
     this._handlers();
+    this._focusTableSearch();
   }
 
   viewMounted() {
@@ -134,6 +139,15 @@ export default class NodesList extends Box {
       selectedIndex: nodesStore.state.selectedIndex,
       checkedIndexes: nodesStore.state.checkedIndexes
     }));
+  }
+
+  show() {
+    super.show();
+    this._focusTableSearch();
+  }
+
+  _focusTableSearch() {
+    $(`#${this.componentId} .dataTables_filter .input-group input`).focus();
   }
 
 }
