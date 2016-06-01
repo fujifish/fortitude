@@ -34,10 +34,15 @@ router.route('/nodes')
       }
 
       // filter results
-      var queryKey, filters = {}, nonTagsPrefix = { 'name' : '', 'id' : '', 'agentVersion' : 'info.' };
+      var queryKey, filters = {}, searchablePrefix = { 'name' : '', 'id' : '', 'agentVersion' : 'info.' };
       Object.keys(req.query).forEach(function(k) {
-        queryKey = nonTagsPrefix[k] !== undefined ? nonTagsPrefix[k] + k : 'metadata.' + k;
-        filters[common.mongoSanitize(queryKey)] = common.mongoSanitize(req.query[k]);
+        if (searchablePrefix[k] !== undefined) {
+          queryKey = searchablePrefix[k] + k;
+          filters[common.mongoSanitize(queryKey)] = common.mongoSanitize(req.query[k]);
+        } else if (k.indexOf('tag_') == 0) {
+          queryKey = 'metadata.' + (k.substr(k.indexOf('_') + 1));
+          filters[common.mongoSanitize(queryKey)] = common.mongoSanitize(req.query[k]);
+        }
       });
 
       collection.find(filters).toArray(function(err, items) {
