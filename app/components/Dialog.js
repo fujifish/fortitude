@@ -15,7 +15,7 @@ export default class Dialog extends Component {
       this.ok();
     });
     // register on background clicks
-    $('#ConfigureModuleDialog-dialog').on('click', () => {
+    $(`#${this.dialogId}`).on('click', () => {
       this.cancel();
     });
   }
@@ -29,7 +29,7 @@ export default class Dialog extends Component {
   beforeRender() {
     $(`#${this.dialogId}-cancel`).off();
     $(`#${this.dialogId}-ok`).off();
-    $('#ConfigureModuleDialog-dialog').off();
+    $(`#${this.dialogId}`).off();
   }
 
   afterRender() {
