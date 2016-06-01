@@ -23,14 +23,20 @@ class RouterStore extends Store {
     this.commit();
   }
 
+  // return the path after the domain and before any other sub path (before any '/').
   currentMainPath() {
     var path = this.state.path;
-    if (['/',''].indexOf(path) != -1 || path.indexOf('/nodes') != -1) {
-      path = '/nodes';
-    } else if (['modules'].indexOf(path) != -1){
-      path = '/modules';
+    if (['/',''].indexOf(path) != -1) {
+      path = this.homePath || '/';
+    } else if (path.indexOf('#') != -1) {
+      path = path.substr(0, path.indexOf('#'));
     }
     return path;
+  }
+
+  setHomePath(path) {
+    this.homePath = path;
+    return this;
   }
 }
 

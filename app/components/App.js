@@ -28,7 +28,7 @@ class App extends Component {
       { title: "Modules", component: new Modules(), path: "/modules" }
     ];
 
-    routerStore.on('path', () => {
+    routerStore.setHomePath('/nodes').on('path', () => {
       this._makeVisible(routerStore.currentMainPath());
     });
   }
