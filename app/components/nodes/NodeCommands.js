@@ -6,17 +6,28 @@ export default class NodeCommands extends Box {
   constructor(commandDetailsDialog) {
     super("NodeCommands");
     nodesStore.on('selectedIndex', diff => {
-      if (diff.rhs != -1){
-        nodesStore.startRefreshFor('fetchCommands');
+      if (diff.rhs != -1) {
+        nodesStore.fetchCommands();
       } else {
         nodesStore.stopRefreshFor('fetchCommands');
+        nodesStore.resetCommands();
       }
     });
+    nodesStore.on('nodeDetails.commands.0.status', () => {
+      nodesStore.stopRefreshFor('fetchCommands');
+      this.render();
+    });
     nodesStore.on('nodeDetails.commands', () => {
+      var latestCmd = nodesStore.state.nodeDetails.commands[0];
+      if (latestCmd && latestCmd.status == 'pending') {
+        nodesStore.startRefreshFor('fetchCommands', false);
+      }
       this.render();
     });
     nodesStore.on('nodeDetails.commandsLoading', diff => {
-      this.renderLoading(diff.rhs);
+      if (!nodesStore.isRefreshing('fetchCommands')) {
+        this.renderLoading(diff.rhs);
+      }
     });
     this.commandDetailsDialog = commandDetailsDialog;
   }

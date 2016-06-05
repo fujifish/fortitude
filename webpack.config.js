@@ -23,7 +23,7 @@ function makeWebpackConfig (options) {
     },
     module: {
       loaders: [
-        { test: /\.(ttf|eot|svg|png|jpg|jpeg|gif|woff|woff2)(\?.*$|$)/, loader: "file-loader" },
+        { test: /\.(ttf|eot|svg|jpg|jpeg|gif|woff|woff2)(\?.*$|$)/, loader: "file-loader" },
         {
           test: /\.js$/,
           include: [
@@ -31,8 +31,13 @@ function makeWebpackConfig (options) {
           ],
           loader: "babel-loader"
         },
-        {test: /\.ejs$/, loader: 'ejs-compiled'},
-        { test: /\.css$/, loader : BUILD ? ExtractTextPlugin.extract('style', 'css?sourceMap') : "style-loader?sourceMap!css-loader?sourceMap"}
+        { test: /\.ejs$/, loader: 'ejs-compiled' },
+        { test: /\.css$/, loader : BUILD ? ExtractTextPlugin.extract('style', 'css?sourceMap') : "style-loader?sourceMap!css-loader?sourceMap"},
+        {
+          test: /\.(png)$/,
+          exclude: /node_modules/,
+          loader:'file-loader?name=[name].[ext]'
+        }
       ]
     },
     plugins: [

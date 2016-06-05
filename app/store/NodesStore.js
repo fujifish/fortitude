@@ -66,7 +66,6 @@ class NodesStore extends Store {
       return;
     }
     this.state.nodeDetails.commandsLoading = true;
-    this.state.nodeDetails.commands = [];
     this.commit();
     this.makeRequest('get', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands`)
         .then(commands => {
@@ -76,6 +75,11 @@ class NodesStore extends Store {
         }).catch(ex => {
       throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message + '\n'+ex.stack);
     });
+  }
+
+  resetCommands() {
+    this.state.nodeDetails.commandsLoading = false;
+    this.state.nodeDetails.commands = [];
   }
 
   cancelPendingCommand() {

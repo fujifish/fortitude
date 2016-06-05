@@ -93,22 +93,23 @@ export default class Store extends EventEmitter {
   }
 
   // set interval for 'methodName' - tries to not set the same method twice but race cond' can occur.
-  startRefreshFor(methodName, startNow = true) {
+  startRefreshFor(methodName) {
     var _this = this;
-    if (startNow) _this[methodName]();
-    if (this.scheduled[methodName] == undefined)  {
+    if (!this.isRefreshing(methodName))  {
       this.scheduled[methodName] = setInterval(() => _this[methodName](), window.refreshRate);
-    } else {
-      console.log('startRefreshFor called in vain for ' + methodNAme);
     }
   }
 
   // stop performing 'methodName'
   stopRefreshFor(methodName) {
+    if (!this.isRefreshing(methodName)) return;
     var intervalId = this.scheduled[methodName];
-    if (!intervalId) console.log('stopRefreshFor called in vain for ' + methodName);
     delete this.scheduled[methodName];
     clearInterval(intervalId);
+  }
+
+  isRefreshing(methodName) {
+    return this.scheduled[methodName] != undefined;
   }
 
 }
