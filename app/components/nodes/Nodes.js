@@ -19,6 +19,7 @@ export default class Nodes extends Component {
         _this.nodesList.hide();
         _this.nodeDetails.show();
       } else {
+        // if came from a node page
         if (routerStore.state.path.indexOf('/nodes#') != -1) {
           routerStore.changeRoute('/nodes');
         }

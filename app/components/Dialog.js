@@ -16,7 +16,6 @@ export default class Dialog extends Component {
     });
     // register on background clicks
     $(`#${this.dialogId}`).on('hidden.bs.modal', () => {
-      console.log(11111);
       this.cancel();
     });
   }

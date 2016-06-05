@@ -92,18 +92,21 @@ export default class Store extends EventEmitter {
     }).then(checkStatus).then(parseJSON);
   }
 
-  // set interval for 'methodName' - not thread safe but tries to not set the same method twice.
+  // set interval for 'methodName' - tries to not set the same method twice but race cond' can occur.
   startRefreshFor(methodName, startNow = true) {
     var _this = this;
     if (startNow) _this[methodName]();
     if (this.scheduled[methodName] == undefined)  {
       this.scheduled[methodName] = setInterval(() => _this[methodName](), window.refreshRate);
+    } else {
+      console.log('startRefreshFor called in vain for ' + methodNAme);
     }
   }
 
   // stop performing 'methodName'
   stopRefreshFor(methodName) {
     var intervalId = this.scheduled[methodName];
+    if (!intervalId) console.log('stopRefreshFor called in vain for ' + methodName);
     delete this.scheduled[methodName];
     clearInterval(intervalId);
   }
