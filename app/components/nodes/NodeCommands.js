@@ -6,9 +6,13 @@ export default class NodeCommands extends Box {
   constructor(commandDetailsDialog) {
     super("NodeCommands");
     nodesStore.on('selectedIndex', diff => {
-      nodesStore.fetchCommands();
+      if (diff.rhs != -1){
+        nodesStore.startRefreshFor('fetchCommands');
+      } else {
+        nodesStore.stopRefreshFor('fetchCommands');
+      }
     });
-    nodesStore.on('nodeDetails.commands', diff => {
+    nodesStore.on('nodeDetails.commands', () => {
       this.render();
     });
     nodesStore.on('nodeDetails.commandsLoading', diff => {

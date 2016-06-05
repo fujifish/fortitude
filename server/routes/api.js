@@ -36,12 +36,20 @@ router.route('/nodes')
       // filter results
       var queryKey, filters = {}, searchablePrefix = { 'name' : '', 'id' : '', 'agentVersion' : 'info.' };
       Object.keys(req.query).forEach(function(k) {
+        var value = common.isStringAnInt(req.query[k]) ? parseInt(req.query[k]) : req.query[k];
+
         if (searchablePrefix[k] !== undefined) {
           queryKey = searchablePrefix[k] + k;
-          filters[common.mongoSanitize(queryKey)] = common.mongoSanitize(req.query[k]);
-        } else if (k.indexOf('tag_') == 0) {
+          filters[common.mongoSanitize(queryKey)] = common.mongoSanitize(value);
+        }
+        // search tags_<term> in info.tags.term OR metadata.term
+        else if (k.indexOf('tag_') == 0) {
+          var meta = {}, tags = {};
           queryKey = 'metadata.' + (k.substr(k.indexOf('_') + 1));
-          filters[common.mongoSanitize(queryKey)] = common.mongoSanitize(req.query[k]);
+          meta[common.mongoSanitize(queryKey)] = common.mongoSanitize(value);
+          queryKey = 'info.tags.' + (k.substr(k.indexOf('_') + 1));
+          tags[common.mongoSanitize(queryKey)] = common.mongoSanitize(value);
+          filters['$or'] = [meta, tags];
         }
       });
 

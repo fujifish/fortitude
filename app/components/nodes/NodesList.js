@@ -4,23 +4,10 @@ import nodesStore from 'store/NodesStore';
 import ConfirmDialog from 'components/ConfirmDialog'
 import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog'
 import actionsTemplate from 'views/nodes/actions'
-import routerStore from 'store/relax/RouterStore';
 
 export default class NodesList extends Box {
   constructor() {
     super("NodesList", {style: 'primary'});
-    nodesStore.on('nodes', () => {
-      var path = routerStore.state.path;
-      if (path.indexOf('/nodes#') != -1) {
-        // this is in case the user reloads a node page
-        var nodeId = path.substr(path.indexOf('#') + 1);
-        var index = nodesStore.state.nodes.findIndex(n => n.id == nodeId);
-        nodesStore.setSelectedIndex(index);
-      } else {
-        nodesStore.resetSelectedIndex();
-      }
-      this.render();
-    });
 
     nodesStore.on('nodesLoading', diff => {
       this.renderLoading(diff.rhs);

@@ -62,6 +62,7 @@ export default class Store extends EventEmitter {
     super();
     this.state = state;
     this.commitedState = JSON.parse(JSON.stringify(state));
+    this.scheduled = {};
   }
 
   commit() {
@@ -91,5 +92,20 @@ export default class Store extends EventEmitter {
     }).then(checkStatus).then(parseJSON);
   }
 
+  // set interval for 'methodName' - not thread safe but tries to not set the same method twice.
+  startRefreshFor(methodName, startNow = true) {
+    var _this = this;
+    if (startNow) _this[methodName]();
+    if (this.scheduled[methodName] == undefined)  {
+      this.scheduled[methodName] = setInterval(() => _this[methodName](), window.refreshRate);
+    }
+  }
+
+  // stop performing 'methodName'
+  stopRefreshFor(methodName) {
+    var intervalId = this.scheduled[methodName];
+    delete this.scheduled[methodName];
+    clearInterval(intervalId);
+  }
 
 }

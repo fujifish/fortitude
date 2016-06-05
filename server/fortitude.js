@@ -17,6 +17,7 @@ var agent = require('./routes/agent');
 function fortitude(config) {
   config = config || {};
   config.csrfSecret = config.csrfSecret || randomHex();
+  config.refreshRate = config.refreshRate || 10000;
 
   var log = config.logger || bunyan.createLogger({name: "fortitude"});
   var logger = log.child({module: 'main'});
@@ -61,9 +62,9 @@ function fortitude(config) {
   app.use('/', function(req, res, next) {
     // var rpath = url.parse(req.url).path;
     if (req.headers['accept'] && req.headers['accept'].indexOf('text/html') !== -1) {
-      var salt = randomHex();
+      var salt = randomHex(), clientConfig = { csrfToken: csrfToken(salt, config.csrfSecret), refreshRate: config.refreshRate };
       res.setHeader('Set-Cookie', '_csrf=' + salt+';HttpOnly');
-      ejs.renderFile(path.resolve(__dirname, '../index.ejs'), {csrfToken: csrfToken(salt, config.csrfSecret)}, function(err, html) {
+      ejs.renderFile(path.resolve(__dirname, '../index.ejs'), clientConfig, function(err, html) {
         res.end(html);
       });
       // no next continuation

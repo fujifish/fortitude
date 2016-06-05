@@ -13,10 +13,14 @@ module.exports.unescapeHtml = function(value){
 };
 
 module.exports.mongoSanitize = function(value){
-  if (!value) {
+  if (!value || typeof(value) != 'string') {
     return value;
   }
   return value.indexOf('$') !== -1 ? '' : value;
+};
+
+module.exports.isStringAnInt = function(n){
+  return !isNaN(Number(n)) && Number(n) == parseInt(n);
 };
 
 // Overwrites slaveObj's values with masterObj's and adds masterObj's if non existent in slaveObj

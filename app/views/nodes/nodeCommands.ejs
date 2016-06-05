@@ -45,7 +45,7 @@
         <i class="fa <%= commandStatus(command.status) %>"></i>
         <div class="timeline-item">
           <span class="time">
-            <i class="fa fa-clock-o"></i> <%= time.getUTCDate() %>.<%= time.getUTCMonth() %>.<%= time.getUTCFullYear() %>, <%= time.getUTCHours() %>:<%= time.getUTCMinutes() %>
+            <i class="fa fa-clock-o"></i> <%= time.getUTCDate() %>.<%= (time.getUTCMonth() + 1) %>.<%= time.getUTCFullYear() %>, <%= time.getUTCHours() %>:<%= time.getUTCMinutes() %>
           </span>
           <h4 class="timeline-header">
             <a href="#" name="nodeCommandDetails" data-index="<%= index %>" class="text-capitalize"><%= command.type %> <%= command.action %></a>
