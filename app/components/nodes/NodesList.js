@@ -4,6 +4,7 @@ import nodesStore from 'store/NodesStore';
 import ConfirmDialog from 'components/ConfirmDialog'
 import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog'
 import actionsTemplate from 'views/nodes/actions'
+import routerStore from 'store/relax/RouterStore';
 
 export default class NodesList extends Box {
   constructor() {
@@ -108,7 +109,14 @@ export default class NodesList extends Box {
     super.afterRender();
     $(`[data-toggle="popover"]`).popover();
     this._handlers();
-    this._focusTableSearch();
+
+    var query = routerStore.urlValueOf('q');
+    if (query) {
+      $(`#${this.componentId} table`).DataTable().search(routerStore.urlValueOf('q')).draw();
+      $(`#${this.componentId} .dataTables_filter .input-group input`).val(query);
+    } else {
+      this._focusTableSearch();
+    }
   }
 
   viewMounted() {

@@ -38,6 +38,12 @@ class RouterStore extends Store {
     this.homePath = path;
     return this;
   }
+
+  urlValueOf(key) {
+    var params = window.location.search.substring(1);
+    var value = params.match(new RegExp(key + '=([^&]+)'));
+    return value && value[1] && decodeURI(value[1]) || '';
+  }
 }
 
 export default new RouterStore();
