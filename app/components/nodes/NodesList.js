@@ -11,10 +11,20 @@ export default class NodesList extends Box {
     super("NodesList", {style: 'primary'});
 
     nodesStore.on('nodesLoading', diff => {
-      this.renderLoading(diff.rhs);
+      if(!nodesStore.isRefreshing('fetchNodes'))  {
+        this.renderLoading(diff.rhs);
+      }
     });
     nodesStore.on('nodeActionLoading', diff => {
       this.renderLoading(diff.rhs);
+    });
+    routerStore.on('path', diff => {
+      if (diff.rhs == '/nodes') {
+        nodesStore.startRefreshFor('fetchNodes');
+      }
+      else if (diff.lhs == '/nodes') {
+        nodesStore.stopRefreshFor('fetchNodes');
+      }
     });
 
     this.confirmDialog = new ConfirmDialog('nodeListConfirmDialog');
@@ -111,7 +121,8 @@ export default class NodesList extends Box {
     this._handlers();
 
     var query = routerStore.urlValueOf('q');
-    if (query) {
+    if (query && !this.skipParamInject) {
+      this.skipParamInject = true;
       $(`#${this.componentId} table`).DataTable().search(routerStore.urlValueOf('q')).draw();
       $(`#${this.componentId} .dataTables_filter .input-group input`).val(query);
     } else {
