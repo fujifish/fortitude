@@ -11,9 +11,7 @@ export default class NodesList extends Box {
     super("NodesList", {style: 'primary'});
 
     nodesStore.on('nodesLoading', diff => {
-      if(!nodesStore.isRefreshing('fetchNodes'))  {
-        this.renderLoading(diff.rhs);
-      }
+      this.renderLoading(diff.rhs);
     });
     nodesStore.on('nodeActionLoading', diff => {
       this.renderLoading(diff.rhs);
@@ -74,7 +72,7 @@ export default class NodesList extends Box {
         },
         {
           "targets": [1, -1],
-          "sortable": false,
+          "sortable": false
         },
         {
           // Sort column 1 (formatted date) by column 6 (hidden seconds)
