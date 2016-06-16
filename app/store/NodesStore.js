@@ -20,24 +20,13 @@ class NodesStore extends Store {
     });
   }
 
-  _handleNodesResult(promise) {
-    promise
-        .then(nodes => {
-          var selectedNode = this.getSelectedNode();
-          var checkedNodes = this.getCheckedNodes();
-          this.state.nodes = nodes;
-          this.state.nodesLoading = false;
-          this.state.checkedIndexes = [];
-          this.state.selectedIndex = -1;
-          this.state.nodeActionLoading = false;
-
-          // updated selected / checked nodes according to previous nodes state
-          this.state.selectedIndex = this.nodeIndex(selectedNode);
-          this.state.checkedIndexes = checkedNodes.map(n => this.nodeIndex(n)).filter(i => i != -1);
-          this.commit();
-        }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
-    });
+  setNodes(nodes) {
+    this.state.nodes = nodes;
+    this.state.nodesLoading = false;
+    this.state.checkedIndexes = [];
+    this.state.selectedIndex = -1;
+    this.state.nodeActionLoading = false;
+    this.commit();
   }
 
   enrich(node) {

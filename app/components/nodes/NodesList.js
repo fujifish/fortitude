@@ -1,13 +1,16 @@
 import Box from 'components/Box';
+import nodesStore from 'store/NodesStore';
+import ConfirmDialog from 'components/ConfirmDialog';
+import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog';
+import routerStore from 'store/relax/RouterStore';
+
+import actionsTemplate from 'views/nodes/actions';
 import tableTemplate from 'views/nodes/nodeList/table';
 import checkboxTemplate from 'views/nodes/nodeList/checkbox';
 import removeButtonTemplate from 'views/nodes/nodeList/removeButton';
 import warningTemplate from 'views/nodes/nodeList/warning';
-import nodesStore from 'store/NodesStore';
-import ConfirmDialog from 'components/ConfirmDialog'
-import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog'
-import actionsTemplate from 'views/nodes/actions'
-import routerStore from 'store/relax/RouterStore';
+import nodeName from 'views/nodes/nodeList/nodeName';
+import tags from 'views/nodes/nodeList/tags';
 
 export default class NodesList extends Box {
   constructor() {
@@ -32,10 +35,14 @@ export default class NodesList extends Box {
       "dom": "<'row'<'col-sm-9'<'pull-left'f>><'col-sm-3'<'pull-right'l>>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+      "oLanguage": { "sSearch": '' },
       "serverSide": true,
       "ajax": {
         "url": '/api/nodes',
-        "dataSrc": this._renderServerNodes
+        "dataSrc": (json) => {
+          nodesStore.setNodes(json.nodes);
+          return this._renderServerNodes(json);
+        }
       },
       "order": [[ 7, "desc" ]],
       "columnDefs": [{ "targets": [0], "sortable": false }],
@@ -49,26 +56,18 @@ export default class NodesList extends Box {
         { data: 'agentVersion', name: 'agnetVersion' },
         { data: 'lastSeen', name: 'lastSynced' },
         { data: 'deleteButton'}
-      ],
-      "oLanguage": {
-        "sSearch": ''
-      }
+      ]
     }).on('draw.dt', () => {
       nodesStore.uncheckAllNodes();
       $(`#${this.componentId} input:checkbox`).iCheck('uncheck');
-    });
+      _this._tableHandlers();
+    }).on('preDrawCallback', _this._tableHandlersOff.bind(_this));
 
     // append 'actions' button to table
     $('.dataTables_filter > label').addClass('input-group').prepend(actionsTemplate);
 
     $(`#${this.componentId} a[name='aUpdateNode']`).click(() => {
       _this.updateNodesVersionDialog.show();
-    });
-
-    $(`#${this.componentId} a[name='btSelectItemNodes']`).click(event => {
-      //let radioButtons = $(`#${this.componentId} input:radio[name='btSelectItemNodes']`);
-      //var selectedIndex = radioButtons.index(radioButtons.filter(':checked'));
-      nodesStore.setSelectedIndex(parseInt($(event.target).data('index')));
     });
 
     $(`#${this.componentId} input:checkbox[name='checkAllNodes']`).on('change', elem => {
@@ -83,24 +82,6 @@ export default class NodesList extends Box {
         nodesStore.uncheckAllNodes();
       }
     });
-
-    $(`#${this.componentId} input:checkbox[name='checkNode']`).on('change', event => {
-      nodesStore.toggleNode(parseInt($(event.target).data('index')));
-    });
-
-    $(`#${this.componentId} button[name='btRemoveNode']`).click(event => {
-      let index = parseInt($(event.target).data('index'));
-      let node = nodesStore.state.nodes[index];
-      _this.confirmDialog.show({
-        ok: ()=> {
-          nodesStore.deleteNode(node.id);
-        },
-        text: `Remove node "${node.name}"?`
-      });
-    });
-
-    // todo take data form serevr to ui - maniplkutaing tafgs / name / last sync etc..
-    // todo - need to check handler..
   }
 
   beforeRender() {
@@ -111,6 +92,7 @@ export default class NodesList extends Box {
     $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
     $(`#${this.componentId} a[name='aUpdateNode']`).off();
     $(`#${this.componentId} table`).off('draw.dt');
+    this._tableHandlersOff();
   }
 
   afterRender() {
@@ -147,20 +129,78 @@ export default class NodesList extends Box {
     $(`#${this.componentId} .dataTables_filter .input-group input`).focus();
   }
 
+  _tableHandlers() {
+    $(`#${this.componentId} a[name='btSelectItemNodes']`).click(event => {
+      //let radioButtons = $(`#${this.componentId} input:radio[name='btSelectItemNodes']`);
+      //var selectedIndex = radioButtons.index(radioButtons.filter(':checked'));
+      nodesStore.setSelectedIndex(parseInt($(event.target).data('index')));
+    });
+
+    $(`#${this.componentId} input:checkbox[name='checkNode']`).on('change', event => {
+      nodesStore.toggleNode(parseInt($(event.target).data('index')));
+    });
+
+    $(`#${this.componentId} button[name='btRemoveNode']`).off().click(event => {
+      let index = parseInt($(event.target).data('index'));
+      let node = nodesStore.state.nodes[index];
+      _this.confirmDialog.show({
+        ok: ()=> {
+          nodesStore.deleteNode(node.id);
+        },
+        text: `Remove node "${node.name}"?`
+      });
+    });
+  }
+
+  _tableHandlersOff() {
+    $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
+    $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
+    $(`#${this.componentId} button[name='btRemoveNode']`).off();
+  }
+
+  // this function receives the returned json from the nodes api and returns render-able data for the DataTable
   _renderServerNodes(json) {
-    var renderedItems = json.data.map(function(node, i) {
+    function _timeSince(date) {
+      var seconds = Math.floor((new Date() - date) / 1000);
+      var interval = Math.floor(seconds / 31536000);
+
+      if (interval > 1) {
+        return interval + " years";
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval > 1) {
+        return interval + " months";
+      }
+      interval = Math.floor(seconds / 86400);
+      if (interval > 1) {
+        return interval + " days";
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval > 1) {
+        return interval + " hours";
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval > 1) {
+        return interval + " minutes";
+      }
+      return Math.floor(seconds) + " seconds";
+    }
+
+    var renderedItems = json.nodes.map(function(node, i) {
+      var node = nodesStore.enrich(node);
       return {
         checkbox: checkboxTemplate({index: i}),
-        warning: warningTemplate({node: nodesStore.enrich(node)}),
-        name: node.name || '',
-        tags: node.info.tags || '',
+        warning: warningTemplate({node: node}),
+        name: nodeName({node: node, index: i}) || '',
+        tags: tags({node: node}) || '',
         id: node.id || '',
         platform: node.info.platform || '',
         agentVersion: node.info.agentVersion || '',
-        lastSeen: node.lastSync || '',
+        lastSeen: _timeSince(new Date(node.lastSync)) || '',
         deleteButton: removeButtonTemplate({index: i})
       };
     });
+
     return renderedItems;
   }
 

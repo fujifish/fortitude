@@ -61,7 +61,7 @@ router.route('/nodes')
           delete i._id
         });
 
-        var res2 = {
+        var res2 = {//todo
           "draw": 1,
           "recordsTotal": 57,
           "recordsFiltered": 57,

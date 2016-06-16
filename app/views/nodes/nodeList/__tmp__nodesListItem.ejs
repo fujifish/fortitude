@@ -1,59 +1,118 @@
-<%= node.lastSync %>
-<input name="checkNode" type="checkbox" data-index="<%= index %>" />
-<% if (node.problems.length > 0) { %>
-<a href="#" data-trigger="focus" data-container="body" data-html="true" data-toggle="popover" data-placement="top" title="Problems"
-   data-template='
-       <div class="popover" style="width: 512px;" role="tooltip">
-          <div class="arrow"></div>
-          <h3 class="popover-title bg-yellow"></h3>
-          <div class="popover-content"></div>
-        </div>
-       '
-   data-content="
-          <% for (var p = 0; p < node.problems.length; p++) { %>
-          <p><%= node.problems[p] %></p>
-          <% } %>
-       "
-        >
-    <i class="fa fa-warning text-yellow"></i>
-</a>
-<% } %>
-<%= node.id %>
-<%= node.id %>
-<%= node.info.platform %>
-<%= node.info.agentVersion %>
-<%
-function timeSince(date) {
+<div class="box-body">
+    <table class="table table-condensed table-hover" width="100%">
+        <thead>
+        <tr>
+            <th class="hidden_last_seen">Hidden Last Seen field</th>
+            <th><input name="checkAllNodes" type="checkbox"/></th>
+            <th></th>
+            <th>Name</th>
+            <th>Tags</th>
+            <th>Id</th>
+            <th>Platform</th>
+            <th>Agent Version</th>
+            <th class="last_seen">Last Seen</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <%
 
-    var seconds = Math.floor((new Date() - date) / 1000);
+        function timeSince(date) {
 
-    var interval = Math.floor(seconds / 31536000);
+            var seconds = Math.floor((new Date() - date) / 1000);
 
-    if (interval > 1) {
-        return interval + " years";
-    }
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) {
-        return interval + " months";
-    }
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) {
-        return interval + " days";
-    }
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) {
-        return interval + " hours";
-    }
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) {
-        return interval + " minutes";
-    }
-    return Math.floor(seconds) + " seconds";
-}
-%>>
-<%= timeSince(new Date(node.lastSync)) %>
-<div class="input-group-btn pull-left">
-    <button class="btn btn-sm btn-default " data-index="<%= index %>" name="btRemoveNode" data-toggle="tooltip" data-placement="top" title="Remove">
-        <i class="fa fa-remove"></i>
-    </button>
+            var interval = Math.floor(seconds / 31536000);
+
+            if (interval > 1) {
+                return interval + " years";
+            }
+            interval = Math.floor(seconds / 2592000);
+            if (interval > 1) {
+                return interval + " months";
+            }
+            interval = Math.floor(seconds / 86400);
+            if (interval > 1) {
+                return interval + " days";
+            }
+            interval = Math.floor(seconds / 3600);
+            if (interval > 1) {
+                return interval + " hours";
+            }
+            interval = Math.floor(seconds / 60);
+            if (interval > 1) {
+                return interval + " minutes";
+            }
+            return Math.floor(seconds) + " seconds";
+        }
+
+        //    const maxLastSeen = 1000*60*60*24;
+        for (var index = 0; index < nodes.length; index++ ){
+            var node = nodes[index];
+//      var problems = [];
+//      var lastSynced = Date.parse(node.lastSync);
+//      if (Date.now() - lastSynced > maxLastSeen) {
+//        problems.push("Last seen at " + node.lastSync.replace('T', ' ').replace('Z', ''));
+//      }
+
+        %>
+        <tr class="">
+            <td><%= node.lastSync %></td>
+            <td><input name="checkNode" type="checkbox" data-index="<%= index %>" <%= checkedIndexes.indexOf(index) !== -1  ? 'checked' : '' %>/></td>
+            <!--<% if (selectedIndex === -1) { selectedIndex = 0; } %>-->
+            <!--<td style="width: 16px;"><input name="btSelectItemNodes" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>-->
+            <td style="width: 16px; vertical-align: middle">
+                <% if (node.problems.length > 0) { %>
+                <a href="#" data-trigger="focus" data-container="body" data-html="true" data-toggle="popover" data-placement="top" title="Problems"
+                   data-template='
+           <div class="popover" style="width: 512px;" role="tooltip">
+              <div class="arrow"></div>
+              <h3 class="popover-title bg-yellow"></h3>
+              <div class="popover-content"></div>
+            </div>
+           '
+                   data-content="
+              <% for (var p = 0; p < node.problems.length; p++) { %>
+              <p><%= node.problems[p] %></p>
+              <% } %>
+           "
+                        >
+                    <i class="fa fa-warning text-yellow"></i>
+                </a>
+                <% } %>
+            </td>
+            <td><a role="button" name="btSelectItemNodes" data-index="<%= index %>" ><%= node.name %></a></td>
+            <td>
+
+                <%
+                    var meta = node.metadata || {};
+                    var keys = Object.keys(meta);
+                for (var j = 0; j < keys.length; ++j) {
+                %>
+                <span class="label bg-orange" style="line-height: 24px;"><%= keys[j] %>:<%= meta[keys[j]] %></span>
+                <% } %>
+
+                <%
+                    var tags = node.info.tags || {};
+                    keys = Object.keys(tags);
+                for (var j = 0; j < keys.length; ++j) {
+                %>
+                <span class="label bg-blue"  style="line-height: 24px;"><%= keys[j] %>:<%= tags[keys[j]] %></span>
+                <% } %>
+
+            </td>
+            <td><%= node.id %></td>
+            <td><%= node.info.platform %></td>
+            <td><%= node.info.agentVersion %></td>
+            <td><%= timeSince(new Date(node.lastSync)) %></td>
+            <td style="vertical-align: middle;" >
+                <div class="input-group-btn pull-left">
+                    <button class="btn btn-sm btn-default " data-index="<%= index %>" name="btRemoveNode" data-toggle="tooltip" data-placement="top" title="Remove">
+                        <i class="fa fa-remove"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
 </div>

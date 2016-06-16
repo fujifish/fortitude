@@ -1,0 +1,18 @@
+<td>
+    <%
+    var meta = node.metadata || {};
+    var keys = Object.keys(meta);
+    for (var j = 0; j < keys.length; ++j) {
+    %>
+    <span class="label bg-orange" style="line-height: 24px;"><%= keys[j] %>:<%= meta[keys[j]] %></span>
+    <% } %>
+
+    <%
+    var tags = node.info.tags || {};
+    keys = Object.keys(tags);
+    for (var j = 0; j < keys.length; ++j) {
+    %>
+    <span class="label bg-blue"  style="line-height: 24px;"><%= keys[j] %>:<%= tags[keys[j]] %></span>
+    <% } %>
+
+</td>
