@@ -60,7 +60,14 @@ router.route('/nodes')
         items.forEach(function(i) {
           delete i._id
         });
-        res.json(items);
+
+        var res2 = {
+          "draw": 1,
+          "recordsTotal": 57,
+          "recordsFiltered": 57,
+          "nodes": items
+        }
+        res.json(res2);
       });
     });
   });

@@ -1,0 +1,59 @@
+<%= node.lastSync %>
+<input name="checkNode" type="checkbox" data-index="<%= index %>" />
+<% if (node.problems.length > 0) { %>
+<a href="#" data-trigger="focus" data-container="body" data-html="true" data-toggle="popover" data-placement="top" title="Problems"
+   data-template='
+       <div class="popover" style="width: 512px;" role="tooltip">
+          <div class="arrow"></div>
+          <h3 class="popover-title bg-yellow"></h3>
+          <div class="popover-content"></div>
+        </div>
+       '
+   data-content="
+          <% for (var p = 0; p < node.problems.length; p++) { %>
+          <p><%= node.problems[p] %></p>
+          <% } %>
+       "
+        >
+    <i class="fa fa-warning text-yellow"></i>
+</a>
+<% } %>
+<%= node.id %>
+<%= node.id %>
+<%= node.info.platform %>
+<%= node.info.agentVersion %>
+<%
+function timeSince(date) {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+}
+%>>
+<%= timeSince(new Date(node.lastSync)) %>
+<div class="input-group-btn pull-left">
+    <button class="btn btn-sm btn-default " data-index="<%= index %>" name="btRemoveNode" data-toggle="tooltip" data-placement="top" title="Remove">
+        <i class="fa fa-remove"></i>
+    </button>
+</div>

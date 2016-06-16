@@ -114,12 +114,6 @@ class NodesStore extends Store {
     });
   }
 
-  fetchNodes() {
-    this.state.nodesLoading = true;
-    this.commit();
-    return this._handleNodesResult(this.makeRequest('get', '/nodes'));
-  }
-
   resetSelectedIndex() {
     this.setSelectedIndex(-1);
   }

@@ -1,5 +1,8 @@
 import Box from 'components/Box';
-import template from 'views/nodes/nodesList';
+import tableTemplate from 'views/nodes/nodeList/table';
+import checkboxTemplate from 'views/nodes/nodeList/checkbox';
+import removeButtonTemplate from 'views/nodes/nodeList/removeButton';
+import warningTemplate from 'views/nodes/nodeList/warning';
 import nodesStore from 'store/NodesStore';
 import ConfirmDialog from 'components/ConfirmDialog'
 import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog'
@@ -23,6 +26,44 @@ export default class NodesList extends Box {
 
   _handlers() {
     let _this = this;
+
+    $(`#${this.componentId} table`).DataTable({
+      "pagingType": "full_numbers",
+      "dom": "<'row'<'col-sm-9'<'pull-left'f>><'col-sm-3'<'pull-right'l>>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+      "serverSide": true,
+      "ajax": {
+        "url": '/api/nodes',
+        "dataSrc": this._renderServerNodes
+      },
+      "order": [[ 7, "desc" ]],
+      "columnDefs": [{ "targets": [0], "sortable": false }],
+      "columns"    : [
+        { data: 'checkbox' },
+        { data: 'warning' },
+        { data: 'name', name: 'name' },
+        { data: 'tags', name: 'tags' },
+        { data: 'id', name: 'id' },
+        { data: 'platform', name: 'platform' },
+        { data: 'agentVersion', name: 'agnetVersion' },
+        { data: 'lastSeen', name: 'lastSynced' },
+        { data: 'deleteButton'}
+      ],
+      "oLanguage": {
+        "sSearch": ''
+      }
+    }).on('draw.dt', () => {
+      nodesStore.uncheckAllNodes();
+      $(`#${this.componentId} input:checkbox`).iCheck('uncheck');
+    });
+
+    // append 'actions' button to table
+    $('.dataTables_filter > label').addClass('input-group').prepend(actionsTemplate);
+
+    $(`#${this.componentId} a[name='aUpdateNode']`).click(() => {
+      _this.updateNodesVersionDialog.show();
+    });
 
     $(`#${this.componentId} a[name='btSelectItemNodes']`).click(event => {
       //let radioButtons = $(`#${this.componentId} input:radio[name='btSelectItemNodes']`);
@@ -58,41 +99,8 @@ export default class NodesList extends Box {
       });
     });
 
-    $(`#${this.componentId} table`).DataTable({
-      "pagingType": "full_numbers",
-      "dom": "<'row'<'col-sm-9'<'pull-left'f>><'col-sm-3'<'pull-right'l>>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-      "order": [[ 2, "desc" ]],
-      "columnDefs": [
-        {
-          "targets": "hidden_last_seen", // index 0
-          "visible": false,
-          "searchable": false
-        },
-        {
-          "targets": [1, -1],
-          "sortable": false
-        },
-        {
-          // Sort column 1 (formatted date) by column 6 (hidden seconds)
-          "orderData": [0] ,   "targets": "last_seen"
-        }
-      ],
-      "oLanguage": {
-        "sSearch": ''
-      }
-    }).on('draw.dt', () => {
-      nodesStore.uncheckAllNodes();
-      $(`#${this.componentId} input:checkbox`).iCheck('uncheck');
-    });
-
-    // append 'actions' button to table
-    $('.dataTables_filter > label').addClass('input-group').prepend(actionsTemplate);
-
-    $(`#${this.componentId} a[name='aUpdateNode']`).click(() => {
-      _this.updateNodesVersionDialog.show();
-    });
+    // todo take data form serevr to ui - maniplkutaing tafgs / name / last sync etc..
+    // todo - need to check handler..
   }
 
   beforeRender() {
@@ -111,8 +119,7 @@ export default class NodesList extends Box {
     this._handlers();
 
     var query = routerStore.urlValueOf('q');
-    if (query && !this.skipParamInject) {
-      this.skipParamInject = true;
+    if (query) {
       $(`#${this.componentId} table`).DataTable().search(routerStore.urlValueOf('q')).draw();
       $(`#${this.componentId} .dataTables_filter .input-group input`).val(query);
     } else {
@@ -120,18 +127,12 @@ export default class NodesList extends Box {
     }
   }
 
-  viewMounted() {
-    super.viewMounted();
-    nodesStore.fetchNodes();
-  }
-
   initialView() {
     return `${super.initialView()}${this.confirmDialog.initialView()}${this.updateNodesVersionDialog.initialView()}`;
   }
 
   view() {
-    return this.viewWithContent(template({
-      nodes: nodesStore.state.nodes.map(n => {return nodesStore.enrich(n)}),
+    return this.viewWithContent(tableTemplate({
       selectedIndex: nodesStore.state.selectedIndex,
       checkedIndexes: nodesStore.state.checkedIndexes
     }));
@@ -144,6 +145,23 @@ export default class NodesList extends Box {
 
   _focusTableSearch() {
     $(`#${this.componentId} .dataTables_filter .input-group input`).focus();
+  }
+
+  _renderServerNodes(json) {
+    var renderedItems = json.data.map(function(node, i) {
+      return {
+        checkbox: checkboxTemplate({index: i}),
+        warning: warningTemplate({node: nodesStore.enrich(node)}),
+        name: node.name || '',
+        tags: node.info.tags || '',
+        id: node.id || '',
+        platform: node.info.platform || '',
+        agentVersion: node.info.agentVersion || '',
+        lastSeen: node.lastSync || '',
+        deleteButton: removeButtonTemplate({index: i})
+      };
+    });
+    return renderedItems;
   }
 
 }
