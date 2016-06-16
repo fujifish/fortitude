@@ -239,7 +239,7 @@ router.route('/nodes/:node_id/commands/:created')
       if (err) {
         return res.status(500).json({error: err});
       }
-      collection.remove({'created': created, 'status': 'pending'}, {safe: true}, function(err, result) {
+      collection.remove({'created': created, 'status': 'pending', 'node_id': node_id}, {safe: true}, function(err, result) {
         if (err) {
           return res.status(500).json({error: err});
         }

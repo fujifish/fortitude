@@ -86,7 +86,7 @@ class NodesStore extends Store {
 
   resetCommands() {
     this.state.nodeDetails.commandsLoading = false;
-    this.state.nodeDetails.commands = [];
+    this.state.nodeDetails.commands = null;
   }
 
   cancelPendingCommand() {
