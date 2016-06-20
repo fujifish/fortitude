@@ -18,14 +18,6 @@ export default class NodesList extends Box {
     nodesStore.on('nodeActionLoading', diff => {
       this.renderLoading(diff.rhs);
     });
-    routerStore.on('path', diff => {
-      if (diff.rhs == '/nodes') {
-        nodesStore.startRefreshFor('fetchNodes');
-      }
-      else if (diff.lhs == '/nodes') {
-        nodesStore.stopRefreshFor('fetchNodes');
-      }
-    });
 
     this.confirmDialog = new ConfirmDialog('nodeListConfirmDialog');
     this.updateNodesVersionDialog = new UpdateNodesVersionDialog();
