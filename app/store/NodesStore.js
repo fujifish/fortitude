@@ -20,6 +20,20 @@ class NodesStore extends Store {
     });
   }
 
+  _resetNodeState(promise) {
+    promise
+      .then(() => {
+        this.state.nodes = [];
+        this.state.nodesLoading = false;
+        this.state.checkedIndexes = [];
+        this.state.selectedIndex = -1;
+        this.state.nodeActionLoading = false;
+        this.commit();
+      }).catch(ex => {
+        throw new Error("Oops! Something went wrong. Ex: " + ex.message);
+      });
+  }
+
   setNodes(nodes) {
     this.state.nodes = nodes;
     this.state.nodesLoading = false;
@@ -134,7 +148,7 @@ class NodesStore extends Store {
   deleteNode(id) {
     this.state.nodesLoading = true;
     this.commit();
-    return this._handleNodesResult(this.makeRequest('delete', '/nodes/' + encodeURIComponent(id)));
+    return this._resetNodeState(this.makeRequest('delete', '/nodes/' + encodeURIComponent(id)));
   }
 
   openConfigureModuleDialog() {

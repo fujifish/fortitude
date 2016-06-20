@@ -53,7 +53,17 @@ router.route('/nodes')
         }
       });
 
-      collection.find(filters).toArray(function(err, items) {
+      var perPage = parseInt(req.query.length) || 1000;
+      var page = parseInt(req.query.start) || 0;
+      const allowedOrderFields = { name: true, lastSynced: true, agentVersion: true }, defaultOrderFiled = '_id';
+      var orderFiled = req.query.order && common.mongoSanitize(req.query.columns[[req.query.order[0]['column']]]['name']);
+      orderFiled = orderFiled && allowedOrderFields[orderFiled] ? orderFiled : defaultOrderFiled;
+      var order = {};
+      order[orderFiled] = req.query.order && (req.query.order[0]['dir'] == 'desc') ? -1 : 1;
+
+      // todo - rebase
+      // todo - filters & ( perhaps paging ) & add sort in ui by lastSynced
+      collection.find(filters).skip(perPage * page).limit(perPage).sort(order).toArray(function(err, items) {
         if (err) {
           return res.status(500).json({error: err});
         }
@@ -61,13 +71,11 @@ router.route('/nodes')
           delete i._id
         });
 
-        var res2 = {//todo
-          "draw": 1,
-          "recordsTotal": 57,
-          "recordsFiltered": 57,
+        var result = {
+          "draw": parseInt(req.query.draw),
           "nodes": items
-        }
-        res.json(res2);
+        };
+        res.json(result);
       });
     });
   });

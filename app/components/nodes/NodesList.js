@@ -12,15 +12,26 @@ import warningTemplate from 'views/nodes/nodeList/warning';
 import nodeName from 'views/nodes/nodeList/nodeName';
 import tags from 'views/nodes/nodeList/tags';
 
+//todo - warning of nodes
+//todo - clear loading of node ??
+//todo - delete node and then reload on node page
+//todo - server side ..
+
 export default class NodesList extends Box {
   constructor() {
     super("NodesList", {style: 'primary'});
 
+    var _this = this;
     nodesStore.on('nodesLoading', diff => {
       this.renderLoading(diff.rhs);
     });
     nodesStore.on('nodeActionLoading', diff => {
       this.renderLoading(diff.rhs);
+    });
+    nodesStore.on('nodes', (diff) => {
+      if (diff.item.kind == 'D') {
+        //$(`#${_this.componentId} table`).DataTable().ajax.reload();
+      }
     });
 
     this.confirmDialog = new ConfirmDialog('nodeListConfirmDialog');
@@ -61,7 +72,7 @@ export default class NodesList extends Box {
       nodesStore.uncheckAllNodes();
       $(`#${this.componentId} input:checkbox`).iCheck('uncheck');
       _this._tableHandlers();
-    }).on('preDrawCallback', _this._tableHandlersOff.bind(_this));
+    }).on('preDrawCallback', _this._tableHandlersOff);
 
     // append 'actions' button to table
     $('.dataTables_filter > label').addClass('input-group').prepend(actionsTemplate);
@@ -86,10 +97,7 @@ export default class NodesList extends Box {
 
   beforeRender() {
     super.beforeRender();
-    $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
-    $(`#${this.componentId} button[name='btRemoveNode']`).off();
     $(`#${this.componentId} input:checkbox[name='checkAllNodes']`).off();
-    $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
     $(`#${this.componentId} a[name='aUpdateNode']`).off();
     $(`#${this.componentId} table`).off('draw.dt');
     this._tableHandlersOff();
@@ -130,6 +138,8 @@ export default class NodesList extends Box {
   }
 
   _tableHandlers() {
+    var _this = this;
+
     $(`#${this.componentId} a[name='btSelectItemNodes']`).click(event => {
       //let radioButtons = $(`#${this.componentId} input:radio[name='btSelectItemNodes']`);
       //var selectedIndex = radioButtons.index(radioButtons.filter(':checked'));
@@ -144,9 +154,7 @@ export default class NodesList extends Box {
       let index = parseInt($(event.target).data('index'));
       let node = nodesStore.state.nodes[index];
       _this.confirmDialog.show({
-        ok: ()=> {
-          nodesStore.deleteNode(node.id);
-        },
+        ok: ()=> { nodesStore.deleteNode(node.id) },
         text: `Remove node "${node.name}"?`
       });
     });
