@@ -12,25 +12,19 @@ import warningTemplate from 'views/nodes/nodeList/warning';
 import nodeName from 'views/nodes/nodeList/nodeName';
 import tags from 'views/nodes/nodeList/tags';
 
-//todo - warning of nodes
-//todo - clear loading of node ??
-//todo - delete node and then reload on node page
-//todo - server side ..
+//todo - ( add sync indicator )
 
 export default class NodesList extends Box {
   constructor() {
     super("NodesList", {style: 'primary'});
 
     var _this = this;
-    nodesStore.on('nodesLoading', diff => {
-      this.renderLoading(diff.rhs);
-    });
     nodesStore.on('nodeActionLoading', diff => {
       this.renderLoading(diff.rhs);
     });
-    nodesStore.on('nodes', (diff) => {
-      if (diff.item.kind == 'D') {
-        //$(`#${_this.componentId} table`).DataTable().ajax.reload();
+    nodesStore.on('nodes', () => {
+      if (!_this.tableChangedNodes) {
+        $(`#${_this.componentId} table`).DataTable().ajax.reload();
       }
     });
 
@@ -51,12 +45,14 @@ export default class NodesList extends Box {
       "ajax": {
         "url": '/api/nodes',
         "dataSrc": (json) => {
+          _this.tableChangedNodes = true;
           nodesStore.setNodes(json.nodes);
-          return this._renderServerNodes(json);
+          _this.tableChangedNodes = false;
+          return _this._renderServerNodes(json);
         }
       },
       "order": [[ 7, "desc" ]],
-      "columnDefs": [{ "targets": [0], "sortable": false }],
+      "columnDefs": [{ "targets": [0,1,3,4,8], "sortable": false }],
       "columns"    : [
         { data: 'checkbox' },
         { data: 'warning' },
@@ -64,15 +60,25 @@ export default class NodesList extends Box {
         { data: 'tags', name: 'tags' },
         { data: 'id', name: 'id' },
         { data: 'platform', name: 'platform' },
-        { data: 'agentVersion', name: 'agnetVersion' },
-        { data: 'lastSeen', name: 'lastSynced' },
+        { data: 'agentVersion', name: 'info.agentVersion' },
+        { data: 'lastSeen', name: 'lastSync' },
         { data: 'deleteButton'}
       ]
-    }).on('draw.dt', () => {
-      nodesStore.uncheckAllNodes();
-      $(`#${this.componentId} input:checkbox`).iCheck('uncheck');
-      _this._tableHandlers();
-    }).on('preDrawCallback', _this._tableHandlersOff);
+    }).on('preXhr', () => { _this.renderLoading(true) })
+      .on('preDrawCallback', _this._tableHandlersOff.bind(_this))
+      .on('draw.dt', () => {
+        nodesStore.uncheckAllNodes();
+        $(`#${_this.componentId} input:checkbox`).iCheck('uncheck');
+        _this._tableHandlers();
+        _this.renderLoading(false);
+      });
+
+    $(`#${this.componentId} .dataTables_filter input`).off().keyup(function (e) {
+      var val = $(e.target).val();
+      if (e.keyCode == 13 || (e.keyCode == 8 && !val)) {
+        $(`#${_this.componentId} table`).DataTable().search($(e.target).val()).draw();
+      }
+    });
 
     // append 'actions' button to table
     $('.dataTables_filter > label').addClass('input-group').prepend(actionsTemplate);
@@ -105,7 +111,6 @@ export default class NodesList extends Box {
 
   afterRender() {
     super.afterRender();
-    $(`[data-toggle="popover"]`).popover();
     this._handlers();
 
     var query = routerStore.urlValueOf('q');
@@ -115,6 +120,9 @@ export default class NodesList extends Box {
     } else {
       this._focusTableSearch();
     }
+
+    // the table turns this off on draw event
+    this.renderLoading(true);
   }
 
   initialView() {
@@ -158,42 +166,32 @@ export default class NodesList extends Box {
         text: `Remove node "${node.name}"?`
       });
     });
+
+    _this.lastSeenUpdater = window.setInterval(() => {
+      $(`#${this.componentId} table tr`).each((i, e) => {
+        var nodeIndex = $(e).find('input').attr('data-index');
+        var node = nodeIndex && nodesStore.state.nodes[nodeIndex];
+        if (node) {
+          // update last seen
+          $(e).find('td:nth-child(8n+8)').html( _this._timeSince(new Date(node.lastSync)) );
+        }
+      });
+    }, 3000);
+
+    $(`[data-toggle="popover"]`).popover();
   }
 
   _tableHandlersOff() {
     $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
     $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
     $(`#${this.componentId} button[name='btRemoveNode']`).off();
+    $(`[data-toggle="popover"]`).off();
+    window.clearInterval(this.lastSeenUpdater);
   }
 
   // this function receives the returned json from the nodes api and returns render-able data for the DataTable
   _renderServerNodes(json) {
-    function _timeSince(date) {
-      var seconds = Math.floor((new Date() - date) / 1000);
-      var interval = Math.floor(seconds / 31536000);
-
-      if (interval > 1) {
-        return interval + " years";
-      }
-      interval = Math.floor(seconds / 2592000);
-      if (interval > 1) {
-        return interval + " months";
-      }
-      interval = Math.floor(seconds / 86400);
-      if (interval > 1) {
-        return interval + " days";
-      }
-      interval = Math.floor(seconds / 3600);
-      if (interval > 1) {
-        return interval + " hours";
-      }
-      interval = Math.floor(seconds / 60);
-      if (interval > 1) {
-        return interval + " minutes";
-      }
-      return Math.floor(seconds) + " seconds";
-    }
-
+    var _this = this;
     var renderedItems = json.nodes.map(function(node, i) {
       var node = nodesStore.enrich(node);
       return {
@@ -204,12 +202,39 @@ export default class NodesList extends Box {
         id: node.id || '',
         platform: node.info.platform || '',
         agentVersion: node.info.agentVersion || '',
-        lastSeen: _timeSince(new Date(node.lastSync)) || '',
+        lastSeen: _this._timeSince(new Date(node.lastSync)) || '',
         deleteButton: removeButtonTemplate({index: i})
       };
     });
 
     return renderedItems;
+  }
+
+  _timeSince(date) {
+    var seconds = Math.floor((new Date() - date) / 1000);
+    var interval;
+
+    interval = Math.floor(seconds / 31536000);
+    if (interval >= 1) {
+      return interval + " year" + (interval != 1 ? 's' : '') + ' ago';
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) {
+      return interval + " month" + (interval != 1 ? 's' : '') + ' ago';
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) {
+      return interval + " day" + (interval != 1 ? 's' : '') + ' ago';
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) {
+      return interval + " hour" + (interval != 1 ? 's' : '') + ' ago';
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) {
+      return interval + " minute" + (interval != 1 ? 's' : '') + ' ago';
+    }
+    return Math.floor(seconds) + " second" + (interval != 1 ? 's' : '') + ' ago';
   }
 
 }

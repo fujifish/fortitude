@@ -9,7 +9,6 @@ class NodesStore extends Store {
       selectedIndex: -1,
       checkedIndexes: [],
       nodeActionLoading: false,
-      nodesLoading: false,
       nodeDetails: {
         commandsLoading: false,
         commands: [],
@@ -24,7 +23,6 @@ class NodesStore extends Store {
     promise
       .then(() => {
         this.state.nodes = [];
-        this.state.nodesLoading = false;
         this.state.checkedIndexes = [];
         this.state.selectedIndex = -1;
         this.state.nodeActionLoading = false;
@@ -36,7 +34,6 @@ class NodesStore extends Store {
 
   setNodes(nodes) {
     this.state.nodes = nodes;
-    this.state.nodesLoading = false;
     this.state.checkedIndexes = [];
     this.state.selectedIndex = -1;
     this.state.nodeActionLoading = false;
@@ -146,7 +143,6 @@ class NodesStore extends Store {
   }
 
   deleteNode(id) {
-    this.state.nodesLoading = true;
     this.commit();
     return this._resetNodeState(this.makeRequest('delete', '/nodes/' + encodeURIComponent(id)));
   }
