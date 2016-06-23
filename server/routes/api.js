@@ -91,7 +91,7 @@ router.route('/nodes')
           recordsFiltered: recordsFiltered,
           nodes: nodes
         };
-        setTimeout(function(){ res.json(nodesResult) }, 3000);
+        res.json(nodesResult);
       });
     });
   });

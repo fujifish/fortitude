@@ -38,7 +38,6 @@ export default class Nodes extends Component {
         this._waitingForNode = false;
         nodesStore.setSelectedIndex(0);
         this.nodeDetails.render();
-        this.nodeDetails.renderLoading(false);
       }
     });
   }
