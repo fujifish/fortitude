@@ -10,7 +10,12 @@
     <ul class="sidebar-menu">
       <li class="header">Menu</li>
       <% routes.forEach(function(route){ %>
-        <li class="<%= route.path == selected ? 'active' : '' %>" data-path="<%= route.path %>"><a href="<%= route.path %>"><%= route.title %></a></li>
+        <li class="<%= route.path == selected ? 'active' : '' %>" data-path="<%= route.path %>">
+          <a href="<%= route.path %>">
+            <i class="fa fa-<%= route.icon %>"></i>
+            <span><%= route.title %></span>
+          </a>
+        </li>
       <% }) %>
     </ul>
   </div>

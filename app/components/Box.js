@@ -14,7 +14,9 @@ export default class Box extends Component {
 
   renderLoading(loading) {
     if (loading) {
-      $(`#${this.componentId} > div`).append($('<div class="overlay"><i class="fa fa-spinner fa-spin"></i></div>'));
+      if ($(`#${this.componentId} .overlay > .fa-spinner`).length == 0) {
+        $(`#${this.componentId} > div`).append($('<div class="overlay"><i class="fa fa-spinner fa-spin"></i></div>'));
+      }
     } else {
       $(`#${this.componentId} > div .overlay`).remove();
     }

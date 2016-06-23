@@ -11,39 +11,33 @@ export default class Nodes extends Component {
     this.nodesList = new NodesList();
     this.nodeDetails = new NodeDetails();
 
-    var _this = this;
-    nodesStore.on('selectedIndex', diff => {
-      if (diff.rhs !== -1) {
-        var node = nodesStore.state.nodes[diff.rhs];
-        routerStore.changeRoute('/nodes#' + node.id);
-        _this.nodesList.hide();
-        _this.nodeDetails.show();
-      } else {
-        // if came from a node page
-        if (routerStore.state.path.indexOf('/nodes#') != -1) {
-          routerStore.changeRoute('/nodes');
-        }
-        _this.nodeDetails.hide();
-        _this.nodesList.show();
+    routerStore.on('path', diff => {
+      var oldPath = diff.lhs;
+      if (oldPath.indexOf('/nodes#') != -1) {
+        nodesStore.resetSelectedIndex();
+        this.nodeDetails.hide();
+        this.nodesList.show();
       }
-    });
-
-    // initialize nodesStore's 'selectedIndex' in case the user reloads the page
-    nodesStore.on('nodes', () => {
-      var path = routerStore.state.path;
-      if (path.indexOf('/nodes#') != -1) {
-        var nodeId = path.substr(path.indexOf('#') + 1);
+      else if (routerStore.isNodePage()) {
+        var nodeId = routerStore.nodeId();
         var index = nodesStore.state.nodes.findIndex(n => n.id == nodeId);
-        nodesStore.setSelectedIndex(index);
-      } else {
-        nodesStore.resetSelectedIndex();
+        this._waitingForNode = index == -1;
+        if (!this._waitingForNode) {
+          nodesStore.setSelectedIndex(index);
+        } else {
+          this.nodeDetails.renderLoading(true);
+          nodesStore.resetSelectedIndex();
+        }
+        this.nodesList.hide();
+        this.nodeDetails.show();
       }
-      _this.nodesList.render();
     });
 
-    routerStore.on('path', selected => {
-      if (selected.lhs.indexOf('/nodes#') != -1) {
-        nodesStore.resetSelectedIndex();
+    nodesStore.on('nodes', () => {
+      if (this._waitingForNode) {
+        this._waitingForNode = false;
+        nodesStore.setSelectedIndex(0);
+        this.nodeDetails.render();
       }
     });
   }
@@ -54,5 +48,9 @@ export default class Nodes extends Component {
       nodeDetails: this.nodeDetails.initialView()
     };
     return template(data);
+  }
+
+  viewMounted() {
+    this.nodesList.render();
   }
 }

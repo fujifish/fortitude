@@ -25,8 +25,8 @@ class App extends Component {
   constructor() {
     super("App");
     this.sideBarRoutes = [
-      { title: "Nodes", component: new Nodes(), path: "/nodes" },
-      { title: "Modules", component: new Modules(), path: "/modules" }
+      { title: "Nodes", component: new Nodes(), path: "/nodes", icon: 'cloud' },
+      { title: "Modules", component: new Modules(), path: "/modules", icon: 'cube' }
     ];
 
     routerStore.setHomePath('/nodes').on('path', () => {

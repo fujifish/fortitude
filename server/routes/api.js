@@ -2,6 +2,7 @@ var express = require('express');
 var semver = require('semver');
 var common = require('../common');
 var store = require('../store');
+var async = require('async');
 
 var logger;
 function init(log){
@@ -33,34 +34,64 @@ router.route('/nodes')
         return res.status(500).json({error: err});
       }
 
-      // filter results
-      var queryKey, filters = {}, searchablePrefix = { 'name' : '', 'id' : '', 'agentVersion' : 'info.' };
-      Object.keys(req.query).forEach(function(k) {
-        var value = common.isStringAnInt(req.query[k]) ? parseInt(req.query[k]) : req.query[k];
+      // filter results, search only these fields.
+      const searchableFields = [
+        'id',
+        'name',
+        'info.agentVersion',
+        'metadata.org',
+        'info.tags.deployment_type',
+        'info.tags.environment',
+        'info.tags.ip_address',
+        'info.tags.ec2_placement_availability_zone'
+      ];
+      var searchTerm = common.mongoSanitize(req.query.search && req.query.search.value);
+      var orFilters = [], filters = {};
+      if (searchTerm) {
+        searchableFields.forEach(function(field) {
+          var filter = {};
+          filter[field] = new RegExp('^' + searchTerm + '.*');
+          orFilters.push(filter);
+        });
+        filters = { $or: orFilters};
+      }
 
-        if (searchablePrefix[k] !== undefined) {
-          queryKey = searchablePrefix[k] + k;
-          filters[common.mongoSanitize(queryKey)] = common.mongoSanitize(value);
-        }
-        // search tags_<term> in info.tags.term OR metadata.term
-        else if (k.indexOf('tag_') == 0) {
-          var meta = {}, tags = {};
-          queryKey = 'metadata.' + (k.substr(k.indexOf('_') + 1));
-          meta[common.mongoSanitize(queryKey)] = common.mongoSanitize(value);
-          queryKey = 'info.tags.' + (k.substr(k.indexOf('_') + 1));
-          tags[common.mongoSanitize(queryKey)] = common.mongoSanitize(value);
-          filters['$or'] = [meta, tags];
-        }
-      });
+      var perPage = parseInt(req.query.length) || 1000;
+      var offset = parseInt(req.query.start) || 0;
 
-      collection.find(filters).toArray(function(err, items) {
+      const allowedOrderFields = { 'name': true, 'lastSync': true, 'info.agentVersion': true, 'info.platform': true }, defaultOrderField = '_id';
+      var orderFiled = req.query.order && common.mongoSanitize(req.query.columns[[req.query.order[0]['column']]]['name']);
+      orderFiled = orderFiled && allowedOrderFields[orderFiled] ? orderFiled : defaultOrderField;
+      var order = {};
+      order[orderFiled] = req.query.order && (req.query.order[0]['dir'] == 'desc') ? -1 : 1;
+
+
+      async.parallel([
+        function(cb) {
+          collection.find(filters).skip(offset).limit(perPage).sort(order).toArray(cb);
+        },
+        function(cb) {
+          collection.find(filters).count(cb);
+        },
+        function(cb) {
+          collection.find({}).count(cb);
+        }
+      ], function (err, results) {
         if (err) {
           return res.status(500).json({error: err});
         }
-        items.forEach(function(i) {
-          delete i._id
-        });
-        res.json(items);
+        var nodes = results[0];
+        var recordsFiltered = results[1];
+        var recordsTotal = results[2];
+
+        nodes.forEach(function(i) { delete i._id });
+        var nodesResult = {
+          draw: parseInt(req.query.draw),
+          recordsTotal: recordsTotal,
+          recordsFiltered: recordsFiltered,
+          nodes: nodes
+        };
+        res.json(nodesResult);
       });
     });
   });

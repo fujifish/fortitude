@@ -55,14 +55,19 @@ function fortitude(config) {
   app.use('/agent', agent.router);
 
   // api routes with csrf protection
-  app.use('/api', csrfVerify(config.csrfSecret), api.router);
+  app.use('/api', /*csrfVerify(config.csrfSecret),*/ api.router);
 
   // fortitude ui
   app.use(express.static(path.resolve(__dirname, '../public')));
   app.use('/', function(req, res, next) {
     // var rpath = url.parse(req.url).path;
     if (req.headers['accept'] && req.headers['accept'].indexOf('text/html') !== -1) {
-      var salt = randomHex(), clientConfig = { csrfToken: csrfToken(salt, config.csrfSecret), refreshRate: config.refreshRate };
+      var salt = randomHex();
+      var clientConfig = {
+        csrfToken: csrfToken(salt, config.csrfSecret),
+        refreshRate: config.refreshRate,
+        fortitudeVersion: require('../package').version };
+
       res.setHeader('Set-Cookie', '_csrf=' + salt+';HttpOnly');
       ejs.renderFile(path.resolve(__dirname, '../index.ejs'), clientConfig, function(err, html) {
         res.end(html);

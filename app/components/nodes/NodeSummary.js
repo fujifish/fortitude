@@ -1,12 +1,15 @@
 import Component from 'components/relax/Component';
 import template from 'views/nodes/nodeSummary';
 import nodesStore from 'store/NodesStore';
+import routerStore from 'store/relax/RouterStore';
 
 export default class NodeSummary extends Component {
   constructor() {
     super("NodeSummary");
-    nodesStore.on('selectedIndex', diff => {
-      this.render();
+    routerStore.on('path', diff => {
+      if (routerStore.isNodePage()) {
+        this.render();
+      }
     });
   }
 

@@ -1,0 +1,18 @@
+<% if (node.problems.length > 0) { %>
+    <a href="#" data-trigger="focus" data-container="body" data-html="true" data-toggle="popover" data-placement="top" title="Problems"
+       data-template='
+           <div class="popover" style="width: 512px;" role="tooltip">
+              <div class="arrow"></div>
+              <h3 class="popover-title bg-yellow"></h3>
+              <div class="popover-content"></div>
+            </div>
+           '
+       data-content="
+              <% for (var p = 0; p < node.problems.length; p++) { %>
+              <p><%= node.problems[p] %></p>
+              <% } %>
+           "
+            >
+        <i class="fa fa-warning text-yellow"></i>
+    </a>
+<% } %>

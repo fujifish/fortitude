@@ -1,3 +1,9 @@
 #NodesList .dataTables_filter > label.input-group > input {
     width: 150%;
 }
+
+.box-clear {
+    background: none;
+    border-top: none;
+    box-shadow: none;
+}

@@ -1,29 +1,35 @@
 import Box from 'components/Box';
 import template from 'views/nodes/nodeCommands';
 import nodesStore from 'store/NodesStore';
+import routerStore from 'store/relax/RouterStore';
 
 export default class NodeCommands extends Box {
   constructor(commandDetailsDialog) {
     super("NodeCommands");
-    nodesStore.on('selectedIndex', diff => {
-      if (diff.rhs != -1) {
+
+    routerStore.on('path', diff => {
+      var oldPath = diff.lhs;
+      if (routerStore.isNodePage()) {
         nodesStore.fetchCommands();
-      } else {
+      } else if (oldPath.indexOf('/nodes#') != - 1) {
         nodesStore.stopRefreshFor('fetchCommands');
         nodesStore.resetCommands();
       }
     });
+
     nodesStore.on('nodeDetails.commands.0.status', () => {
       nodesStore.stopRefreshFor('fetchCommands');
       this.render();
     });
+
     nodesStore.on('nodeDetails.commands', () => {
       var latestCmd = nodesStore.state.nodeDetails.commands[0];
       if (latestCmd && latestCmd.status == 'pending') {
-        nodesStore.startRefreshFor('fetchCommands', false);
+        nodesStore.startRefreshFor('fetchCommands');
       }
       this.render();
     });
+
     nodesStore.on('nodeDetails.commandsLoading', diff => {
       if (!nodesStore.isRefreshing('fetchCommands')) {
         this.renderLoading(diff.rhs);
@@ -33,16 +39,14 @@ export default class NodeCommands extends Box {
   }
 
   _handlers() {
-    let _this = this;
     $(`button[name='btnCancelPendingCommand']`).click(() => {
       nodesStore.cancelPendingCommand();
     });
-    $("a[name='nodeCommandDetails']").click(function(){
+    $("a[name='nodeCommandDetails']").click(() => {
       let index = parseInt($(this).data('index'));
       let command = nodesStore.state.nodeDetails.commands[index];
-      _this.commandDetailsDialog.show(command.log);
+      this.commandDetailsDialog.show(command.log);
     });
-
   }
 
   beforeRender() {

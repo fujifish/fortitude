@@ -1,14 +1,17 @@
 import Box from 'components/Box';
 import template from 'views/nodes/nodeState';
 import nodesStore from 'store/NodesStore';
+import routerStore from 'store/relax/RouterStore';
 import ConfirmDialog from 'components/ConfirmDialog';
 
 export default class NodeState extends Box {
   constructor(configureDialog, options) {
     super("NodeState-"+options.title, options);
     this.options = options;
-    nodesStore.on('selectedIndex', index => {
-      this.render();
+    routerStore.on('path', () => {
+      if (routerStore.isNodePage()) {
+        this.render();
+      }
     });
     nodesStore.on('nodeDetails.applyStatePending', pending => {
       this.render();
