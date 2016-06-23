@@ -143,7 +143,6 @@ class NodesStore extends Store {
   }
 
   deleteNode(id) {
-    this.commit();
     return this._resetNodeState(this.makeRequest('delete', '/nodes/' + encodeURIComponent(id)));
   }
 

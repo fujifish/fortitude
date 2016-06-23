@@ -34,16 +34,16 @@ router.route('/nodes')
         return res.status(500).json({error: err});
       }
 
-      // filter results (need to change schema so we search dynamically on all keys but for now search only these fields)
+      // filter results, search only these fields.
       const searchableFields = [
-        'info.tags.deployment_type',
+        'id',
+        'name',
+        'info.agentVersion',
         'metadata.org',
+        'info.tags.deployment_type',
         'info.tags.environment',
         'info.tags.ip_address',
-        'info.tags.ec2_placement_availability_zone',
-        'name',
-        'id',
-        'info.agentVersion'
+        'info.tags.ec2_placement_availability_zone'
       ];
       var searchTerm = common.mongoSanitize(req.query.search && req.query.search.value);
       var orFilters = [], filters = {};
@@ -59,9 +59,9 @@ router.route('/nodes')
       var perPage = parseInt(req.query.length) || 1000;
       var offset = parseInt(req.query.start) || 0;
 
-      const allowedOrderFields = { name: true, lastSync: true, 'info.agentVersion': true, 'platform': true }, defaultOrderFiled = '_id';
+      const allowedOrderFields = { 'name': true, 'lastSync': true, 'info.agentVersion': true, 'info.platform': true }, defaultOrderField = '_id';
       var orderFiled = req.query.order && common.mongoSanitize(req.query.columns[[req.query.order[0]['column']]]['name']);
-      orderFiled = orderFiled && allowedOrderFields[orderFiled] ? orderFiled : defaultOrderFiled;
+      orderFiled = orderFiled && allowedOrderFields[orderFiled] ? orderFiled : defaultOrderField;
       var order = {};
       order[orderFiled] = req.query.order && (req.query.order[0]['dir'] == 'desc') ? -1 : 1;
 
@@ -86,12 +86,12 @@ router.route('/nodes')
 
         nodes.forEach(function(i) { delete i._id });
         var nodesResult = {
-          "draw": parseInt(req.query.draw),
+          draw: parseInt(req.query.draw),
           recordsTotal: recordsTotal,
           recordsFiltered: recordsFiltered,
-          "nodes": nodes
+          nodes: nodes
         };
-        res.json(nodesResult);
+        setTimeout(function(){ res.json(nodesResult) }, 3000);
       });
     });
   });

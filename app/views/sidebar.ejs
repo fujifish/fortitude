@@ -12,7 +12,7 @@
       <% routes.forEach(function(route){ %>
         <li class="<%= route.path == selected ? 'active' : '' %>" data-path="<%= route.path %>">
           <a href="<%= route.path %>">
-            <i class="fa fa-th"></i>
+            <i class="fa fa-<%= route.icon %>"></i>
             <span><%= route.title %></span>
           </a>
         </li>

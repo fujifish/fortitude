@@ -3,17 +3,17 @@ import Store from 'store/relax/Store'
 class RouterStore extends Store {
   constructor() {
     super({ path: '' });
-    let _this = this;
 
-    window.onpopstate = function(event) {
+    window.onpopstate = (event) => {
       if (event.state && event.state.path !== undefined) {
-        _this.state.path = event.state.path;
-        _this.commit();
+        this.state.path = event.state.path;
+        this.commit();
       }
     };
+    
     $(document).ready(() => {
-      _this.state.path = window.location.pathname + (window.location.hash || '');
-      _this.commit();
+      this.state.path = window.location.pathname + (window.location.hash || '');
+      this.commit();
     });
   }
 
@@ -43,6 +43,30 @@ class RouterStore extends Store {
     var params = window.location.search.substring(1);
     var value = params.match(new RegExp(key + '=([^&]+)'));
     return value && value[1] && decodeURI(value[1]) || '';
+  }
+
+  nodeId() {
+    var path = this.state.path || window.location.pathname + (window.location.hash || '');
+    return path.match(/#([^&]+)/) && path.match(/#([^&]+)/)[1];
+  }
+  
+  isNodePage() {
+    return this.page() == 'nodes/:id';
+  }
+
+  page() {
+    var page;
+    var path = this.state.path;
+    if (path) {
+      if (path.indexOf('/nodes#') != -1) {
+        page = 'nodes/:id';
+      } else if (path == '/modules') {
+        page = 'modules';
+      } else  {
+        page = 'nodes';
+      }
+    }
+    return page;
   }
 }
 

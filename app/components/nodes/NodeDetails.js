@@ -1,4 +1,4 @@
-import Component from 'components/relax/Component';
+import Box from 'components/Box';
 import template from 'views/nodes/nodeDetails';
 import NodeCommands from 'components/nodes/NodeCommands';
 import NodeState from 'components/nodes/NodeState';
@@ -6,30 +6,30 @@ import NodePlannedState from 'components/nodes/NodePlannedState';
 import NodeSummary from 'components/nodes/NodeSummary';
 import NodeInfo from 'components/nodes/NodeInfo';
 import nodesStore from 'store/NodesStore';
+import routerStore from 'store/relax/RouterStore';
 import ConfigureModuleDialog from 'components/nodes/ConfigureModuleDialog'
 import CommandDetailsDialog from 'components/nodes/CommandDetailsDialog'
 import UpdateAgentVersionDialog from 'components/nodes/UpdateAgentVersionDialog'
 import ConfirmDialog from 'components/ConfirmDialog';
 
-export default class NodeDetails extends Component {
-  constructor(configureDialog) {
-    super(configureDialog, "NodeDetails");
+export default class NodeDetails extends Box {
+  constructor() {
+    super("NodeDetails", { style: 'clear' });
     this.updateAgentVersionDialog = new UpdateAgentVersionDialog();
     this.confirmDialog = new ConfirmDialog('NodeDetailsConfirm');
   }
 
   _handlers() {
-    let _this = this;
     $(`#${this.componentId} button[name="btBackToNodesList"]`).click(() => {
-      nodesStore.resetSelectedIndex();
+      routerStore.changeRoute('/nodes');
     });
     $(`#${this.componentId} button[name='btUpdateNode']`).click(() => {
       let node = nodesStore.getSelectedNode();
-      _this.updateAgentVersionDialog.show(node.info.agentVersion);
+      this.updateAgentVersionDialog.show(node.info.agentVersion);
     });
     $(`#${this.componentId} button[name='btResetNode']`).click(() => {
       let node = nodesStore.getSelectedNode();
-      _this.confirmDialog.show({
+      this.confirmDialog.show({
         ok: ()=> {
           nodesStore.resetNodeContents();
         },
@@ -37,7 +37,6 @@ export default class NodeDetails extends Component {
         subtext: 'This action will remove all currently installed modules.'
       });
     });
-
   }
 
   beforeRender() {
@@ -45,9 +44,7 @@ export default class NodeDetails extends Component {
     $(`#${this.componentId} button[name="btBackToNodesList"]`).off();
     $(`#${this.componentId} button[name='btUpdateNode']`).off();
     $(`#${this.componentId} button[name='btResetNode']`).off();
-
   }
-
 
   afterRender() {
     super.afterRender();
@@ -75,7 +72,7 @@ export default class NodeDetails extends Component {
       updateAgentVersionDialog: this.updateAgentVersionDialog.initialView(),
       confirmDialog: this.confirmDialog.initialView()
     };
-    return template(data);
+    return this.viewWithContent(template(data));
   }
 
 }
