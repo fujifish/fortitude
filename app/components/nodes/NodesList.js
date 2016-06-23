@@ -11,10 +11,8 @@ import removeButtonTemplate from 'views/nodes/nodeList/removeButton';
 import warningTemplate from 'views/nodes/nodeList/warning';
 import nodeName from 'views/nodes/nodeList/nodeName';
 import tags from 'views/nodes/nodeList/tags';
+import common from '../../common';
 
-
-// todo - check q=
-// todo - test checkboxes and reloading on certain pages
 export default class NodesList extends Box {
   constructor() {
     super("NodesList", {style: 'primary'});
@@ -179,10 +177,10 @@ export default class NodesList extends Box {
         var node = nodeIndex && nodesStore.state.nodes[nodeIndex];
         if (node) {
           // update last seen
-          $(e).find('td:nth-child(8n+8)').html(this._timeSince(new Date(node.lastSync)));
+          $(e).find('td:nth-child(8n+8)').html(common.timeSince(new Date(node.lastSync)));
         }
       });
-    }, 3000);
+    }, 1000);
 
     $(`[data-toggle="popover"]`).popover();
   }
@@ -207,39 +205,11 @@ export default class NodesList extends Box {
         id: node.id || '',
         platform: node.info.platform || '',
         agentVersion: node.info.agentVersion || '',
-        lastSeen: this._timeSince(new Date(node.lastSync)) || '',
+        lastSeen: common.timeSince(new Date(node.lastSync)) || '',
         deleteButton: removeButtonTemplate({index: i})
       };
     });
 
     return renderedItems;
   }
-
-  _timeSince(date) {
-    var seconds = Math.floor((new Date() - date) / 1000);
-    var interval;
-
-    interval = Math.floor(seconds / 31536000);
-    if (interval >= 1) {
-      return interval + " year" + (interval != 1 ? 's' : '') + ' ago';
-    }
-    interval = Math.floor(seconds / 2592000);
-    if (interval >= 1) {
-      return interval + " month" + (interval != 1 ? 's' : '') + ' ago';
-    }
-    interval = Math.floor(seconds / 86400);
-    if (interval >= 1) {
-      return interval + " day" + (interval != 1 ? 's' : '') + ' ago';
-    }
-    interval = Math.floor(seconds / 3600);
-    if (interval >= 1) {
-      return interval + " hour" + (interval != 1 ? 's' : '') + ' ago';
-    }
-    interval = Math.floor(seconds / 60);
-    if (interval >= 1) {
-      return interval + " minute" + (interval != 1 ? 's' : '') + ' ago';
-    }
-    return Math.floor(seconds) + " second" + (interval != 1 ? 's' : '') + ' ago';
-  }
-
 }

@@ -29,6 +29,7 @@ class EventEmitter {
       };
     }
     this.listeners[type].callbacks.push(listener);
+    return this;
   }
 
   off(type, listener) {

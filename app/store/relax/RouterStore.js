@@ -54,6 +54,10 @@ class RouterStore extends Store {
     return this.page() == 'nodes/:id';
   }
 
+  isNodesPage() {
+    return this.page() == 'nodes';
+  }
+
   page() {
     var page;
     var path = this.state.path;

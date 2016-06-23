@@ -2,6 +2,7 @@ import template from "views/nodes/nodes";
 import Component from 'components/relax/Component';
 import NodesList from 'components/nodes/NodesList';
 import NodeDetails from 'components/nodes/NodeDetails';
+import SyncTimer from 'components/nodes/SyncTimer';
 import nodesStore from 'store/NodesStore';
 import routerStore from 'store/relax/RouterStore';
 
@@ -10,6 +11,7 @@ export default class Nodes extends Component {
     super('nodes');
     this.nodesList = new NodesList();
     this.nodeDetails = new NodeDetails();
+    this.syncTimer = new SyncTimer();
 
     routerStore.on('path', diff => {
       var oldPath = diff.lhs;
@@ -51,7 +53,8 @@ export default class Nodes extends Component {
   initialView() {
     const data = {
       nodesList: this.nodesList.initialView(),
-      nodeDetails: this.nodeDetails.initialView()
+      nodeDetails: this.nodeDetails.initialView(),
+      syncTimer: this.syncTimer.initialView()
     };
     return template(data);
   }

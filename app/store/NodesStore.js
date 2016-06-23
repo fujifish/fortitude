@@ -6,12 +6,14 @@ class NodesStore extends Store {
   constructor() {
     super({
       nodes: [],
+      nodesSyncedAt: null,
       selectedIndex: -1,
       checkedIndexes: [],
       nodeActionLoading: false,
       nodeDetails: {
         commandsLoading: false,
         commands: [],
+        commandsSyncedAt: null,
         configureModuleDialog: false,
         plannedStateLoading: false,
         applyStatePending: false,
@@ -24,6 +26,7 @@ class NodesStore extends Store {
     promise
       .then(() => {
         this.state.nodes = [];
+        this.state.nodesSyncedAt = null;
         this.state.checkedIndexes = [];
         this.state.selectedIndex = -1;
         this.state.nodeActionLoading = false;
@@ -35,6 +38,7 @@ class NodesStore extends Store {
 
   setNodes(nodes) {
     this.state.nodes = nodes;
+    this.state.nodesSyncedAt = new Date();
     this.state.checkedIndexes = [];
     this.state.selectedIndex = -1;
     this.state.nodeActionLoading = false;
@@ -83,6 +87,7 @@ class NodesStore extends Store {
     this.makeRequest('get', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands`)
         .then(commands => {
           this.state.nodeDetails.commands = commands || [];
+          this.state.nodeDetails.commandsSyncedAt = new Date();
           this.state.nodeDetails.commandsLoading = false;
           this.commit();
         }).catch(ex => {
@@ -93,6 +98,7 @@ class NodesStore extends Store {
   resetCommands() {
     this.state.nodeDetails.commandsLoading = false;
     this.state.nodeDetails.commands = [];
+    this.state.nodeDetails.commandsSyncedAt = null;
   }
 
   cancelPendingCommand() {
@@ -111,6 +117,7 @@ class NodesStore extends Store {
     this.makeRequest('delete', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands/${encodeURIComponent(command.created)}`)
         .then(commands => {
           this.state.nodeDetails.commands = commands || [];
+          this.state.nodeDetails.commandsSyncedAt = new Date();
           this.state.nodeDetails.commandsLoading = false;
           this.commit();
         }).catch(ex => {
@@ -213,6 +220,7 @@ class NodesStore extends Store {
     this.makeRequest('POST', `/nodes/${encodeURIComponent(nodeId)}/commands`, JSON.stringify(command))
       .then(commands => {
         this.state.nodeDetails.commands = commands || [];
+        this.state.nodeDetails.commandsSyncedAt = new Date();
         this.state.nodeDetails.commandsLoading = false;
         this.commit();
       }).catch(ex => {
@@ -252,15 +260,8 @@ class NodesStore extends Store {
 
   resetNodeContents() {
     this._addNodeCommand({type: 'reset', action: 'all'});
-  };
-
-  nodeIndex(node) {
-    if (!node) {
-      return -1;
-    }
-    return this.state.nodes.findIndex(n => n.id == node.id);
   }
-
+  
 }
 
 export default new NodesStore();

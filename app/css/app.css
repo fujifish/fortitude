@@ -7,3 +7,17 @@
     border-top: none;
     box-shadow: none;
 }
+
+.sync-time {
+    color: #999;
+    float: right;
+    padding: 10px;
+    font-size: 12px;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+}
+
+.sync-time > i.syncing {
+    color: #00A65A;
+}
