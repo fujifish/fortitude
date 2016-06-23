@@ -17,6 +17,11 @@ export default class NodeCommands extends Box {
       }
     });
 
+    nodesStore.on('nodeUpdate', () => {
+      nodesStore.fetchCommands();
+      this.render();
+    });
+
     nodesStore.on('nodeDetails.commands.0.status', () => {
       nodesStore.stopRefreshFor('fetchCommands');
       this.render();

@@ -6,10 +6,15 @@ import routerStore from 'store/relax/RouterStore';
 export default class NodeSummary extends Component {
   constructor() {
     super("NodeSummary");
-    routerStore.on('path', diff => {
+    
+    routerStore.on('path', () => {
       if (routerStore.isNodePage()) {
         this.render();
       }
+    });
+    
+    nodesStore.on('nodeUpdate', () => {
+      this.render();
     });
   }
 

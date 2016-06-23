@@ -14,7 +14,8 @@ class NodesStore extends Store {
         commands: [],
         configureModuleDialog: false,
         plannedStateLoading: false,
-        applyStatePending: false
+        applyStatePending: false,
+        nodeUpdate: false
       }
     });
   }
@@ -37,6 +38,11 @@ class NodesStore extends Store {
     this.state.checkedIndexes = [];
     this.state.selectedIndex = -1;
     this.state.nodeActionLoading = false;
+    this.commit();
+  }
+  
+  setNodeUpdate(updated) {
+    this.state.nodeUpdate = updated;
     this.commit();
   }
 
@@ -76,7 +82,7 @@ class NodesStore extends Store {
     this.commit();
     this.makeRequest('get', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands`)
         .then(commands => {
-          this.state.nodeDetails.commands = commands;
+          this.state.nodeDetails.commands = commands || [];
           this.state.nodeDetails.commandsLoading = false;
           this.commit();
         }).catch(ex => {
@@ -86,7 +92,7 @@ class NodesStore extends Store {
 
   resetCommands() {
     this.state.nodeDetails.commandsLoading = false;
-    this.state.nodeDetails.commands = null;
+    this.state.nodeDetails.commands = [];
   }
 
   cancelPendingCommand() {
@@ -104,7 +110,7 @@ class NodesStore extends Store {
     this.commit();
     this.makeRequest('delete', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands/${encodeURIComponent(command.created)}`)
         .then(commands => {
-          this.state.nodeDetails.commands = commands;
+          this.state.nodeDetails.commands = commands || [];
           this.state.nodeDetails.commandsLoading = false;
           this.commit();
         }).catch(ex => {
@@ -206,7 +212,7 @@ class NodesStore extends Store {
     var nodeId = nodeId || this.getSelectedNode().id;
     this.makeRequest('POST', `/nodes/${encodeURIComponent(nodeId)}/commands`, JSON.stringify(command))
       .then(commands => {
-        this.state.nodeDetails.commands = commands;
+        this.state.nodeDetails.commands = commands || [];
         this.state.nodeDetails.commandsLoading = false;
         this.commit();
       }).catch(ex => {

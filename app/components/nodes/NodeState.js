@@ -8,14 +8,21 @@ export default class NodeState extends Box {
   constructor(configureDialog, options) {
     super("NodeState-"+options.title, options);
     this.options = options;
+    
     routerStore.on('path', () => {
       if (routerStore.isNodePage()) {
         this.render();
       }
     });
-    nodesStore.on('nodeDetails.applyStatePending', pending => {
+    
+    nodesStore.on('nodeDetails.applyStatePending', () => {
       this.render();
     });
+    
+    nodesStore.on('nodeUpdate', () => {
+      this.render();
+    });
+    
     this.confirmDialog = new ConfirmDialog('removeNodeModule'+options.title);
     this.configureDialog = configureDialog;
   }

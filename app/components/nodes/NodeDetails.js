@@ -17,6 +17,8 @@ export default class NodeDetails extends Box {
     super("NodeDetails", { style: 'clear' });
     this.updateAgentVersionDialog = new UpdateAgentVersionDialog();
     this.confirmDialog = new ConfirmDialog('NodeDetailsConfirm');
+    this.configureModuleDialog = new ConfigureModuleDialog();
+    this.commandDetailsDialog = new CommandDetailsDialog();
   }
 
   _handlers() {
@@ -57,20 +59,21 @@ export default class NodeDetails extends Box {
     this.hide();
   }
 
-  view() {
-    let configureModuleDialog = new ConfigureModuleDialog();
-    let commandDetailsDialog = new CommandDetailsDialog();
+  initialView() {
+    return `${super.initialView()}` +
+      `${this.updateAgentVersionDialog.initialView()}` +
+      `${this.confirmDialog.initialView()}` +
+      `${this.commandDetailsDialog.initialView()}` +
+      `${this.configureModuleDialog.initialView()}`;
+  }
 
+  view() {
     const data = {
       info: new NodeInfo().initialView(),
       summary: new NodeSummary().initialView(),
-      commands: new NodeCommands(commandDetailsDialog).initialView(),
-      currentState: new NodeState(configureModuleDialog, {title: "Current", editable: false}).initialView(),
-      plannedState: new NodePlannedState(configureModuleDialog).initialView(),
-      configureModuleDialog: configureModuleDialog.initialView(),
-      commandDetailsDialog: commandDetailsDialog.initialView(),
-      updateAgentVersionDialog: this.updateAgentVersionDialog.initialView(),
-      confirmDialog: this.confirmDialog.initialView()
+      commands: new NodeCommands(this.commandDetailsDialog).initialView(),
+      currentState: new NodeState(this.configureModuleDialog, {title: "Current", editable: false}).initialView(),
+      plannedState: new NodePlannedState(this.configureModuleDialog).initialView()
     };
     return this.viewWithContent(template(data));
   }

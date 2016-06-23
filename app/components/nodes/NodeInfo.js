@@ -6,10 +6,15 @@ import routerStore from 'store/relax/RouterStore';
 export default class NodeInfo extends Box {
   constructor() {
     super("NodeInfo");
+
     routerStore.on('path', () => {
       if (routerStore.isNodePage()) {
         this.render();
       }
+    });
+
+    nodesStore.on('nodeUpdate', () => {
+      this.render();
     });
   }
 

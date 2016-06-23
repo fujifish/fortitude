@@ -13,18 +13,20 @@ export default class Nodes extends Component {
 
     routerStore.on('path', diff => {
       var oldPath = diff.lhs;
+      // if came from a node page
       if (oldPath.indexOf('/nodes#') != -1) {
         nodesStore.resetSelectedIndex();
         this.nodeDetails.hide();
         this.nodesList.show();
       }
+      // if loading a node page
       else if (routerStore.isNodePage()) {
         var nodeId = routerStore.nodeId();
         var index = nodesStore.state.nodes.findIndex(n => n.id == nodeId);
-        this._waitingForNode = index == -1;
-        if (!this._waitingForNode) {
+        if (index != -1) {
           nodesStore.setSelectedIndex(index);
         } else {
+          this._waitingForNode = true;
           this.nodeDetails.renderLoading(true);
           nodesStore.resetSelectedIndex();
         }
@@ -34,10 +36,14 @@ export default class Nodes extends Component {
     });
 
     nodesStore.on('nodes', () => {
+      // if user loaded a node page as first page
       if (this._waitingForNode) {
         this._waitingForNode = false;
-        nodesStore.setSelectedIndex(0);
-        this.nodeDetails.render();
+        var nodeId = routerStore.nodeId();
+        var index = nodesStore.state.nodes.findIndex(n => n.id == nodeId);
+        nodesStore.setSelectedIndex(index);
+        nodesStore.setNodeUpdate(true);
+        this.nodeDetails.renderLoading(false);
       }
     });
   }
