@@ -44,9 +44,15 @@ export default class NodesList extends Box {
       "ajax": {
         "url": '/api/nodes',
         "data" : (data) => {
+          // if fetching data from a node page (loading a node page as first)
           data.search.value = data.search.value || routerStore.nodeId();
         },
+        'beforeSend': function (request) {
+          // customize request to server
+          request.setRequestHeader("X-CSRF-Token", window.csrfToken);
+        },
         "dataSrc": (json) => {
+          // customize the server response and render the nodes
           this.tableChangedNodes = true;
           nodesStore.setNodes(json.nodes);
           this.tableChangedNodes = false;
