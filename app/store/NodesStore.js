@@ -1,4 +1,5 @@
 import Store from 'store/relax/Store'
+import common from '../common';
 
 const maxLastSeen = 1000*60*60*24;
 
@@ -25,6 +26,7 @@ class NodesStore extends Store {
   _resetNodeState(promise) {
     promise
       .then(() => {
+        window.clearInterval(this.lastSeenUpdater);
         this.state.nodes = [];
         this.state.nodesSyncedAt = null;
         this.state.checkedIndexes = [];
@@ -37,12 +39,21 @@ class NodesStore extends Store {
   }
 
   setNodes(nodes) {
-    this.state.nodes = nodes;
+    this.state.nodes = nodes.map(n => this.enrich(n));
     this.state.nodesSyncedAt = new Date();
     this.state.checkedIndexes = [];
     this.state.selectedIndex = -1;
     this.state.nodeActionLoading = false;
     this.commit();
+
+    window.clearInterval(this.lastSeenUpdater);
+    this.lastSeenUpdater = window.setInterval(() => {
+      this.state.nodes = this.state.nodes.map(n => {
+        n.timeSinceSync = n.lastSync && common.timeSince(Date.parse(n.lastSync));
+        return n;
+      });
+      this.commit();
+    }, 5000);
   }
   
   setNodeUpdate(updated) {
@@ -60,19 +71,20 @@ class NodesStore extends Store {
     if (timeSinceSeen > maxLastSeen) {
       node.problems.push(`Last seen ${Math.round((timeSinceSeen / maxLastSeen))} days ago`);
     }
+    node.timeSinceSync = common.timeSince(lastSynced);
     return node;
   }
 
   getSelectedNode() {
     let node = (this.state.nodes && this.state.selectedIndex > -1) ? this.state.nodes[this.state.selectedIndex] : null;
-    return this.enrich(node);
+    return node;
   }
 
   getCheckedNodes() {
     if (this.state.nodes && (this.state.checkedIndexes.length > 0)) {
       let nodes = [];
       this.state.checkedIndexes.forEach(i => nodes.push(this.state.nodes[i]));
-      return nodes.map(this.enrich);
+      return nodes;
     }
     return [];
   }

@@ -11,7 +11,6 @@ import removeButtonTemplate from 'views/nodes/nodeList/removeButton';
 import warningTemplate from 'views/nodes/nodeList/warning';
 import nodeName from 'views/nodes/nodeList/nodeName';
 import tags from 'views/nodes/nodeList/tags';
-import common from '../../common';
 
 export default class NodesList extends Box {
   constructor() {
@@ -25,6 +24,13 @@ export default class NodesList extends Box {
       if (!this.tableChangedNodes) {
         $(`#${this.componentId} table`).DataTable().ajax.reload();
       }
+    });
+
+    nodesStore.on('nodes.*.timeSinceSync', (diff) => {
+      var nodeIndex = diff.path[1];
+      $(`#${this.componentId} tr input[data-index=${nodeIndex}]`)
+        .parent().parent().find('td:nth-child(8n+8)') // last seen td
+        .html(diff.rhs);
     });
 
     this.confirmDialog = new ConfirmDialog('nodeListConfirmDialog');
@@ -178,22 +184,10 @@ export default class NodesList extends Box {
       });
     });
 
-    this.lastSeenUpdater = window.setInterval(() => {
-      $(`#${this.componentId} table tr`).each((i, e) => {
-        var nodeIndex = $(e).find('input').attr('data-index');
-        var node = nodeIndex && nodesStore.state.nodes[nodeIndex];
-        if (node) {
-          // update last seen
-          $(e).find('td:nth-child(8n+8)').html(common.timeSince(new Date(node.lastSync)));
-        }
-      });
-    }, 1000);
-
     $(`[data-toggle="popover"]`).popover();
   }
 
   _tableHandlersOff() {
-    window.clearInterval(this.lastSeenUpdater);
     $(`[data-toggle="popover"]`).off();
     $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
     $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
@@ -212,7 +206,7 @@ export default class NodesList extends Box {
         id: node.id || '',
         platform: node.info.platform || '',
         agentVersion: node.info.agentVersion || '',
-        lastSeen: common.timeSince(new Date(node.lastSync)) || '',
+        lastSeen: node.timeSinceSync || '',
         deleteButton: removeButtonTemplate({index: i})
       };
     });

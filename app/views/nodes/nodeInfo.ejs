@@ -17,8 +17,11 @@
       </ul>
     </div>
     <% } %>
-  <dl>
+  <dl data-id="<%= node.id %>">
+    <dt>Id</dt>
+    <dd><%= node.id %></dd>
     <dt>Last Seen</dt>
+    <dd class="time-since"><%= node.timeSinceSync || '' %></dd>
     <dd><%= node.lastSync ? node.lastSync.replace('T', ', ').replace('Z', '') : ''%> UTC</dd>
     <dt>Agent Version</dt>
     <dd><%= info.agentVersion %></dd>
