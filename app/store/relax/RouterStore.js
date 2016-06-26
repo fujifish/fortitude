@@ -42,7 +42,7 @@ class RouterStore extends Store {
   urlValueOf(key) {
     var params = window.location.search.substring(1);
     var value = params.match(new RegExp(key + '=([^&]+)'));
-    return value && value[1] && decodeURI(value[1]) || '';
+    return value && value[1] && decodeURIComponent(value[1]) || '';
   }
 
   nodeId() {
