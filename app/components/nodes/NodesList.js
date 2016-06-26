@@ -168,10 +168,11 @@ export default class NodesList extends Box {
       nodesStore.toggleNode(parseInt($(event.target).data('index')));
     });
 
-    $(`#${this.componentId} button[name='btRemoveNode']`).click(event => {
-      let index = parseInt($(event.target).data('index'));
+    var _this = this;
+    $(`#${this.componentId} button[name='btRemoveNode']`).click(function(event) {
+      let index = parseInt($(this).data('index'));
       let node = nodesStore.state.nodes[index];
-      this.confirmDialog.show({
+      _this.confirmDialog.show({
         ok: ()=> { nodesStore.deleteNode(node.id) },
         text: `Remove node "${node.name}"?`
       });
