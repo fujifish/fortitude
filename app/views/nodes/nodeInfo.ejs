@@ -39,14 +39,13 @@
     <dd><%= info.arch %></dd>
     <dt>CPU's</dt>
     <dd><%= info.cpus %></dd>
-    <dt>Total Memory</dt>
-    <dd><%= Math.floor(info.totalmem / 1024 /1024) %> MB</dd>
-    <dt>Free Memory</dt>
-    <dd><%= Math.floor(info.freemem  / 1024 /1024) %> MB</dd>
     <dt>Agent PID</dt>
     <dd><%= info.pid %></dd>
     <dt>Agent Memory Usage</dt>
     <dd><%= info.memUsage ? (Math.floor(info.memUsage.heapUsed / 1024 / 1024)) : 0 %> MB</dd>
+    <dd><%- memory %></dd>
+    <dd><%- installedDiskSpace %></dd>
+    <dd><%- rootDiskSpace %></dd>
   </dl>
   <%
   var tags = info.tags || {};

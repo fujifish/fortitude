@@ -1,5 +1,6 @@
 import Box from 'components/Box';
 import template from 'views/nodes/nodeInfo';
+import Progress from 'components/nodes/Progress';
 import nodesStore from 'store/NodesStore';
 import routerStore from 'store/relax/RouterStore';
 
@@ -28,9 +29,15 @@ export default class NodeInfo extends Box {
 
 
   view() {
-    let node = nodesStore.getSelectedNode() || {info:{}};
-    const data = {
-      node: node
+    let node = nodesStore.getSelectedNode() || {info: {}};
+    var installedDiskSpace = new Progress('Installed DiskSpace', node.info.diskspace && node.info.diskspace.installed.used, node.info.diskspace && node.info.diskspace.installed.total);
+    var rootDiskSpace = new Progress('Root DiskSpace', node.info.diskspace && node.info.diskspace.root.used, node.info.diskspace && node.info.diskspace.root.total);
+    var memory = new Progress('Memory', Math.floor(node.info.freemem/1024/1024), Math.floor(node.info.totalmem/1024/1024));
+    var data = {
+      node: node,
+      memory: memory.setType('MB').initialView(),
+      installedDiskSpace: installedDiskSpace.initialView(),
+      rootDiskSpace: rootDiskSpace.initialView()
     };
     return this.viewWithContent(template(data));
   }

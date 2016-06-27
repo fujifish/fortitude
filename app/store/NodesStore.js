@@ -53,7 +53,7 @@ class NodesStore extends Store {
         return n;
       });
       this.commit();
-    }, 5000);
+    }, 15000);
   }
   
   setNodeUpdate(updated) {
