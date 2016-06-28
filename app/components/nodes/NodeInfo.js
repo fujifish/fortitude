@@ -32,7 +32,8 @@ export default class NodeInfo extends Box {
     let node = nodesStore.getSelectedNode() || {info: {}};
     var installedDiskSpace = new Progress('Installed DiskSpace', node.info.diskspace && node.info.diskspace.installed.used, node.info.diskspace && node.info.diskspace.installed.total);
     var rootDiskSpace = new Progress('Root DiskSpace', node.info.diskspace && node.info.diskspace.root.used, node.info.diskspace && node.info.diskspace.root.total);
-    var memory = new Progress('Memory', Math.floor(node.info.freemem/1024/1024), Math.floor(node.info.totalmem/1024/1024));
+    var totalMem = Math.floor(node.info.totalmem/1024/1024), freeMem = Math.floor(node.info.freemem/1024/1024);
+    var memory = new Progress('Memory', totalMem - freeMem, totalMem);
     var data = {
       node: node,
       memory: memory.setType('MB').initialView(),

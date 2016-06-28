@@ -1,9 +1,9 @@
 <% if (used && total) { %>
 
 <div class="progress-group">
-    <span class="progress-text"><%= title %></span>
+    <span class="progress-text" style="font-weight: bold;"><%= title %></span>
     <span class="progress-number"><b>
-        <%= used %></b>/<%= total %> <%= type || 'B'%>
+        <%= used %></b>/<%= total %> <%= type || 'KB' %>
     </span>
     <div class="progress sm">
         <div style="width: <%= usedPercent || 0 %>%" class="progress-bar progress-bar-aqua"></div>
@@ -12,7 +12,7 @@
 
 <% } else { %>
 <div class="progress-group">
-    <span class="progress-text"><%= title %></span>
+    <span class="progress-text" style="font-weight: bold;"><%= title %></span>
     <span class="progress-number">N/A</span>
 </div>
 <% } %>
