@@ -17,8 +17,11 @@ class RouterStore extends Store {
     });
   }
 
-  changeRoute(path) {
+  changeRoute(path, title) {
     history.pushState({path: path}, '', path);
+    if (title) {
+      document.title = 'Fortitude - ' + title;
+    }
     this.state.path = path;
     this.commit();
   }

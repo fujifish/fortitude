@@ -15,7 +15,7 @@ export default class SideBar extends Component {
   viewMounted() {
     $(`#${this.componentId} a`).click(function(e) {
       var href = $(this).attr("href");
-      routerStore.changeRoute(href);
+      routerStore.changeRoute(href, href.match(/\/(.+)$/) && href.match(/\/(.+)$/)[1]);
       return false;
     });
   }

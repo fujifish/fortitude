@@ -167,7 +167,7 @@ export default class NodesList extends Box {
     $(`#${this.componentId} a[name='btSelectItemNodes']`).click(event => {
       var index = parseInt($(event.target).data('index'));
       var node = nodesStore.state.nodes[index];
-      routerStore.changeRoute('/nodes#' + node.id);
+      routerStore.changeRoute('/nodes#' + node.id, node.name);
     });
 
     $(`#${this.componentId} input:checkbox[name='checkNode']`).on('change', event => {

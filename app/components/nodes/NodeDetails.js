@@ -23,7 +23,7 @@ export default class NodeDetails extends Box {
 
   _handlers() {
     $(`#${this.componentId} button[name="btBackToNodesList"]`).click(() => {
-      routerStore.changeRoute('/nodes');
+      routerStore.changeRoute('/nodes', 'nodes');
     });
     $(`#${this.componentId} button[name='btUpdateNode']`).click(() => {
       let node = nodesStore.getSelectedNode();
