@@ -184,11 +184,11 @@ export default class NodesList extends Box {
       });
     });
 
-    $(`[data-toggle="popover"]`).popover();
+    $(`#${this.componentId} table [data-toggle="popover"]`).popover();
   }
 
   _tableHandlersOff() {
-    $(`[data-toggle="popover"]`).off();
+    $(`#${this.componentId} table [data-toggle="popover"]`).off();
     $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
     $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
     $(`#${this.componentId} button[name='btRemoveNode']`).off();

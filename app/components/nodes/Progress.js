@@ -14,13 +14,21 @@ export default class Progress extends Component{
     return this;
   }
 
+  setPopoverTitle(popoverTitle) {
+    this.popoverTitle = popoverTitle;
+    return this;
+  }
+
+  // $(`#${this.componentId} [data-toggle="popover"]`).popover();
+
   view() {
     var data = {
       title: this.title,
       used: this.used,
       total: this.total,
       usedPercent: Math.floor((this.used * 100) / this.total),
-      type: this.type
+      type: this.type,
+      popoverTitle: this.popoverTitle
     };
     return template(data);
   }

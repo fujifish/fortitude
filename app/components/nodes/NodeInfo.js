@@ -27,18 +27,23 @@ export default class NodeInfo extends Box {
     });
   }
 
-
   view() {
     let node = nodesStore.getSelectedNode() || {info: {}};
-    var installedDiskSpace = new Progress('Installed DiskSpace', node.info.diskspace && node.info.diskspace.installed.used, node.info.diskspace && node.info.diskspace.installed.total);
-    var rootDiskSpace = new Progress('Root DiskSpace', node.info.diskspace && node.info.diskspace.root.used, node.info.diskspace && node.info.diskspace.root.total);
+
+    var usedAgent = node.info.diskspace && Math.floor(node.info.diskspace.installed.used/1024), totalAgent = node.info.diskspace && Math.floor(node.info.diskspace.installed.total/1024);
+    this.agentDiskSpace = new Progress('Agent DiskSpace', usedAgent, totalAgent);
+    var usedModule = node.info.diskspace && Math.floor(node.info.diskspace.root.used/1024), totalModule = node.info.diskspace && Math.floor(node.info.diskspace.root.total/1024);
+    this.moduleDiskSpace = new Progress('Module DiskSpace', usedModule, totalModule);
     var totalMem = Math.floor(node.info.totalmem/1024/1024), freeMem = Math.floor(node.info.freemem/1024/1024);
-    var memory = new Progress('Memory', totalMem - freeMem, totalMem);
+    this.memory = new Progress('Memory', totalMem - freeMem, totalMem);
+
+    var agentPopOverTitle = node.info.diskspace && node.info.diskspace.installed.path;
+    var mosulePopOverTitle = node.info.diskspace && node.info.diskspace.root.path;
     var data = {
       node: node,
-      memory: memory.setType('MB').initialView(),
-      installedDiskSpace: installedDiskSpace.initialView(),
-      rootDiskSpace: rootDiskSpace.initialView()
+      memory: this.memory.initialView(),
+      agentDiskSpace: this.agentDiskSpace.setPopoverTitle(agentPopOverTitle).initialView(),
+      moduleDiskSpace: this.moduleDiskSpace.setPopoverTitle(mosulePopOverTitle).initialView()
     };
     return this.viewWithContent(template(data));
   }

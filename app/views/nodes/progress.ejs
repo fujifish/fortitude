@@ -1,12 +1,25 @@
-<% if (used && total) { %>
+<% if (used != undefined && total) { %>
+
+<% usedPercent = usedPercent || 0; %>
+<% type = type || 'MB'; %>
+<% popoverTitle = popoverTitle || title; %>
+<% var color = usedPercent < 70 ? 'green' : (usedPercent < 90 ? 'yellow' : 'red'); %>
 
 <div class="progress-group">
     <span class="progress-text" style="font-weight: bold;"><%= title %></span>
     <span class="progress-number"><b>
-        <%= used %></b>/<%= total %> <%= type || 'KB' %>
+        <%= used %></b>/<%= total %> <%= type %>
     </span>
-    <div class="progress sm">
-        <div style="width: <%= usedPercent || 0 %>%" class="progress-bar progress-bar-aqua"></div>
+    <div class="progress xxs bg-gray">
+        <div style="width: <%= usedPercent %>%"
+             class="progress-bar progress-bar-<%= color %>"
+             data-container="body" data-html="true" data-toggle="popover" title="<%= popoverTitle %>" data-placement="right" data-trigger="hover"
+             data-template='<div class="popover" role="tooltip">
+                                <div class="arrow"></div>
+                                <h3 class="popover-title bg-<%= color %>"></h3>
+                                <div class="popover-content"></div>
+                            </div>'
+             data-content="<p><%= usedPercent %> %</p>" ></div>
     </div>
 </div>
 

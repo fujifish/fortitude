@@ -44,8 +44,8 @@
     <dt>Agent Memory Usage</dt>
     <dd><%= info.memUsage ? (Math.floor(info.memUsage.heapUsed / 1024 / 1024)) : 0 %> MB</dd>
     <dd><%- memory %></dd>
-    <dd><%- installedDiskSpace %></dd>
-    <dd><%- rootDiskSpace %></dd>
+    <dd><%- agentDiskSpace%></dd>
+    <dd><%- moduleDiskSpace %></dd>
   </dl>
   <%
   var tags = info.tags || {};
