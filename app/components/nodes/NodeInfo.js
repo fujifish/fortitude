@@ -31,19 +31,19 @@ export default class NodeInfo extends Box {
     let node = nodesStore.getSelectedNode() || {info: {}};
 
     var usedAgent = node.info.diskspace && Math.floor(node.info.diskspace.installed.used/1024), totalAgent = node.info.diskspace && Math.floor(node.info.diskspace.installed.total/1024);
-    this.agentDiskSpace = new Progress('Agent DiskSpace', usedAgent, totalAgent);
+    var agentDiskSpace = new Progress('Agent DiskSpace', usedAgent, totalAgent);
     var usedModule = node.info.diskspace && Math.floor(node.info.diskspace.root.used/1024), totalModule = node.info.diskspace && Math.floor(node.info.diskspace.root.total/1024);
-    this.moduleDiskSpace = new Progress('Module DiskSpace', usedModule, totalModule);
+    var moduleDiskSpace = new Progress('Module DiskSpace', usedModule, totalModule);
     var totalMem = Math.floor(node.info.totalmem/1024/1024), freeMem = Math.floor(node.info.freemem/1024/1024);
-    this.memory = new Progress('Memory', totalMem - freeMem, totalMem);
+    var memory = new Progress('Memory', totalMem - freeMem, totalMem);
 
     var agentPopOverTitle = node.info.diskspace && node.info.diskspace.installed.path;
     var mosulePopOverTitle = node.info.diskspace && node.info.diskspace.root.path;
     var data = {
       node: node,
-      memory: this.memory.initialView(),
-      agentDiskSpace: this.agentDiskSpace.setPopoverTitle(agentPopOverTitle).initialView(),
-      moduleDiskSpace: this.moduleDiskSpace.setPopoverTitle(mosulePopOverTitle).initialView()
+      memory: memory.initialView(),
+      agentDiskSpace: agentDiskSpace.setPopoverTitle(agentPopOverTitle).initialView(),
+      moduleDiskSpace: moduleDiskSpace.setPopoverTitle(mosulePopOverTitle).initialView()
     };
     return this.viewWithContent(template(data));
   }
