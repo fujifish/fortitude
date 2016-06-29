@@ -89,23 +89,7 @@ router.route('/nodes')
           draw: parseInt(req.query.draw),
           recordsTotal: recordsTotal,
           recordsFiltered: recordsFiltered,
-          nodes: nodes.map(function(n) {
-            n.info.diskspace = {
-              root: {
-                path: '/etc/root/bin/bin/som',
-                used: 2000000,
-                total: 4096000
-              },
-              installed: {
-                path: '/etc/ins/bin/installed/som/.bin',
-                used: 2000000,
-                total: 4096000
-              }
-            }
-            n.info.totalmem = 5000000;
-            n.info.freemem = 500000;
-            return n;
-          })
+          nodes: nodes
         };
         res.json(nodesResult);
       });
