@@ -44,13 +44,14 @@ export default class NodeCommands extends Box {
   }
 
   _handlers() {
+    var _this = this;
     $(`button[name='btnCancelPendingCommand']`).click(() => {
       nodesStore.cancelPendingCommand();
     });
-    $("a[name='nodeCommandDetails']").click(() => {
+    $("a[name='nodeCommandDetails']").click(function() {
       let index = parseInt($(this).data('index'));
       let command = nodesStore.state.nodeDetails.commands[index];
-      this.commandDetailsDialog.show(command.log);
+      _this.commandDetailsDialog.show(command.log);
     });
   }
 

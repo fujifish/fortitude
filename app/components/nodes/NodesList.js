@@ -59,9 +59,7 @@ export default class NodesList extends Box {
         },
         "dataSrc": (json) => {
           // customize the server response and render the nodes
-          this.tableChangedNodes = true;
-          nodesStore.setNodes(json.nodes);
-          this.tableChangedNodes = false;
+          this.nodesToSet = json.nodes;
           return this._renderServerNodes(json);
         }
       },
@@ -79,8 +77,13 @@ export default class NodesList extends Box {
         { data: 'deleteButton'}
       ]
     }).on('preXhr', () => { this.renderLoading(true) })
-      .on('preDrawCallback', _this._tableHandlersOff.bind(_this))
+      .on('preDrawCallback', () => {
+        this._tableHandlersOff();
+      })
       .on('draw.dt', () => {
+        this.tableChangedNodes = true;
+        nodesStore.setNodes(this.nodesToSet);
+        this.tableChangedNodes = false;
         nodesStore.uncheckAllNodes();
         $(`#${this.componentId} input:checkbox`).iCheck('uncheck');
         this._tableHandlers();
