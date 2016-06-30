@@ -26,11 +26,11 @@ export default class NodeDetails extends Box {
       routerStore.changeRoute('/nodes', 'nodes');
     });
     $(`#${this.componentId} button[name='btUpdateNode']`).click(() => {
-      let node = nodesStore.getSelectedNode();
+      let node = nodesStore.selectedNode;
       this.updateAgentVersionDialog.show(node.info.agentVersion);
     });
     $(`#${this.componentId} button[name='btResetNode']`).click(() => {
-      let node = nodesStore.getSelectedNode();
+      let node = nodesStore.selectedNode;
       this.confirmDialog.show({
         ok: ()=> {
           nodesStore.resetNodeContents();

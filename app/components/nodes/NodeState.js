@@ -19,7 +19,7 @@ export default class NodeState extends Box {
       this.render();
     });
     
-    nodesStore.on('nodeUpdate', () => {
+    nodesStore.on('nodesList.nodes.*', () => {
       this.render();
     });
     
@@ -53,13 +53,13 @@ export default class NodeState extends Box {
       }
       $("button[name='btnEditModuleInState']").click(function(){
         let index = parseInt($(this).data('index'));
-        let module = nodesStore.getSelectedNode().state.planned[index];
+        let module = nodesStore.selectedNode.state.planned[index];
         _this.configureDialog.setConfiguredModule({module: module, index: index});
         nodesStore.openConfigureModuleDialog();
       });
       $("button[name='btnRemoveModuleFromState']").click(function(){
         let index = parseInt($(this).data('index'));
-        let module = nodesStore.getSelectedNode().state.planned[index];
+        let module = nodesStore.selectedNode.state.planned[index];
         _this.confirmDialog.show({
           ok: ()=> {
             nodesStore.removeSelectedNodeModule(index);
@@ -79,7 +79,7 @@ export default class NodeState extends Box {
       });
       $("button[name='btnViewModuleInState']").click(function(){
         let index = parseInt($(this).data('index'));
-        let module = nodesStore.getSelectedNode().state.current[index];
+        let module = nodesStore.selectedNode.state.current[index];
         _this.configureDialog.setConfiguredModule({module: module, index: index, readOnly: true});
         nodesStore.openConfigureModuleDialog();
       });
@@ -119,7 +119,7 @@ export default class NodeState extends Box {
   }
 
   view() {
-    let node = nodesStore.getSelectedNode();
+    let node = nodesStore.selectedNode;
     const data = {
       title: this.options.title || "",
       editable: this.options.editable,

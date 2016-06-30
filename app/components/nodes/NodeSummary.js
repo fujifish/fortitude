@@ -13,13 +13,13 @@ export default class NodeSummary extends Component {
       }
     });
     
-    nodesStore.on('nodeUpdate', () => {
+    nodesStore.on('nodesList.nodes.*', () => {
       this.render();
     });
   }
 
   view() {
-    let node = nodesStore.getSelectedNode() || {info:{}};
+    let node = nodesStore.selectedNode || {info:{}};
     return template({
       name: node.name || 'N/A',
       version: node.info.agentVersion || '0.0.0',

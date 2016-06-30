@@ -17,9 +17,8 @@ export default class NodeCommands extends Box {
       }
     });
 
-    nodesStore.on('nodeUpdate', () => {
+    nodesStore.on('nodesList.nodes.*', () => {
       nodesStore.fetchCommands();
-      this.render();
     });
 
     nodesStore.on('nodeDetails.commands.0.status', () => {

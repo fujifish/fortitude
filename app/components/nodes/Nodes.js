@@ -17,34 +17,29 @@ export default class Nodes extends Component {
       var oldPath = diff.lhs;
       // if came from a node page
       if (oldPath.indexOf('/nodes#') != -1) {
-        nodesStore.resetSelectedIndex();
+        nodesStore.resetSelectedNode();
         this.nodeDetails.hide();
         this.nodesList.show();
       }
       // if loading a node page
       else if (routerStore.isNodePage()) {
         var nodeId = routerStore.nodeId();
-        var index = nodesStore.state.nodes.findIndex(n => n.id == nodeId);
-        if (index != -1) {
-          nodesStore.setSelectedIndex(index);
+        if (nodesStore.nodes[nodeId]) {
+          nodesStore.setSelectedNodeId(nodeId);
         } else {
-          this._waitingForNode = true;
+          // user loaded a node page as first page
           this.nodeDetails.renderLoading(true);
-          nodesStore.resetSelectedIndex();
+          nodesStore.resetSelectedNode();
         }
         this.nodesList.hide();
         this.nodeDetails.show();
       }
     });
 
-    nodesStore.on('nodes', () => {
-      // if user loaded a node page as first page
-      if (this._waitingForNode) {
-        this._waitingForNode = false;
-        var nodeId = routerStore.nodeId();
-        var index = nodesStore.state.nodes.findIndex(n => n.id == nodeId);
-        nodesStore.setSelectedIndex(index);
-        nodesStore.setNodeUpdate(true);
+    // if user loaded a node page as first page
+    nodesStore.on('nodesList.nodes.*', () => {
+      if (routerStore.nodeId() && !nodesStore.selectedNodeId) {
+        nodesStore.setSelectedNodeId(routerStore.nodeId());
         this.nodeDetails.renderLoading(false);
       }
     });

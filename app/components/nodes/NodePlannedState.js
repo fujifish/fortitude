@@ -7,7 +7,8 @@ export default class NodePlannedState extends NodeState {
     nodesStore.on('nodeDetails.plannedStateLoading', loading => {
       this.renderLoading(loading.rhs);
     });
-    nodesStore.on("nodes.*.planned*", planned => {
+    
+    nodesStore.on('nodesList.nodes.*.planned*', () => {
       this.render();
     });
   }

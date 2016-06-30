@@ -6,10 +6,23 @@ const maxLastSeen = 1000*60*60*24;
 class NodesStore extends Store {
   constructor() {
     super({
-      nodes: [],
+      nodesList: {
+        nodes: {},
+        search: '',
+        start: 0,
+        length: 25,
+        order: 'lastSync',
+        orderDir: 'desc',
+        metaData: {
+          draw: 0,
+          recordsTotal: -1,
+          recordsFiltered: -1
+        }
+      },
+      nodesLoading : false,
       nodesSyncedAt: null,
-      selectedIndex: -1,
-      checkedIndexes: [],
+      selectedNodeId: null,
+      checkedNodeIds: [],
       nodeActionLoading: false,
       nodeDetails: {
         commandsLoading: false,
@@ -17,47 +30,43 @@ class NodesStore extends Store {
         commandsSyncedAt: null,
         configureModuleDialog: false,
         plannedStateLoading: false,
-        applyStatePending: false,
-        nodeUpdate: false
+        applyStatePending: false
       }
     });
   }
 
-  _resetNodeState(promise) {
-    promise
-      .then(() => {
-        window.clearInterval(this.lastSeenUpdater);
-        this.state.nodes = [];
-        this.state.nodesSyncedAt = null;
-        this.state.checkedIndexes = [];
-        this.state.selectedIndex = -1;
-        this.state.nodeActionLoading = false;
-        this.commit();
-      }).catch(ex => {
-        throw new Error("Oops! Something went wrong. Ex: " + ex.message);
-      });
+  get selectedNode() {
+    var node = this.state.selectedNodeId ? this.nodes[this.state.selectedNodeId] : null;
+    return node || null;
   }
 
-  setNodes(nodes) {
-    this.state.nodes = nodes.map(n => this.enrich(n));
-    this.state.nodesSyncedAt = new Date();
-    this.state.checkedIndexes = [];
-    this.state.selectedIndex = -1;
-    this.state.nodeActionLoading = false;
+  get checkedNodes() {
+    var nodes = [];
+    if (this.nodes && (this.state.checkedNodeIds.length > 0)) {
+      this.state.checkedNodeIds.forEach(nodeId => {
+        if (this.nodes[nodeId]) {
+          nodes.push(this.nodes[nodeId])
+        }
+      });
+    }
+    return nodes;
+  }
+
+  get nodes() {
+    return this.state.nodesList.nodes;
+  }
+
+  get selectedNodeId() {
+    return this.state.selectedNodeId;
+  }
+
+  setCheckedNodeIds(checkedNodeIds) {
+    this.state.checkedNodeIds = checkedNodeIds;
     this.commit();
-
-    window.clearInterval(this.lastSeenUpdater);
-    this.lastSeenUpdater = window.setInterval(() => {
-      this.state.nodes = this.state.nodes.map(n => {
-        n.timeSinceSync = n.lastSync && common.timeSince(Date.parse(n.lastSync));
-        return n;
-      });
-      this.commit();
-    }, 15000);
   }
-  
-  setNodeUpdate(updated) {
-    this.state.nodeUpdate = updated;
+
+  setSelectedNodeId(selectedNodeId) {
+    this.state.selectedNodeId = selectedNodeId;
     this.commit();
   }
 
@@ -65,38 +74,61 @@ class NodesStore extends Store {
     if (!node) {
        return node;
     }
-    node.problems = [];
     var lastSynced = Date.parse(node.lastSync);
     var timeSinceSeen = Date.now() - lastSynced;
-    if (timeSinceSeen > maxLastSeen) {
-      node.problems.push(`Last seen ${Math.round((timeSinceSeen / maxLastSeen))} days ago`);
-    }
     node.timeSinceSync = common.timeSince(lastSynced);
-    return node;
-  }
-
-  getSelectedNode() {
-    let node = (this.state.nodes && this.state.selectedIndex > -1) ? this.state.nodes[this.state.selectedIndex] : null;
-    return node;
-  }
-
-  getCheckedNodes() {
-    if (this.state.nodes && (this.state.checkedIndexes.length > 0)) {
-      let nodes = [];
-      this.state.checkedIndexes.forEach(i => nodes.push(this.state.nodes[i]));
-      return nodes;
+    node.problems = [];
+    if (timeSinceSeen > maxLastSeen) {
+      node.problems.push(`Last seen ${node.timeSinceSync}`);
     }
-    return [];
+    return node;
+  }
+
+  _handleNodesResult(promise) {
+    promise
+      .then(resp => {
+        if (resp.draw < this.state.nodesList.metaData.draw) return;
+
+        this.state.nodesList.metaData.draw = resp.draw;
+        this.state.nodesList.metaData.recordsTotal = resp.recordsTotal;
+        this.state.nodesList.metaData.recordsFiltered = resp.recordsFiltered;
+        this.state.nodesList.nodes = {};
+        resp.nodes.forEach(n => { this.nodes[n.id] = this.enrich(n) });
+        this.state.nodesSyncedAt = new Date();
+        this.state.selectedNodeId = null;
+        this.state.checkedNodeIds = [];
+        this.state.nodeActionLoading = false;
+        this.state.nodesLoading = false;
+        this.commit();
+      }).catch(ex => {
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+    });
+  }
+
+  fetchNodes(filters = {}) {
+    this.state.nodesLoading = true;
+    this.commit();
+
+    this.state.nodesList = common.mergeObjects(this.state.nodesList, filters);
+    this.state.nodesList.metaData.draw += 1;
+    
+    var urlParams = `search=${this.state.nodesList.search || ''}&` +
+      `start=${this.state.nodesList.start}&` +
+      `length=${this.state.nodesList.length}&` +
+      `order=${this.state.nodesList.order}&` +
+      `orderDir=${this.state.nodesList.orderDir}&` +
+      `draw=${this.state.nodesList.metaData.draw}`;
+    return this._handleNodesResult(this.makeRequest('get', `/nodes?${urlParams}`));
   }
 
   fetchCommands() {
-    let selected = this.getSelectedNode();
+    let selected = this.selectedNode;
     if (!selected) {
       return;
     }
     this.state.nodeDetails.commandsLoading = true;
     this.commit();
-    this.makeRequest('get', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands`)
+    this.makeRequest('get', `/nodes/${encodeURIComponent(this.selectedNodeId)}/commands`)
         .then(commands => {
           this.state.nodeDetails.commands = commands || [];
           this.state.nodeDetails.commandsSyncedAt = new Date();
@@ -114,7 +146,7 @@ class NodesStore extends Store {
   }
 
   cancelPendingCommand() {
-    let selected = this.getSelectedNode();
+    let selected = this.selectedNode;
     if (!selected) {
       return;
     }
@@ -126,7 +158,7 @@ class NodesStore extends Store {
 
     this.state.nodeDetails.commandsLoading = true;
     this.commit();
-    this.makeRequest('delete', `/nodes/${encodeURIComponent(this.getSelectedNode().id)}/commands/${encodeURIComponent(command.created)}`)
+    this.makeRequest('delete', `/nodes/${encodeURIComponent(this.selectedNodeId)}/commands/${encodeURIComponent(command.created)}`)
         .then(commands => {
           this.state.nodeDetails.commands = commands || [];
           this.state.nodeDetails.commandsSyncedAt = new Date();
@@ -139,36 +171,31 @@ class NodesStore extends Store {
     });
   }
 
-  resetSelectedIndex() {
-    this.setSelectedIndex(-1);
-  }
-
-  setSelectedIndex(selectedIndex) {
-    this.state.selectedIndex = selectedIndex;
+  resetSelectedNode() {
+    this.state.selectedNodeId = null;
     this.commit();
   }
 
-  toggleNode(checkedIndexe) {
-    if (this.state.checkedIndexes.indexOf(checkedIndexe) != -1) {
-      this.state.checkedIndexes.splice(this.state.checkedIndexes.indexOf(checkedIndexe), 1);
+  toggleNode(checkedNode) {
+    if (this.state.checkedNodeIds.indexOf(checkedNode) != -1) {
+      this.state.checkedNodeIds.splice(this.state.checkedNodeIds.indexOf(checkedNode), 1);
     } else {
-      this.state.checkedIndexes.push(checkedIndexe);
+      this.state.checkedNodeIds.push(checkedNode);
     }
     this.commit();
   }
 
-  setCheckedIndexes(checkedIndexes) {
-    this.state.checkedIndexes = checkedIndexes;
-    this.commit();
-  }
-
   uncheckAllNodes() {
-    this.state.checkedIndexes = [];
+    this.state.checkedNodeIds = [];
     this.commit();
   }
 
   deleteNode(id) {
-    return this._resetNodeState(this.makeRequest('delete', '/nodes/' + encodeURIComponent(id)));
+    return this.makeRequest('delete', '/nodes/' + encodeURIComponent(id)).then(() => {
+      this.fetchNodes();
+    }).catch(ex => {
+      throw new Error("Oops! Something went wrong. Ex: " + ex.message);
+    });
   }
 
   openConfigureModuleDialog() {
@@ -182,28 +209,28 @@ class NodesStore extends Store {
   }
 
   removeSelectedNodeModule(index){
-    var node = this.getSelectedNode();
+    var node = this.selectedNode;
     let planned = JSON.parse(JSON.stringify(node.state.planned || []));
     planned.splice(index, 1);
     this.updateNodePlannedState(node.id, planned);
   }
 
   addSelectedNodeModule(module){
-    var node = this.getSelectedNode();
+    var node = this.selectedNode;
     let planned = JSON.parse(JSON.stringify(node.state.planned || []));
     planned.push(module);
     this.updateNodePlannedState(node.id, planned);
   }
 
   updateSelectedNodeModule(index, module){
-    var node = this.getSelectedNode();
+    var node = this.selectedNode;
     let planned = JSON.parse(JSON.stringify(node.state.planned || []));
     planned[index] = module;
     this.updateNodePlannedState(node.id, planned);
   }
 
   copySelectedNodeCurrentStateToPlanned(){
-    var node = this.getSelectedNode();
+    var node = this.selectedNode;
     let planned = JSON.parse(JSON.stringify(node.state.current || []));
     this.updateNodePlannedState(node.id, planned);
   }
@@ -215,20 +242,17 @@ class NodesStore extends Store {
     this.makeRequest('PUT', `/nodes/${encodeURIComponent(nodeId)}`, JSON.stringify({"state.planned": state}))
       .then(node => {
         this.state.nodeDetails.plannedStateLoading = false;
-        let index = this.state.nodes.findIndex(function(n){ return n.id == node.id});
-        if(index > -1){
-          this.state.nodes[index] = node;
-        }
+        this.nodes[node.id] = this.enrich(node);
         this.commit();
       }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+        throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
     });
   }
 
   _addNodeCommand(command, nodeId){
     this.state.nodeDetails.commandsLoading = true;
     this.commit();
-    var nodeId = nodeId || this.getSelectedNode().id;
+    var nodeId = nodeId || this.selectedNodeId;
     this.makeRequest('POST', `/nodes/${encodeURIComponent(nodeId)}/commands`, JSON.stringify(command))
       .then(commands => {
         this.state.nodeDetails.commands = commands || [];
@@ -236,12 +260,12 @@ class NodesStore extends Store {
         this.state.nodeDetails.commandsLoading = false;
         this.commit();
       }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+        throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
     });
   }
 
   _addNodesCommand(command, nodeIds){
-    var nodeIds = nodeIds || this.getCheckedNodes().map(n => n.id);
+    var nodeIds = nodeIds || this.state.checkedNodeIds;
     if (!nodeIds || 0 == nodeIds.length) return;
 
     this.state.nodeActionLoading = true;

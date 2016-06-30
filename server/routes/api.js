@@ -45,7 +45,7 @@ router.route('/nodes')
         'info.tags.ip_address',
         'info.tags.ec2_placement_availability_zone'
       ];
-      var searchTerm = common.mongoSanitize(req.query.search && req.query.search.value);
+      var searchTerm = common.mongoSanitize(req.query.search);
       var orFilters = [], filters = {};
       if (searchTerm) {
         searchableFields.forEach(function(field) {
@@ -60,10 +60,10 @@ router.route('/nodes')
       var offset = parseInt(req.query.start) || 0;
 
       const allowedOrderFields = { 'name': true, 'lastSync': true, 'info.agentVersion': true, 'info.platform': true }, defaultOrderField = '_id';
-      var orderFiled = req.query.order && common.mongoSanitize(req.query.columns[[req.query.order[0]['column']]]['name']);
+      var orderFiled = req.query.order && common.mongoSanitize(req.query.order);
       orderFiled = orderFiled && allowedOrderFields[orderFiled] ? orderFiled : defaultOrderField;
       var order = {};
-      order[orderFiled] = req.query.order && (req.query.order[0]['dir'] == 'desc') ? -1 : 1;
+      order[orderFiled] = (req.query.orderDir && req.query.orderDir == 'desc') ? -1 : 1;
 
 
       async.parallel([

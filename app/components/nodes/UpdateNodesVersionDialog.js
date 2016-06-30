@@ -13,7 +13,7 @@ export default class UpdateNodesVersionDialog extends Dialog {
   }
 
   show() {
-    if (!nodesStore.getCheckedNodes().length) return;
+    if (!nodesStore.checkedNodes.length) return;
 
     super.show();
     let selectVersion = $(`#${this.dialogId} form select`);
@@ -44,7 +44,7 @@ export default class UpdateNodesVersionDialog extends Dialog {
   }
 
   _title() {
-    var nodesCount = nodesStore.getCheckedNodes().length;
+    var nodesCount = nodesStore.checkedNodes.length;
     return 'Update version for ' + nodesCount + ' agent' + (nodesCount > 1 ? 's' : '');
   }
 }

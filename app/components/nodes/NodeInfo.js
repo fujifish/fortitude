@@ -14,13 +14,9 @@ export default class NodeInfo extends Box {
       }
     });
 
-    nodesStore.on('nodeUpdate', () => {
-      this.render();
-    });
-
-    nodesStore.on('nodes.*.timeSinceSync', (diff) => {
+    nodesStore.on('nodesList.nodes.*.timeSinceSync', (diff) => {
       var nodeIndex = diff.path[1];
-      var nodeId = nodesStore.state.nodes[nodeIndex] && nodesStore.state.nodes[nodeIndex].id;
+      var nodeId = nodesStore.nodes[nodeIndex] && nodesStore.nodes[nodeIndex].id;
       if (nodeId) {
         $(`#${this.componentId} dl[data-id='${nodeId}']`).find('.time-since').html(diff.rhs);
       }
@@ -28,7 +24,7 @@ export default class NodeInfo extends Box {
   }
 
   view() {
-    let node = nodesStore.getSelectedNode() || {info: {}};
+    let node = nodesStore.selectedNode || {info: {}};
 
     var usedAgent = node.info.diskspace && Math.floor(node.info.diskspace.installed.used/1024), totalAgent = node.info.diskspace && Math.floor(node.info.diskspace.installed.total/1024);
     var agentDiskSpace = new Progress('Agent DiskSpace', usedAgent, totalAgent);
