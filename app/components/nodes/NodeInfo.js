@@ -14,6 +14,10 @@ export default class NodeInfo extends Box {
       }
     });
 
+    nodesStore.on('nodesList.nodes.*', () => {
+      this.render();
+    });
+
     nodesStore.on('nodesList.nodes.*.timeSinceSync', (diff) => {
       var nodeIndex = diff.path[1];
       var nodeId = nodesStore.nodes[nodeIndex] && nodesStore.nodes[nodeIndex].id;

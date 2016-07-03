@@ -70,16 +70,20 @@ class NodesStore extends Store {
     this.commit();
   }
 
-  enrich(node) {
+  enrich(node, order) {
     if (!node) {
        return node;
     }
+
     var lastSynced = Date.parse(node.lastSync);
     var timeSinceSeen = Date.now() - lastSynced;
     node.timeSinceSync = common.timeSince(lastSynced);
     node.problems = [];
     if (timeSinceSeen > maxLastSeen) {
       node.problems.push(`Last seen ${node.timeSinceSync}`);
+    }
+    if (order) {
+      node.orderIndex = order;
     }
     return node;
   }
@@ -93,7 +97,7 @@ class NodesStore extends Store {
         this.state.nodesList.metaData.recordsTotal = resp.recordsTotal;
         this.state.nodesList.metaData.recordsFiltered = resp.recordsFiltered;
         this.state.nodesList.nodes = {};
-        resp.nodes.forEach(n => { this.nodes[n.id] = this.enrich(n) });
+        resp.nodes.forEach((n, i) => { this.nodes[n.id] = this.enrich(n, i) });
         this.state.nodesSyncedAt = new Date();
         this.state.selectedNodeId = null;
         this.state.checkedNodeIds = [];
@@ -242,7 +246,7 @@ class NodesStore extends Store {
     this.makeRequest('PUT', `/nodes/${encodeURIComponent(nodeId)}`, JSON.stringify({"state.planned": state}))
       .then(node => {
         this.state.nodeDetails.plannedStateLoading = false;
-        this.nodes[node.id] = this.enrich(node);
+        this.nodes[node.id] = this.enrich(node, this.nodes[node.id] && this.nodes[node.id].orderIndex);
         this.commit();
       }).catch(ex => {
         throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
