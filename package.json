@@ -1,6 +1,6 @@
 {
   "name": "fortitude",
-  "version": "0.1.36",
+  "version": "0.1.37",
   "description": "The outpost server",
   "author": "Capriza Inc. <backend@capriza.com>",
   "maintainers": [
@@ -33,7 +33,7 @@
     "cookie-parser": "1.4.x",
     "ejs": "2.4.1",
     "express": "4.13.x",
-    "mongodb": "2.1.x",
+    "mongodb": "2.1.7",
     "semver": "5.1.0"
   },
   "devDependencies": {
