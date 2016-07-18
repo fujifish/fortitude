@@ -10,7 +10,7 @@ class NodesStore extends Store {
         nodes: {},
         search: '',
         start: 0,
-        length: 25,
+        length: parseInt(localStorage.getItem('nodesList/length') || '25'),
         order: 'lastSync',
         orderDir: 'desc',
         metaData: {
@@ -100,7 +100,7 @@ class NodesStore extends Store {
         resp.nodes.forEach((n, i) => { this.nodes[n.id] = this.enrich(n, i) });
         this.state.nodesSyncedAt = new Date();
         this.state.selectedNodeId = null;
-        this.state.checkedNodeIds = [];
+        this.state.checkedNodeIds = this.state.checkedNodeIds.filter(id => !!this.nodes[id]);
         this.state.nodeActionLoading = false;
         this.state.nodesLoading = false;
         this.commit();
@@ -283,14 +283,31 @@ class NodesStore extends Store {
       });
   }
 
-  // selected node update
+  // selected node version update
   updateNodeAgentVersion(version) {
     this._addNodeCommand({type: 'update', version: version});
   };
 
-  // checked nodes update
+  // checked nodes version update
   updateNodesAgentVersion(version) {
     this._addNodesCommand({type: 'update', version: version});
+  };
+
+  // checked nodes metadata update
+  updateNodesAgentMetadata(metadata) {
+    var nodeIds = this.state.checkedNodeIds;
+    if (!nodeIds || 0 == nodeIds.length) return;
+
+    this.state.nodeActionLoading = true;
+    this.commit();
+    this.makeRequest('POST', `/nodes/metadata`, JSON.stringify({ metadata: metadata, ids: nodeIds }))
+      .then(() => {
+        this.state.nodeActionLoading = false;
+        this.commit();
+        this.fetchNodes();
+      }).catch(ex => {
+        throw new Error("Oops! Something went wrong and we couldn't update your nodes. Ex: " + ex.message);
+    });
   };
 
   applyNodePlannedState() {

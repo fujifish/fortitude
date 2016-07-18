@@ -3,6 +3,7 @@ import nodesStore from 'store/NodesStore';
 import routerStore from 'store/relax/RouterStore';
 import ConfirmDialog from 'components/ConfirmDialog';
 import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog';
+import AddNodesTagsDialog from 'components/nodes/AddNodesTagsDialog';
 
 import actionsTemplate from 'views/nodes/actions';
 import tableTemplate from 'views/nodes/nodeList/table';
@@ -39,8 +40,18 @@ export default class NodesList extends Box {
         .html(diff.rhs);
     });
 
+    routerStore.on('path', diff => {
+      var oldPath = diff.lhs;
+      if (routerStore.isNodesPage()) {
+        nodesStore.startRefreshFor('fetchNodes');
+      } else if (oldPath.endsWith('/nodes')) {
+        nodesStore.stopRefreshFor('fetchNodes');
+      }
+    });
+
     this.confirmDialog = new ConfirmDialog('nodeListConfirmDialog');
     this.updateNodesVersionDialog = new UpdateNodesVersionDialog();
+    this.addNodesTagsDialog = new AddNodesTagsDialog();
   }
 
   _handlers() {
@@ -64,14 +75,19 @@ export default class NodesList extends Box {
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
       "oLanguage": { "sSearch": '' },
+      "lengthMenu": [10, 25, 50, 100, 250, 500],
       "columns": columns,
       "order": [[ columns.findIndex(c => c.name == order), orderDir ]],
       "columnDefs": [{ "targets": [0,1,3,4,8], "sortable": false }],
       "pageLength": nodesStore.state.nodesList.length,
       "serverSide": true,
       "ajax" : this._fetchTableData.bind(this),
-    }).on('preDrawCallback', this._tableHandlersOff.bind(this))
-      .on('draw.dt', this._tableHandlers.bind(this));
+    }).on('length.dt', (e, settings, len) => { localStorage.setItem('nodesList/length', len) })
+      .on('preDrawCallback', this._tableHandlersOff.bind(this))
+      .on('draw.dt', () => {
+        this._tableHandlers();
+        nodesStore.uncheckAllNodes();
+      });
 
 
     // search table handler
@@ -82,10 +98,13 @@ export default class NodesList extends Box {
       }
     });
 
-    // append 'actions' button to table
+    // append 'actions' button to table and add menu listeners
     $('.dataTables_filter > label').addClass('input-group').prepend(actionsTemplate);
     $(`#${this.componentId} a[name='aUpdateNode']`).click(() => {
       this.updateNodesVersionDialog.show();
+    });
+    $(`#${this.componentId} a[name='aAddTags']`).click(() => {
+      this.addNodesTagsDialog.show();
     });
 
     // check / uncheck all handler
@@ -107,6 +126,7 @@ export default class NodesList extends Box {
     super.beforeRender();
     $(`#${this.componentId} input:checkbox[name='checkAllNodes']`).off();
     $(`#${this.componentId} a[name='aUpdateNode']`).off();
+    $(`#${this.componentId} a[name='aAddTags']`).off();
     $(`#${this.componentId} table`).off('draw.dt');
     $(`#${this.componentId} table`).off('preDrawCallback');
     $(`#${this.componentId} table`).off('preXhr');
@@ -127,7 +147,10 @@ export default class NodesList extends Box {
   }
 
   initialView() {
-    return `${super.initialView()}${this.confirmDialog.initialView()}${this.updateNodesVersionDialog.initialView()}`;
+    return super.initialView() + 
+      this.confirmDialog.initialView() + 
+      this.updateNodesVersionDialog.initialView() + 
+      this.addNodesTagsDialog.initialView();
   }
 
   view() {

@@ -1,0 +1,21 @@
+<div class="row <%= removable ? 'removable' : '' %> form-group">
+    <div class="col-xs-5">
+        <input class="form-control key" placeholder="Tag name" type="text">
+    </div>
+    <div class="col-xs-5">
+        <input class="form-control val" placeholder="Value" type="text">
+    </div>
+    <% if (removable) { %>
+        <div class="col-xs-1">
+            <button type="button" class="btn btn-box-tool rmv">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    <% } else { %>
+        <div class="col-xs-1">
+            <button type="button" class="btn btn-box-tool add">
+                <i class="fa fa-plus"></i>
+            </button>
+        </div>
+    <% } %>
+</div>

@@ -50,7 +50,7 @@ router.route('/nodes')
       if (searchTerm) {
         searchableFields.forEach(function(field) {
           var filter = {};
-          filter[field] = new RegExp('^' + searchTerm + '.*');
+          filter[field] = new RegExp('^' + searchTerm + '.*', 'i');
           orFilters.push(filter);
         });
         filters = { $or: orFilters};
@@ -259,6 +259,47 @@ router.route('/nodes/:node_id/commands')
       })
     });
 
+  });
+
+// update nodes metadata (overrides existing tags and creates new ones, does not delete old tags).
+router.route('/nodes/metadata')
+  .post(function(req, res) {
+    store.db().collection('nodes', function(err, collection) {
+      if (err) {
+        return res.status(500).json({ error: err });
+      }
+      if (req.body.ids.length > 100) {
+        return res.status(500).json({ error: 'maximum 100 nodes limit reached' });
+      }
+
+      var nodeIds = req.body.ids.map(function(id) { return common.mongoSanitize(id) });
+      collection.find(nodesQuery(nodeIds)).toArray(function(err, nodes) {
+        if (err) {
+          return res.status(500).json({ error: err });
+        }
+        var metadata = req.body.metadata;
+        var updaters = nodes.map(function(node) {
+          node.metadata = common.mergeObjects(node.metadata, metadata);
+          return function(cb) {
+            collection.update({ _id: node._id }, node, { safe: true, upsert: true }, function(err) {
+                if (err) {
+                  cb(err);
+                } else {
+                  cb(null, { id: node.id, metadta: node.metadata });
+                }
+              }
+            );
+          }
+        });
+
+        async.parallel(updaters, function (err, results) {
+          if (err) {
+            return res.status(500).json({ error: err });
+          }
+          res.json(results);
+        });
+      });
+    });
   });
 
 router.route('/nodes/:node_id/commands/:created')
