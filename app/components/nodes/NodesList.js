@@ -88,10 +88,8 @@ export default class NodesList extends Box {
       var order = $(`#${this.componentId} table`).DataTable().order();
       localStorage.setItem('nodesList/order', columns[order[0][0]].name);
       localStorage.setItem('nodesList/orderDir', order[0][1]);
-    }).on('draw.dt', () => {
-      this._tableHandlers();
-      nodesStore.uncheckAllNodes();
-    }).on('preDrawCallback', this._tableHandlersOff.bind(this));
+    }).on('draw.dt', this._tableHandlers.bind(this))
+      .on('preDrawCallback', this._tableHandlersOff.bind(this));
 
 
     // search table handler
@@ -234,7 +232,7 @@ export default class NodesList extends Box {
     var data = Object.keys(nodes).map(nodeId => {
       node = nodes[nodeId];
       return {
-        checkbox: checkboxTemplate({id: nodeId}),
+        checkbox: checkboxTemplate({id: nodeId, checked: (nodesStore.state.checkedNodeIds.indexOf(nodeId) != -1)}),
         warning: warningTemplate({node: node}),
         name: nodeName({node: node}) || '',
         tags: tags({node: node}) || '',
