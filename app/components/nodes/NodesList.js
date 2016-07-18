@@ -82,12 +82,16 @@ export default class NodesList extends Box {
       "pageLength": nodesStore.state.nodesList.length,
       "serverSide": true,
       "ajax" : this._fetchTableData.bind(this),
-    }).on('length.dt', (e, settings, len) => { localStorage.setItem('nodesList/length', len) })
-      .on('preDrawCallback', this._tableHandlersOff.bind(this))
-      .on('draw.dt', () => {
-        this._tableHandlers();
-        nodesStore.uncheckAllNodes();
-      });
+    }).on('length.dt', (e, settings, len) => { 
+      localStorage.setItem('nodesList/length', len);
+    }).on('order', () => {
+      var order = $(`#${this.componentId} table`).DataTable().order();
+      localStorage.setItem('nodesList/order', columns[order[0][0]].name);
+      localStorage.setItem('nodesList/orderDir', order[0][1]);
+    }).on('draw.dt', () => {
+      this._tableHandlers();
+      nodesStore.uncheckAllNodes();
+    }).on('preDrawCallback', this._tableHandlersOff.bind(this));
 
 
     // search table handler

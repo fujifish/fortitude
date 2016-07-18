@@ -11,8 +11,8 @@ class NodesStore extends Store {
         search: '',
         start: 0,
         length: parseInt(localStorage.getItem('nodesList/length') || '25'),
-        order: 'lastSync',
-        orderDir: 'desc',
+        order: localStorage.getItem('nodesList/order') || 'lastSync',
+        orderDir: localStorage.getItem('nodesList/orderDir') || 'desc',
         metaData: {
           draw: 0,
           recordsTotal: -1,
