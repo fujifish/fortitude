@@ -204,6 +204,19 @@ export default class NodesList extends Box {
       }
     });
 
+    $(`#${this.componentId} .badge.remove`).click(function(event) {
+      var match = $(this).parent().text().match(/([^\s]+):([^\s]+)/);
+      var metadataJson = {};
+      metadataJson[match[1]] = match[2];
+      var node = _this._nodeById($(this).data('id'));
+      if (node) {
+        _this.confirmDialog.show({
+          ok: ()=> { nodesStore.removeNodeMetadata(node.id, metadataJson) },
+          text: `Remove tag "${match[1]}:${match[2]}" for "${node.name}"?`
+        });
+      }
+    });
+
     $(`#${this.componentId} table [data-toggle="popover"]`).popover();
   }
 
@@ -212,6 +225,7 @@ export default class NodesList extends Box {
     $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
     $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
     $(`#${this.componentId} button[name='btRemoveNode']`).off();
+    $(`#${this.componentId} .badge.remove`).off();
   }
   
   _fetchTableData(data, cb, settings) {

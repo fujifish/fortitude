@@ -309,6 +309,14 @@ class NodesStore extends Store {
         throw new Error("Oops! Something went wrong and we couldn't update your nodes. Ex: " + ex.message);
     });
   };
+  
+  removeNodeMetadata(id, tag) {
+    return this.makeRequest('delete', `/nodes/${encodeURIComponent(id)}/metadata`, JSON.stringify(tag)).then(() => {
+      this.fetchNodes();
+    }).catch(ex => {
+      throw new Error("Oops! Something went wrong. Ex: " + ex.message);
+    });
+  }
 
   applyNodePlannedState() {
     this.state.nodeDetails.applyStatePending = false;

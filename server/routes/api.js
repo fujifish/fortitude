@@ -261,6 +261,38 @@ router.route('/nodes/:node_id/commands')
 
   });
 
+// delete a node metadata tag
+router.route('/nodes/:id/metadata')
+  .delete(function(req, res) {
+    var id = req.params.id;
+    var metadata = req.body;
+    logger.info('Deleting node:' + id + ' metadata:' + metadata);
+    store.db().collection('nodes', function(err, collection) {
+      if (err) {
+        return res.status(500).json({ error: err });
+      }
+      collection.findOne({'id': id}, function(err, node) {
+        if (err || !node) {
+          return res.status(500).json({ error: err || 'cannot find node with id:' + id });
+        }
+        var deletedKeys = 0;
+        Object.keys(metadata).forEach(function(k) {
+          if (node.metadata[k] == metadata[k]) {
+            delete node.metadata[k];
+            deletedKeys += 1;
+          }
+        });
+        collection.update({ _id: node._id }, node, { safe: true, upsert: true }, function(err) {
+          if (err) {
+            return res.status(500).json({ error: err });
+          } else {
+            res.json({ success: true, keysDeleted: deletedKeys });
+          }
+        });
+      });
+    });
+  });
+
 // update nodes metadata (overrides existing tags and creates new ones, does not delete old tags).
 router.route('/nodes/metadata')
   .post(function(req, res) {

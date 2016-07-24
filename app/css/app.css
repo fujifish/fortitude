@@ -21,3 +21,15 @@
 .sync-time > i.syncing {
     color: #00A65A;
 }
+
+.badge.remove {
+    cursor: pointer;
+    margin-top: -20px;
+    margin-right: -20px;
+    position: relative;
+    visibility: hidden;
+}
+
+.metadata:hover .badge.remove, .badge.remove:hover {
+    visibility: visible;
+}
