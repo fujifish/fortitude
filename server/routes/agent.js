@@ -162,11 +162,13 @@ router.route('/nodes/sync')
         commandsCollection.find({'node_id': input.id, 'status': 'pending'}).toArray(callback);
       },
       function(commands, callback) {
+        var ids = [];
         commands.forEach(function(c) {
           c.status = 'delivered';
+          ids.push(new ObjectID(c._id));
         });
         commandsCollection.update(
-          {'_id': {'$in': commands}},
+          {'_id': {'$in': ids}},
           {$set: {status: 'delivered'}},
           {safe: true, multi: true}, function(err, result) {
             logger.info(result, 'document(s) updated');
