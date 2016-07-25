@@ -14,6 +14,7 @@ import datatables from 'datatables.net/js/jquery.dataTables';
 import datatables_bs from 'datatables.net-bs/js/dataTables.bootstrap';
 
 import template from "views/app";
+import footerTemplate from "views/footer";
 import Navigation from "components/Navigation";
 import SideBar from 'components/Sidebar';
 import Modules from 'components/modules/Modules';
@@ -47,7 +48,7 @@ class App extends Component {
       content: this.sideBarRoutes.map(r => {
         return { view: r.component.initialView(), path: r.path }
       }),
-      footer: ""
+      footer: footerTemplate({ version: window.fortitudeVersion, linkText: 'Outpost', url: 'https://github.com/capriza/outpost' })
     };
     return template(data);
   }

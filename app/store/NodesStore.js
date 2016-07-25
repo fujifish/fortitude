@@ -9,6 +9,7 @@ class NodesStore extends Store {
       nodesList: {
         nodes: {},
         search: '',
+        tags: [],
         start: 0,
         length: parseInt(localStorage.getItem('nodesList/length') || '25'),
         order: localStorage.getItem('nodesList/order') || 'lastSync',
@@ -122,6 +123,7 @@ class NodesStore extends Store {
       `order=${this.state.nodesList.order}&` +
       `orderDir=${this.state.nodesList.orderDir}&` +
       `draw=${this.state.nodesList.metaData.draw}`;
+    this.state.nodesList.tags.forEach(t => { urlParams += `&tag=${t}` });
     return this._handleNodesResult(this.makeRequest('get', `/nodes?${urlParams}`));
   }
 

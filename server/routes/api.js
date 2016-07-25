@@ -34,17 +34,8 @@ router.route('/nodes')
         return res.status(500).json({error: err});
       }
 
-      // filter results, search only these fields.
-      const searchableFields = [
-        'id',
-        'name',
-        'info.agentVersion',
-        'metadata.org',
-        'info.tags.deployment_type',
-        'info.tags.environment',
-        'info.tags.ip_address',
-        'info.tags.ec2_placement_availability_zone'
-      ];
+      // filter these fields for 'search' parameter
+      const searchableFields = ['id', 'name', 'info.agentVersion'];
       var searchTerm = common.mongoSanitize(req.query.search);
       var orFilters = [], filters = {};
       if (searchTerm) {
@@ -53,8 +44,34 @@ router.route('/nodes')
           filter[field] = new RegExp('^' + searchTerm + '.*', 'i');
           orFilters.push(filter);
         });
-        filters = { $or: orFilters};
+        if(!filters['$and']) filters['$and'] = [];
+        filters['$and'].push({ $or: orFilters });
       }
+
+      // also filter by 'tag' parameter
+      if (req.query.tag && !Array.isArray(req.query.tag)) {
+        req.query.tag = [req.query.tag];
+      }
+      req.query.tag && req.query.tag.forEach(function(tag) {
+        tag = common.mongoSanitize(tag);
+        var filter = {}, m = tag.match(/^(.+):(.+)$/);
+        orFilters = [];
+        if (m) {
+          filter['info.tags.' + m[1]] = new RegExp('^' + m[2] + '$', 'i');
+          orFilters.push(filter);
+          filter = {};
+          filter['metadata.' + m[1]] = new RegExp('^' + m[2] + '$', 'i');
+          orFilters.push(filter);
+        } else {
+          filter['info.tags.' + tag] = new RegExp('^.*$');
+          orFilters.push(filter);
+          filter = {};
+          filter['metadata.' + tag] = new RegExp('^.*$');
+          orFilters.push(filter);
+        }
+        if(!filters['$and']) filters['$and'] = [];
+        filters['$and'].push({ $or: orFilters });
+      });
 
       var perPage = parseInt(req.query.length) || 1000;
       var offset = parseInt(req.query.start) || 0;

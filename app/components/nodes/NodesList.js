@@ -28,9 +28,6 @@ export default class NodesList extends Box {
         recordsTotal: nodesStore.state.nodesList.metaData.recordsTotal,
         recordsFiltered: nodesStore.state.nodesList.metaData.recordsFiltered
       });
-      if (nodesStore.state.nodesList.search) {
-        $(`#${this.componentId} .dataTables_filter .input-group input`).val(nodesStore.state.nodesList.search);
-      }
     });
 
     nodesStore.on('nodesList.nodes.*.timeSinceSync', (diff) => {
@@ -96,7 +93,7 @@ export default class NodesList extends Box {
     $(`#${this.componentId} .dataTables_filter input`).off().keyup(e => {
       var val = $(e.target).val();
       if (e.keyCode == 13 || (e.keyCode == 8 && !val)) {
-        nodesStore.fetchNodes({ search: val });
+        this._queryNodes(val);
       }
     });
 
@@ -142,7 +139,8 @@ export default class NodesList extends Box {
 
     var query = routerStore.urlValueOf('q');
     if (query) {
-      nodesStore.fetchNodes({ search: routerStore.urlValueOf('q') });
+      $(`#${this.componentId} .dataTables_filter input`).val(query);
+      this._queryNodes(query);
     } else {
       this._focusTableSearch();
     }
@@ -172,6 +170,13 @@ export default class NodesList extends Box {
       window.console.log(`sorry cannot find node id = ${id}`);
       return null;
     }
+  }
+
+  _queryNodes(val) {
+    var tags = val.match(/([^\s]+:[^\s]+)/g) || [];          // get tags
+    var search = val.replace(/([^\s]+:[^\s]+)/g, '').trim(); // remove tag:val words
+    tags = tags.map(t => { return t.replace(/\:\*$/g, '') });
+    nodesStore.fetchNodes({ search: search, tags: tags });
   }
 
   _focusTableSearch() {
