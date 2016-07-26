@@ -204,6 +204,14 @@ class NodesStore extends Store {
     });
   }
 
+  deleteNodes(ids) {
+    return this.makeRequest('delete', '/nodes', JSON.stringify({ids: ids})).then(() => {
+      this.fetchNodes();
+    }).catch(ex => {
+      throw new Error("Oops! Something went wrong. Ex: " + ex.message);
+    });
+  }
+
   openConfigureModuleDialog() {
     this.state.nodeDetails.configureModuleDialog = true;
     this.commit();

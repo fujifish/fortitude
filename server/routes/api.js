@@ -111,6 +111,25 @@ router.route('/nodes')
         res.json(nodesResult);
       });
     });
+  })
+
+  // delete nodes by id
+  .delete(function(req, res) {
+    var ids = req.body.ids;
+    logger.info('Deleting nodes: ' + ids);
+    store.db().collection('nodes', function(err, collection) {
+      if (err) {
+        return res.status(500).json({error: err});
+      }
+      var orIds = ids.map(function(id) { return { 'id': common.mongoSanitize(id) }});
+      collection.remove({$or: orIds}, {safe: true}, function(err, result) {
+        if (err) {
+          return res.status(500).json({error: err});
+        }
+        logger.info(result, 'document(s) deleted');
+        res.json({ success: true, deleted: result.result.n });
+      });
+    });
   });
 
 router.route('/nodes/commands')
@@ -567,7 +586,6 @@ function saveCommands(commands, cb) {
     });
   });
 }
-
 
 function nodesQuery(nodeIds) {
   return { $or: nodeIds.map(function(id){ return { id: id }}) };

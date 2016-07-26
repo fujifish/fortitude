@@ -105,6 +105,12 @@ export default class NodesList extends Box {
     $(`#${this.componentId} a[name='aAddTags']`).click(() => {
       this.addNodesTagsDialog.show();
     });
+    $(`#${this.componentId} a[name='aRemoveNode']`).click(() => {
+      this.confirmDialog.show({
+        ok: ()=> { nodesStore.deleteNodes(nodesStore.state.checkedNodeIds) },
+        text: `Delete nodes: ${nodesStore.checkedNodes.map(n => ` "${n.name}" `)} ?`
+      });
+    });
 
     // check / uncheck all handler
     $(`#${this.componentId} input:checkbox[name='checkAllNodes']`).on('change', elem => {
