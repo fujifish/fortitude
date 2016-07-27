@@ -34,7 +34,7 @@ router.route('/nodes')
         return res.status(500).json({error: err});
       }
 
-      // filter these fields for 'search' parameter
+      // filter these fields for 'search' parameter.
       const searchableFields = ['id', 'name', 'info.agentVersion'];
       var searchTerm = common.mongoSanitize(req.query.search);
       var orFilters = [], filters = {};
@@ -48,7 +48,7 @@ router.route('/nodes')
         filters['$and'].push({ $or: orFilters });
       }
 
-      // also filter by 'tag' parameter
+      // also filter by 'tag' parameter (includes tags, metadata and current state).
       if (req.query.tag && !Array.isArray(req.query.tag)) {
         req.query.tag = [req.query.tag];
       }
@@ -62,11 +62,15 @@ router.route('/nodes')
           filter = {};
           filter['metadata.' + m[1]] = new RegExp('^' + m[2] + '$', 'i');
           orFilters.push(filter);
+          filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + m[1] + '$', 'i'), version: m[2]}}};
+          orFilters.push(filter);
         } else {
           filter['info.tags.' + tag] = new RegExp('^.*$');
           orFilters.push(filter);
           filter = {};
           filter['metadata.' + tag] = new RegExp('^.*$');
+          orFilters.push(filter);
+          filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + tag + '$', 'i'), version: new RegExp('^.*$')}}};
           orFilters.push(filter);
         }
         if(!filters['$and']) filters['$and'] = [];
