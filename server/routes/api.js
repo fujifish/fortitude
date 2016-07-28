@@ -57,12 +57,12 @@ router.route('/nodes')
         var filter = {}, m = tag.match(/^(.+):(.+)$/);
         orFilters = [];
         if (m) {
-          filter['info.tags.' + m[1]] = new RegExp('^' + m[2] + '$', 'i');
+          filter['info.tags.' + m[1]] = new RegExp('^' + m[2], 'i');
           orFilters.push(filter);
           filter = {};
-          filter['metadata.' + m[1]] = new RegExp('^' + m[2] + '$', 'i');
+          filter['metadata.' + m[1]] = new RegExp('^' + m[2], 'i');
           orFilters.push(filter);
-          filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + m[1] + '$', 'i'), version: m[2]}}};
+          filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + m[1], 'i'), version: new RegExp('^' + m[2], 'i')}}};
           orFilters.push(filter);
         } else {
           filter['info.tags.' + tag] = new RegExp('^.*$');
@@ -70,7 +70,7 @@ router.route('/nodes')
           filter = {};
           filter['metadata.' + tag] = new RegExp('^.*$');
           orFilters.push(filter);
-          filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + tag + '$', 'i'), version: new RegExp('^.*$')}}};
+          filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + tag, 'i'), version: new RegExp('^.*$')}}};
           orFilters.push(filter);
         }
         if(!filters['$and']) filters['$and'] = [];
