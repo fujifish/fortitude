@@ -149,7 +149,8 @@ router.route('/nodes/sync')
             'state.current': input.payload.modules,
             info: input.payload.info,
             lastSync: new Date(),
-            metadata: common.mergeObjects(node.metadata, req.metadata) // add arbitrary metadata about the agent that can be added by an embedding server
+            // add arbitrary metadata about the agent that can be added by an embedding server
+            metadata: node && common.mergeObjects(node.metadata, req.metadata) || req.metadata
           }
         }, {safe: true, upsert: true}, function(err) {
           callback(err, node);
