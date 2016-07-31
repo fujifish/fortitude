@@ -21,8 +21,11 @@ export default class NodeCommands extends Box {
       nodesStore.fetchCommands();
     });
 
-    nodesStore.on('nodeDetails.commands.0.status', () => {
+    nodesStore.on('nodeDetails.commands.0.status', (diff) => {
       nodesStore.stopRefreshFor('fetchCommands');
+      if (diff.lhs == 'pending') {
+        nodesStore.fetchNodes();
+      }
       this.render();
     });
 
