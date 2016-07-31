@@ -2,6 +2,7 @@ import Dialog from 'components/Dialog';
 import body from 'views/nodes/updateAgentVersionDialog/body';
 import modulesStore from 'store/ModulesStore';
 import nodesStore from 'store/NodesStore';
+import common from '../../common';
 
 export default class UpdateNodesVersionDialog extends Dialog {
   constructor() {
@@ -20,7 +21,7 @@ export default class UpdateNodesVersionDialog extends Dialog {
     selectVersion.empty();
     modulesStore.state.modules.forEach(function(m) {
       if (m.name == 'outpost') {
-        m.versions.sort(function(a,b){return a.version < b.version;}).forEach(function(v) {
+        m.versions.sort((a,b) => common.versionCompare(a.version, b.version)).forEach(function(v) {
           selectVersion.append($('<option>', {text: v.version, data: v}));
         });
       }

@@ -2,6 +2,7 @@ import Dialog from 'components/Dialog';
 import nodesStore from 'store/NodesStore';
 import modulesStore from 'store/ModulesStore'
 import body from 'views/nodes/configureModuleDialog/body'
+import common from '../../common';
 
 export default class ConfigureModuleDialog extends Dialog {
   constructor() {
@@ -25,7 +26,7 @@ export default class ConfigureModuleDialog extends Dialog {
       // populate available versions
       var module = selectName.find(':selected').data();
 
-      module.versions.sort(function(a,b){return a.version < b.version;}).forEach(function(v) {
+      module.versions.sort((a,b) => common.versionCompare(a.version, b.version)).forEach(function(v) {
         selectVersion.append($('<option>', {text: v.version, data: v}));
       });
       if(this.context) {
