@@ -19,7 +19,7 @@ router.route('/nodes')
     store.db().collection('nodes', function(err, collection) {
       collection.insert(node, {safe: true}, function(err, result) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         logger.info(result[0], 'Success');
         res.json(result[0]);
@@ -31,7 +31,7 @@ router.route('/nodes')
   .get(function(req, res) {
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
 
       // filter these fields for 'search' parameter.
@@ -123,12 +123,12 @@ router.route('/nodes')
     logger.info('Deleting nodes: ' + ids);
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       var orIds = ids.map(function(id) { return { 'id': common.mongoSanitize(id) }});
       collection.remove({$or: orIds}, {safe: true}, function(err, result) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         logger.info(result, 'document(s) deleted');
         res.json({ success: true, deleted: result.result.n });
@@ -140,7 +140,7 @@ router.route('/nodes/commands')
     .post(function(req, res) {
       store.db().collection('nodes', function(err, collection) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         if (req.body.ids.length > 100) {
           return res.status(500).json({error: 'maximum 100 nodes limit reached'});
@@ -151,11 +151,11 @@ router.route('/nodes/commands')
 
         buildCmds(command, nodeIds, collection, function(err, cmds) {
           if (err) {
-            return res.status(500).json({err: err});
+            return respondWithError(res, err);
           }
           saveCommands(cmds, function(err, results) {
             if (err) {
-              res.status(500).json({err: err});
+              respondWithError(res, err);
             } else {
               logger.info(JSON.stringify(results), 'commands update');
               res.json({success: true, nodesUpdated: results.length});
@@ -176,11 +176,11 @@ router.route('/nodes/:id')
     logger.info('Retrieving node: %s' + id);
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       collection.findOne({'id': id}, function(err, item) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         delete item._id;
         res.json(item);
@@ -194,16 +194,16 @@ router.route('/nodes/:id')
     logger.info(node, 'Updating node: ' + id);
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       collection.update({'id': id}, {$set: node}, {safe: true}, function(err, result) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         logger.info(result, 'document(s) updated');
         collection.findOne({'id': id}, function(err, item) {
           if (err) {
-            return res.status(500).json({error: err});
+            return respondWithError(res, err);
           }
           delete item._id;
           res.json(item);
@@ -217,16 +217,16 @@ router.route('/nodes/:id')
     logger.info('Deleting node: ' + id);
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       collection.remove({'id': id}, {safe: true}, function(err, result) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         logger.info(result, 'document(s) deleted');
         collection.find().toArray(function(err, items) {
           if (err) {
-            return res.status(500).json({error: err});
+            return respondWithError(res, err);
           }
           items.forEach(function(i) {
             delete i._id
@@ -245,11 +245,11 @@ router.route('/nodes/:node_id/commands')
     logger.info('Retrieving commands for node: ' + node_id);
     store.db().collection('commands', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       collection.find({'node_id': node_id}).limit(limit).sort({_id: -1}).toArray(function(err, items) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         res.json(items);
       });
@@ -260,13 +260,13 @@ router.route('/nodes/:node_id/commands')
     function respondWithCmds(nodeId) {
       store.db().collection('commands', function(err, collection) {
         if (err) {
-          return res.status(500).json({ error: err });
+          return respondWithError(res, err);
         }
 
         var limit = parseInt(req.query.limit || 10);
         collection.find({ node_id: nodeId }).limit(limit).sort({ _id: -1 }).toArray(function(err, items) {
           if (err) {
-            return res.status(500).json({ error: err });
+            return respondWithError(res, err);
           }
           items.forEach(function(i) {
             delete i._id
@@ -286,11 +286,11 @@ router.route('/nodes/:node_id/commands')
 
       buildCmds(command, nodeId, collection, function(err, cmd) {
         if (err) {
-          return res.status(500).json({ err: err });
+          return respondWithError(res, err);
         }
         saveCommands(cmd, function(err, results) {
           if (err) {
-            res.status(500).json({ err: err });
+            respondWithError(res, err);
           } else {
             logger.info(results[0], 'command update');
             respondWithCmds(cmd[0].node_id);
@@ -309,7 +309,7 @@ router.route('/nodes/:id/metadata')
     logger.info('Deleting node:' + id + ' metadata:' + metadata);
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({ error: err });
+        return respondWithError(res, err);
       }
       collection.findOne({'id': id}, function(err, node) {
         if (err || !node) {
@@ -324,7 +324,7 @@ router.route('/nodes/:id/metadata')
         });
         collection.update({ _id: node._id }, node, { safe: true, upsert: true }, function(err) {
           if (err) {
-            return res.status(500).json({ error: err });
+            return respondWithError(res, err);
           } else {
             res.json({ success: true, keysDeleted: deletedKeys });
           }
@@ -338,7 +338,7 @@ router.route('/nodes/metadata')
   .post(function(req, res) {
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({ error: err });
+        return respondWithError(res, err);
       }
       if (req.body.ids.length > 100) {
         return res.status(500).json({ error: 'maximum 100 nodes limit reached' });
@@ -347,7 +347,7 @@ router.route('/nodes/metadata')
       var nodeIds = req.body.ids.map(function(id) { return common.mongoSanitize(id) });
       collection.find(nodesQuery(nodeIds)).toArray(function(err, nodes) {
         if (err) {
-          return res.status(500).json({ error: err });
+          return respondWithError(res, err);
         }
         var metadata = req.body.metadata;
         var updaters = nodes.map(function(node) {
@@ -366,7 +366,7 @@ router.route('/nodes/metadata')
 
         async.parallel(updaters, function (err, results) {
           if (err) {
-            return res.status(500).json({ error: err });
+            return respondWithError(res, err);
           }
           res.json(results);
         });
@@ -381,17 +381,17 @@ router.route('/nodes/:node_id/commands/:created')
     logger.info('Deleting command: ' + created);
     store.db().collection('commands', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       collection.remove({'created': created, 'status': 'pending', 'node_id': node_id}, {safe: true}, function(err, result) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         logger.info(result, 'document(s) deleted');
         var limit = parseInt(req.query.limit || 10);
         collection.find({node_id: node_id}).limit(limit).sort({_id: -1}).toArray(function(err, items) {
           if (err) {
-            return res.status(500).json({error: err});
+            return respondWithError(res, err);
           }
           items.forEach(function(i) {
             delete i._id
@@ -412,19 +412,19 @@ router.route('/nodes/:node_id/modules/:name/:version')
 
     store.db().collection('nodes', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       collection.updateOne(
         {'id': req.params.node_id, 'state.planned': {$elemMatch: {name: moduleName, version: moduleVersion}}},
         {$set: {"state.planned.$": module}},
         {safe: true}, function(err, result) {
           if (err) {
-            return res.status(500).json({error: err});
+            return respondWithError(res, err);
           }
           logger.info(result, 'document(s) updated');
           collection.findOne({'id': req.params.node_id}, function(err, item) {
             if (err) {
-              return res.status(500).json({error: err});
+              return respondWithError(res, err);
             }
             delete item._id;
             res.json(item);
@@ -452,14 +452,14 @@ router.route('/modules')
     store.db().collection('modules', function(err, collection) {
       collection.findOne({name: module.name, version: module.version}, function(err, item) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         if (item) {
           return res.status(400).json({error: 'module already exists'});
         }
         collection.insertOne(module, {safe: true}, function(err, result) {
           if (err) {
-            return res.status(500).json({error: err})
+            return respondWithError(res, err);
           }
           logger.info(result.result, 'Success');
           collection.aggregate([{
@@ -469,7 +469,7 @@ router.route('/modules')
             }
           }, {$sort: {"versions.version": 1}}]).toArray(function(err, items) {
             if (err) {
-              return res.status(500).json({error: err});
+              return respondWithError(res, err);
             }
             items.forEach(function(i) {
               i.name = i._id;
@@ -489,7 +489,7 @@ router.route('/modules')
   .get(function(req, res) {
     store.db().collection('modules', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       collection.aggregate([{
         $group: {
@@ -498,7 +498,7 @@ router.route('/modules')
         }
       }, {$sort: {"versions.version": 1}}]).toArray(function(err, items) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         items.forEach(function(i) {
           i.name = i._id;
@@ -518,11 +518,11 @@ router.route('/modules/:name/:version')
   .get(function(req, res) {
     store.db().collection('modules', function(err, collection) {
       if (err) {
-        return res.status(500).json({error: err});
+        return respondWithError(res, err);
       }
       collection.findOne({name: req.params.name, version: req.params.version}, function(err, item) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         logger.info(item, 'Success');
         delete item._id;
@@ -539,7 +539,7 @@ router.route('/modules/:name/:version')
     store.db().collection('modules', function(err, collection) {
       collection.deleteOne({name: name, version: version}, function(err, result) {
         if (err) {
-          return res.status(500).json({error: err});
+          return respondWithError(res, err);
         }
         logger.info(result, 'Success');
         collection.aggregate([{
@@ -549,7 +549,7 @@ router.route('/modules/:name/:version')
           }
         }, {$sort: {"versions.version": 1}}]).toArray(function(err, items) {
           if (err) {
-            return res.status(500).json({error: err});
+            return respondWithError(res, err);
           }
           res.json(items);
         });
@@ -569,7 +569,7 @@ module.exports = {
 function saveCommands(commands, cb) {
   store.db().collection('commands', function(err, collection) {
     if (err) {
-      return res.status(500).json({error: err});
+      return respondWithError(res, err);
     }
 
     var results = [], last = commands.length - 1;
@@ -627,4 +627,8 @@ function buildCmds(command, nodeIds, collection, cb) {
     });
     cb(null, cmds);
   }
+}
+
+function respondWithError(res, err) {
+  res.status(500).json({error: err.message || err})
 }
