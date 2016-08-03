@@ -41,7 +41,7 @@ export default class NodesList extends Box {
       var oldPath = diff.lhs;
       if (routerStore.isNodesPage()) {
         nodesStore.startRefreshFor('fetchNodes');
-      } else if (oldPath.endsWith('/nodes')) {
+      } else if (oldPath.endsWith('/nodes') || oldPath == '/') {
         nodesStore.stopRefreshFor('fetchNodes');
       }
     });

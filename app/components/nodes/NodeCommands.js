@@ -17,8 +17,11 @@ export default class NodeCommands extends Box {
       }
     });
 
-    nodesStore.on('nodesList.nodes.*', () => {
-      nodesStore.fetchCommands();
+    // fetch commands after user loads in a node page
+    nodesStore.on('nodesList.nodes.*', (diff) => {
+      if (!diff.lhs) {
+        nodesStore.fetchCommands();
+      }
     });
 
     nodesStore.on('nodeDetails.commands.0.status', (diff) => {
