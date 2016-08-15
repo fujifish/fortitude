@@ -5,6 +5,7 @@ var store = require('../store');
 var ObjectID = store.ObjectID;
 var async = require('async');
 var common = require('../common');
+var safeExecute = common.safeExecute;
 
 var logger;
 function init(log){
@@ -44,19 +45,19 @@ router.route('/commands/:command_id')
           'details': command.details,
           'log': command.log
         }
-      }, {safe: true}, function(err, result) {
+      }, {safe: true}, safeExecute(function(err, result) {
         if (err) {
           return res.status(500).json({error: err});
         }
         logger.info(result, 'document(s) updated');
-        collection.findOne({'_id': new ObjectID(command_id)}, function(err, item) {
+        collection.findOne({'_id': new ObjectID(command_id)}, safeExecute(function(err, item) {
           if (err) {
             return res.status(500).json({error: err});
           }
           delete item._id;
           res.json(item);
-        });
-      });
+        }));
+      }));
     });
   });
 
@@ -68,24 +69,32 @@ router.route('/unregister')
     if (!authHash) {
       return res.status(403).json({error: 'invalid agent auth'});
     }
+
+    function done(err) {
+      if (err) {
+        return res.status(500).json({error: err});
+      }
+      res.json({});
+    }
+
     var nodeCollection, nodesArchiveCollection;
     async.waterfall([
       function(callback) {
-        store.db().collection('nodes', callback);
+        store.db().collection('nodes', safeExecute(callback, done));
       },
       function(collection, callback) {
         nodeCollection = collection;
         callback();
       },
       function(callback) {
-        store.db().collection('nodesArchive', callback);
+        store.db().collection('nodesArchive', safeExecute(callback, done));
       },
       function(collection, callback) {
         nodesArchiveCollection = collection;
         callback();
       },
       function(callback) {
-        nodeCollection.findOne({id: input.id}, callback);
+        nodeCollection.findOne({id: input.id}, safeExecute(callback, done));
       },
       function(node, callback) {
         if(!node){
@@ -99,20 +108,15 @@ router.route('/unregister')
           return;
         }
         logger.info({node_id: node.id}, 'adding node to archive');
-        nodesArchiveCollection.insertOne(node, function(err, result){
+        nodesArchiveCollection.insertOne(node, safeExecute(function(err, result){
           callback(err, node);
-        });
+        }, done));
       },
       function(node, callback) {
         logger.info({node_id: node.id}, 'deleting node');
-        nodeCollection.deleteOne({_id: node._id}, callback);
+        nodeCollection.deleteOne({_id: node._id}, safeExecute(callback, done));
       }
-    ], function(err) {
-      if (err) {
-        return res.status(500).json({error: err});
-      }
-      res.json({});
-    });
+    ], done);
   });
 
 
@@ -126,14 +130,22 @@ router.route('/nodes/sync')
     if (!authHash) {
       return res.status(403).json({error: 'invalid agent auth'});
     }
+
+    function done(err, commands) {
+      if (err) {
+        return res.status(500).json({error: err});
+      }
+      res.json({commands: commands});
+    }
+
     var nodeCollection, commandsCollection;
     async.waterfall([
       function(callback) {
-        store.db().collection('nodes', callback);
+        store.db().collection('nodes', safeExecute(callback, done));
       },
       function(collection, callback) {
         nodeCollection = collection;
-        nodeCollection.findOne({id: input.id}, callback);
+        nodeCollection.findOne({id: input.id}, safeExecute(callback, done));
       },
       function(node, callback) {
         if (node && node.authHash && node.authHash !== authHash) {
@@ -152,16 +164,16 @@ router.route('/nodes/sync')
             // add arbitrary metadata about the agent that can be added by an embedding server
             metadata: node && common.mergeObjects(node.metadata, req.metadata) || req.metadata
           }
-        }, {safe: true, upsert: true}, function(err) {
+        }, {safe: true, upsert: true}, safeExecute(function(err) {
           callback(err, node);
-        });
+        }, done));
       },
       function(node, callback) {
-        store.db().collection('commands', callback);
+        store.db().collection('commands', safeExecute(callback, done));
       },
       function(collection, callback) {
         commandsCollection = collection;
-        commandsCollection.find({'node_id': input.id, 'status': 'pending'}).toArray(callback);
+        commandsCollection.find({'node_id': input.id, 'status': 'pending'}).toArray(safeExecute(callback, done));
       },
       function(commands, callback) {
         var ids = [];
@@ -172,17 +184,12 @@ router.route('/nodes/sync')
         commandsCollection.update(
           {'_id': {'$in': ids}},
           {$set: {status: 'delivered'}},
-          {safe: true, multi: true}, function(err, result) {
+          {safe: true, multi: true}, safeExecute(function(err, result) {
             logger.info(result, 'document(s) updated');
             callback(err, commands);
-          });
+          }, done));
       }
-    ], function(err, commands) {
-      if (err) {
-        return res.status(500).json({error: err});
-      }
-      res.json({commands: commands});
-    });
+    ], done);
   });
 
 module.exports = {

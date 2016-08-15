@@ -30,3 +30,17 @@ module.exports.mergeObjects = function(slaveObj, masterObj){
   for (var attrname in masterObj) { obj3[attrname] = masterObj[attrname]; }
   return obj3;
 };
+
+// Executes the 'handler' callback, if any exceptions are raised then the callback is called again
+// with that exception as first argument, if 'errHandler' is given then it is called with the exception.
+module.exports.safeExecute = function (handler, errHandler) {
+  var errHandler = errHandler || handler;
+  return function (/* arguments */) {
+    try {
+      return handler.apply(this, arguments);
+    } catch (ex) {
+      errHandler(ex);
+      return undefined;
+    }
+  };
+};
