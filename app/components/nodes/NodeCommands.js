@@ -25,8 +25,8 @@ export default class NodeCommands extends Box {
     });
 
     nodesStore.on('nodeDetails.commands.0.status', (diff) => {
-      nodesStore.stopRefreshFor('fetchCommands');
-      if (diff.lhs == 'pending') {
+      if (['pending','delivered'].indexOf(diff.lhs) != -1 && diff.rhs == 'success') {
+        nodesStore.stopRefreshFor('fetchCommands');
         nodesStore.fetchNodes();
       }
       this.render();
@@ -34,7 +34,7 @@ export default class NodeCommands extends Box {
 
     nodesStore.on('nodeDetails.commands', () => {
       var latestCmd = nodesStore.state.nodeDetails.commands[0];
-      if (latestCmd && latestCmd.status == 'pending') {
+      if (latestCmd && ['pending','delivered'].indexOf(latestCmd.status) != -1) {
         nodesStore.startRefreshFor('fetchCommands');
       }
       this.render();
