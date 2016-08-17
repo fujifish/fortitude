@@ -5,7 +5,6 @@
   <ul class="timeline">
     <%
     function commandStatus(status) {
-      status = status || 'none';
       var statusIcons = {
         'pending': {
           icon: 'fa-spinner fa-spin', color: 'bg-blue'
@@ -23,7 +22,8 @@
           icon: '', color: 'text-muted'
         }
       };
-      return statusIcons[status].icon + ' '  + statusIcons[status].color ;
+      status = statusIcons[status] ? status : 'none';
+      return statusIcons[status].icon + ' '  + statusIcons[status].color;
     }
 
     for (var index = 0; index < commands.length; index++) {
