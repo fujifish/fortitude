@@ -38,6 +38,7 @@ export default class NodesList extends Box {
     });
 
     routerStore.on('path', diff => {
+      if (!nodesStore.nodeSyncEnabled()) return;
       var oldPath = diff.lhs;
       if (routerStore.isNodesPage()) {
         nodesStore.startRefreshFor('fetchNodes');
@@ -79,12 +80,6 @@ export default class NodesList extends Box {
       "pageLength": nodesStore.state.nodesList.length,
       "serverSide": true,
       "ajax" : this._fetchTableData.bind(this),
-    }).on('length.dt', (e, settings, len) => { 
-      localStorage.setItem('nodesList/length', len);
-    }).on('order', () => {
-      var order = $(`#${this.componentId} table`).DataTable().order();
-      localStorage.setItem('nodesList/order', columns[order[0][0]].name);
-      localStorage.setItem('nodesList/orderDir', order[0][1]);
     }).on('draw.dt', this._tableHandlers.bind(this))
       .on('preDrawCallback', this._tableHandlersOff.bind(this));
 

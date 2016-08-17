@@ -20,11 +20,14 @@ class NodesStore extends Store {
           recordsFiltered: -1
         }
       },
+      nodesRefreshRate: localStorage.getItem('nodesList/nodesRefreshRate') ? parseInt(localStorage.getItem('nodesList/nodesRefreshRate')) : null,
+      nodeSyncEnabled: localStorage.getItem('nodesList/nodeSyncEnabled') != 'false',
       nodesLoading : false,
       nodesSyncedAt: null,
       selectedNodeId: null,
       checkedNodeIds: [],
       nodeActionLoading: false,
+      commandsRefreshRate: localStorage.getItem('nodeDetails/commandsRefreshRate') ? parseInt(localStorage.getItem('nodesList/commandsRefreshRate')) : null,
       nodeDetails: {
         commandsLoading: false,
         commands: [],
@@ -116,6 +119,9 @@ class NodesStore extends Store {
 
     this.state.nodesList = common.mergeObjects(this.state.nodesList, filters);
     this.state.nodesList.metaData.draw += 1;
+    if (filters.length) localStorage.setItem('nodesList/length', filters.length);
+    if (filters.order) localStorage.setItem('nodesList/order', filters.order);
+    if (filters.orderDir) localStorage.setItem('nodesList/orderDir', filters.orderDir);
     
     var urlParams = `search=${this.state.nodesList.search || ''}&` +
       `start=${this.state.nodesList.start}&` +
@@ -335,6 +341,33 @@ class NodesStore extends Store {
 
   resetNodeContents() {
     this._addNodeCommand({type: 'reset', action: 'all'});
+  }
+
+  refreshRate(methodName) {
+    var rate = {
+      fetchNodes: localStorage.getItem('nodesList/nodesRefreshRate'),
+      fetchCommands: localStorage.getItem('nodeDetails/commandsRefreshRate')
+    }[methodName];
+    return rate || super.refreshRate(methodName);
+  }
+
+  setNodesRefreshRate(rate) {
+    this.state.nodesRefreshRate = rate > 5000 ? rate : 5000;
+    localStorage.setItem('nodesList/nodesRefreshRate', this.state.nodesRefreshRate);
+  }
+
+  setCommandsRefreshRate(rate) {
+    this.state.nodesRefreshRate = rate > 5000 ? rate : 5000;
+    localStorage.setItem('nodeDetails/commandsRefreshRate', this.state.commandsRefreshRate);
+  }
+
+  nodeSyncEnabled() {
+    return this.state.nodeSyncEnabled;
+  }
+
+  setNodeSyncEnabled(enabled) {
+    this.state.nodeSyncEnabled = !!enabled;
+    localStorage.setItem('nodesList/nodeSyncEnabled', this.state.nodeSyncEnabled);
   }
   
 }

@@ -15,12 +15,14 @@ import datatables_bs from 'datatables.net-bs/js/dataTables.bootstrap';
 
 import template from "views/app";
 import footerTemplate from "views/footer";
+import configTemplate from "views/config";
 import Navigation from "components/Navigation";
 import SideBar from 'components/Sidebar';
 import Modules from 'components/modules/Modules';
 import Nodes from 'components/nodes/Nodes';
 import Component from 'components/relax/Component';
 import routerStore from 'store/relax/RouterStore';
+import nodesStore from 'store/NodesStore';
 
 class App extends Component {
   constructor() {
@@ -41,6 +43,38 @@ class App extends Component {
     $('#header-name').text(this.sideBarRoutes.find(r => r.path == path).title);
   }
 
+  viewMounted() {
+    super.afterRender();
+    $(`#${this.componentId} a[data-toggle="control-sidebar"]`).on('click',() => {
+      if(!$(`#${this.componentId} aside.control-sidebar-open`).length) {
+        var nodesRefreshRate = $(`#${this.componentId} #nodesRefreshRate`).val();
+        var nodeSyncEnabled = $(`#${this.componentId} #nodeSyncEnabled`)[0].checked;
+
+        if (nodesRefreshRate) {
+          try {
+            nodesRefreshRate = parseInt(nodesRefreshRate);
+            if (nodesRefreshRate >= 5) {
+              nodesStore.setNodesRefreshRate(nodesRefreshRate * 1000);
+            } else {
+              alert('nodes refresh rate must be greater than 5 sec');
+            }
+          } catch(e) { alert('invalid nodes refresh rate') }
+        }
+
+        nodesStore.setNodeSyncEnabled(nodeSyncEnabled);
+        if (!nodeSyncEnabled) {
+          nodesStore.stopRefreshFor('fetchNodes');
+        } else if (routerStore.isNodesPage()) {
+          nodesStore.stopRefreshFor('fetchNodes');
+          nodesStore.startRefreshFor('fetchNodes');
+        }
+      } else {
+        $(`#${this.componentId} #nodesRefreshRate`).val(nodesStore.refreshRate('fetchNodes') / 1000.0);
+        $(`#${this.componentId} #nodeSyncEnabled`).iCheck(nodesStore.nodeSyncEnabled() ? 'check' : 'uncheck');
+      }
+    });
+  }
+
   initialView() {
     let data = {
       navigation: new Navigation().initialView(),
@@ -48,7 +82,11 @@ class App extends Component {
       content: this.sideBarRoutes.map(r => {
         return { view: r.component.initialView(), path: r.path }
       }),
-      footer: footerTemplate({ version: window.fortitudeVersion, linkText: 'Outpost', url: 'https://github.com/capriza/outpost' })
+      config: configTemplate({}),
+      footer: footerTemplate({
+        version: window.fortitudeVersion,
+        linkText: 'Outpost',
+        url: 'https://github.com/capriza/outpost' }),
     };
     return template(data);
   }

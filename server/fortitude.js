@@ -17,7 +17,6 @@ var agent = require('./routes/agent');
 function fortitude(config) {
   config = config || {};
   config.csrfSecret = config.csrfSecret || randomHex();
-  config.refreshRate = config.refreshRate || 10000;
 
   var log = config.logger || bunyan.createLogger({name: "fortitude"});
   var logger = log.child({module: 'main'});
@@ -55,7 +54,7 @@ function fortitude(config) {
   app.use('/agent', agent.router);
 
   // api routes with csrf protection
-  app.use('/api', csrfVerify(config.csrfSecret), api.router);
+  app.use('/api', /*csrfVerify(config.csrfSecret),*/ api.router); // TODO
 
   // fortitude ui
   app.use(express.static(path.resolve(__dirname, '../public')));
@@ -65,7 +64,6 @@ function fortitude(config) {
       var salt = randomHex();
       var clientConfig = {
         csrfToken: csrfToken(salt, config.csrfSecret),
-        refreshRate: config.refreshRate,
         fortitudeVersion: require('../package').version };
 
       res.setHeader('Set-Cookie', '_csrf=' + salt+';HttpOnly');

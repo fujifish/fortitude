@@ -97,8 +97,12 @@ export default class Store extends EventEmitter {
   startRefreshFor(methodName) {
     var _this = this;
     if (!this.isRefreshing(methodName))  {
-      this.scheduled[methodName] = setInterval(() => _this[methodName](), window.refreshRate);
+      this.scheduled[methodName] = setInterval(() => _this[methodName](), this.refreshRate(methodName));
     }
+  }
+
+  refreshRate(methodName) {
+    return 10000; // 10 sec
   }
 
   // stop performing 'methodName'
