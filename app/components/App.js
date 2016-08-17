@@ -50,15 +50,13 @@ class App extends Component {
         var nodesRefreshRate = $(`#${this.componentId} #nodesRefreshRate`).val();
         var nodeSyncEnabled = $(`#${this.componentId} #nodeSyncEnabled`)[0].checked;
 
-        if (nodesRefreshRate) {
-          try {
-            nodesRefreshRate = parseInt(nodesRefreshRate);
-            if (nodesRefreshRate >= 5) {
-              nodesStore.setNodesRefreshRate(nodesRefreshRate * 1000);
-            } else {
-              alert('nodes refresh rate must be greater than 5 sec');
-            }
-          } catch(e) { alert('invalid nodes refresh rate') }
+        nodesRefreshRate = parseInt(nodesRefreshRate);
+        if (isNaN(nodesRefreshRate)) {
+          alert('invalid nodes refresh rate');
+        } else if (nodesRefreshRate >= 5) {
+          nodesStore.setNodesRefreshRate(nodesRefreshRate * 1000);
+        } else {
+          alert('nodes refresh rate must be greater than 5 sec');
         }
 
         nodesStore.setNodeSyncEnabled(nodeSyncEnabled);
