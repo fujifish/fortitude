@@ -44,7 +44,7 @@ class App extends Component {
   }
 
   viewMounted() {
-    super.afterRender();
+    super.viewMounted();
     $(`#${this.componentId} a[data-toggle="control-sidebar"]`).on('click',() => {
       if(!$(`#${this.componentId} aside.control-sidebar-open`).length) {
         var nodesRefreshRate = $(`#${this.componentId} #nodesRefreshRate`).val();
