@@ -172,6 +172,25 @@ router.route('/nodes/commands')
     });
   });
 
+router.route('/nodes/commands/peek')
+  // get last command for the given node ids
+  .post(function(req, res) {
+    var nodeIds = req.body.ids.map(function(id) { return common.mongoSanitize(id) });
+    logger.info('Retrieving last commands for nodes: ' + nodeIds);
+    store.db().collection('commands', function(err, collection) {
+      if (err) {
+        return respondWithError(res, err);
+      }
+      var groupBy = {$group: { _id: "$node_id", status: { "$first": "$status" }}};
+      collection.aggregate([{$match: commandsNodeQuery(nodeIds)}, {$sort: {_id: -1}}, groupBy]).toArray(safeExecute(function(err, items) {
+        if (err) {
+          return respondWithError(res, err);
+        }
+        res.json({ success:true, commands: items });
+      }));
+    });
+  });
+
 // on routes that end in /nodes/:id
 // ----------------------------------------------------
 router.route('/nodes/:id')
@@ -600,6 +619,10 @@ function saveCommands(commands, cb) {
 
 function nodesQuery(nodeIds) {
   return { $or: nodeIds.map(function(id){ return { id: id }}) };
+}
+
+function commandsNodeQuery(nodeIds) {
+  return { $or: nodeIds.map(function(id){ return { node_id: id }}) };
 }
 
 function buildCmds(command, nodeIds, collection, cb) {

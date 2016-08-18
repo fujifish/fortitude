@@ -1,5 +1,6 @@
 import Box from 'components/Box';
 import template from 'views/nodes/nodeCommands';
+import commandStatusTemplate from 'views/nodes/commandStatus';
 import nodesStore from 'store/NodesStore';
 import routerStore from 'store/relax/RouterStore';
 
@@ -73,7 +74,8 @@ export default class NodeCommands extends Box {
 
   view() {
     const data = {
-      commands: nodesStore.state.nodeDetails.commands
+      commands: nodesStore.state.nodeDetails.commands,
+      commandStatus: nodesStore.state.nodeDetails.commands.map(c => commandStatusTemplate({status: c.status}))
     };
     return this.viewWithContent(template(data));
   }

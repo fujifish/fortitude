@@ -1,0 +1,28 @@
+<%
+    function commandStatus(status) {
+      var statusIcons = {
+        'pending': {
+          icon: 'fa-spinner fa-spin', color: 'bg-blue'
+        },
+        'error': {
+          icon: 'fa-remove', color: 'bg-red'
+        },
+        'success': {
+          icon: 'fa-check', color: 'bg-green'
+        },
+        'skipped': {
+          icon: 'fa-circle-o', color: 'bg-aqua'
+        },
+        'none': {
+          icon: '', color: 'text-muted'
+        },
+        'delivered': {
+          icon: 'fa-spinner fa-spin', color: 'bg-green'
+        }
+      };
+      status = statusIcons[status] ? status : 'none';
+      return statusIcons[status].icon + ' '  + statusIcons[status].color;
+    }
+%>
+
+<i class="fa <%= commandStatus(status) %>"></i>

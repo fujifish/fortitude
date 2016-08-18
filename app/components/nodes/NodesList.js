@@ -12,6 +12,8 @@ import removeButtonTemplate from 'views/nodes/nodeList/removeButton';
 import warningTemplate from 'views/nodes/nodeList/warning';
 import nodeName from 'views/nodes/nodeList/nodeName';
 import tags from 'views/nodes/nodeList/tags';
+import commandStatusTemplate from 'views/nodes/commandStatus';
+import statusTemplate from 'views/nodes/nodeList/status';
 
 export default class NodesList extends Box {
   constructor() {
@@ -60,6 +62,7 @@ export default class NodesList extends Box {
       { data: 'warning' },
       { data: 'name', name: 'name' },
       { data: 'tags', name: 'tags' },
+      { data: 'status' },
       { data: 'id', name: 'id' },
       { data: 'platform', name: 'info.platform' },
       { data: 'agentVersion', name: 'info.agentVersion' },
@@ -76,7 +79,7 @@ export default class NodesList extends Box {
       "lengthMenu": [10, 25, 50, 100, 250, 500],
       "columns": columns,
       "order": [[ columns.findIndex(c => c.name == order), orderDir ]],
-      "columnDefs": [{ "targets": [0,1,3,4,8], "sortable": false }],
+      "columnDefs": [{ "targets": [0,1,3,4,5,9], "sortable": false }],
       "pageLength": nodesStore.state.nodesList.length,
       "serverSide": true,
       "ajax" : this._fetchTableData.bind(this),
@@ -256,6 +259,7 @@ export default class NodesList extends Box {
         warning: warningTemplate({node: node}),
         name: nodeName({node: node}) || '',
         tags: tags({node: node}) || '',
+        status: statusTemplate({commandStatus: commandStatusTemplate({ status: node.lastCommand})}),
         id: nodeId,
         platform: node.info.platform || '',
         agentVersion: node.info.agentVersion || '',

@@ -107,10 +107,16 @@ class NodesStore extends Store {
         this.state.checkedNodeIds = this.state.checkedNodeIds.filter(id => !!this.nodes[id]);
         this.state.nodeActionLoading = false;
         this.state.nodesLoading = false;
+        return Object.keys(this.state.nodesList.nodes);
+      }).then(nodeIds => {
+        return this.makeRequest('POST', '/nodes/commands/peek', JSON.stringify({ ids: nodeIds }));
+      }).then(resp => {
+        resp.commands.forEach(c => { if(this.nodes[c._id]) this.nodes[c._id].lastCommand = c.status });
         this.commit();
       }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
-    });
+        this.commit();
+        throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+      });
   }
 
   fetchNodes(filters = {}) {

@@ -4,30 +4,6 @@
 <div class="box-body bg-gray-light">
   <ul class="timeline">
     <%
-    function commandStatus(status) {
-      var statusIcons = {
-        'pending': {
-          icon: 'fa-spinner fa-spin', color: 'bg-blue'
-        },
-        'error': {
-          icon: 'fa-remove', color: 'bg-red'
-        },
-        'success': {
-          icon: 'fa-check', color: 'bg-green'
-        },
-        'skipped': {
-          icon: 'fa-circle-o', color: 'bg-aqua'
-        },
-        'none': {
-          icon: '', color: 'text-muted'
-        },
-        'delivered': {
-          icon: 'fa-spinner fa-spin', color: 'bg-green'
-        }
-      };
-      status = statusIcons[status] ? status : 'none';
-      return statusIcons[status].icon + ' '  + statusIcons[status].color;
-    }
 
     for (var index = 0; index < commands.length; index++) {
       var command = commands[index];
@@ -45,7 +21,7 @@
       <% } %>
 
       <li>
-        <i class="fa <%= commandStatus(command.status) %>"></i>
+        <%- commandStatus[index] %>
         <div class="timeline-item">
           <span class="time">
             <i class="fa fa-clock-o"></i> <%= time.getUTCDate() %>.<%= (time.getUTCMonth() + 1) %>.<%= time.getUTCFullYear() %>, <%= time.getUTCHours() %>:<%= time.getUTCMinutes() %>
