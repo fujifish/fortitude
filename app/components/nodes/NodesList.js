@@ -4,7 +4,6 @@ import routerStore from 'store/relax/RouterStore';
 import ConfirmDialog from 'components/ConfirmDialog';
 import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog';
 import AddNodesTagsDialog from 'components/nodes/AddNodesTagsDialog';
-import common from '../../common';
 
 import actionsTemplate from 'views/nodes/actions';
 import tableTemplate from 'views/nodes/nodeList/table';
@@ -259,7 +258,7 @@ export default class NodesList extends Box {
         checkbox: checkboxTemplate({id: nodeId, checked: (nodesStore.state.checkedNodeIds.indexOf(nodeId) != -1)}),
         warning: warningTemplate({node: node}),
         name: nodeName({node: node}) || '',
-        tags: tags({node: node, common: common}) || '',
+        tags: tags({node: node}) || '',
         status: statusTemplate({commandStatus: commandStatusTemplate({ status: node.lastCommand})}),
         id: nodeId,
         platform: node.info.platform || '',

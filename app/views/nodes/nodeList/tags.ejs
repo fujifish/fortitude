@@ -11,13 +11,15 @@
     <% } %>
 
     <%
-    var currentStateTags = {};
-    node.state.current.forEach(function(s){ currentStateTags[s.name] = s.version });
-    var tags = common.mergeObjects(node.info.tags, currentStateTags);
-    keys = Object.keys(tags);
-    for (var j = 0; j < keys.length; ++j) {
+    var tags = Object.keys(node.info.tags || {}).map(function(k) {
+        return { key: k, val: node.info.tags[k] };
+    }).concat(node.state.current.map(function(s) {
+       return { key: s.name, val: s.version };
+    }));
+
+    for (var j = 0; j < tags.length; ++j) {
     %>
-    <span class="label bg-blue"  style="line-height: 24px; margin-left: 3px;"><%= keys[j] %>:<%= tags[keys[j]] %></span>
+    <span class="label bg-blue"  style="line-height: 24px; margin-left: 3px;"><%= tags[j]['key'] %>:<%= tags[j]['val'] %></span>
     <% } %>
 
 </td>
