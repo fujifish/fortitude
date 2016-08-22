@@ -93,6 +93,11 @@ class NodesStore extends Store {
   }
 
   _handleNodesResult(promise) {
+    function err(ex) {
+      this.commit();
+      throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
+    }
+
     promise
       .then(resp => {
         if (resp.draw < this.state.nodesList.metaData.draw) return;
@@ -107,16 +112,16 @@ class NodesStore extends Store {
         this.state.checkedNodeIds = this.state.checkedNodeIds.filter(id => !!this.nodes[id]);
         this.state.nodeActionLoading = false;
         this.state.nodesLoading = false;
-        return Object.keys(this.state.nodesList.nodes);
-      }).then(nodeIds => {
-        return this.makeRequest('POST', '/nodes/commands/peek', JSON.stringify({ ids: nodeIds }));
-      }).then(resp => {
-        resp.commands.forEach(c => { if(this.nodes[c._id]) this.nodes[c._id].lastCommand = c.status });
-        this.commit();
-      }).catch(ex => {
-        this.commit();
-        throw new Error("Oops! Something went wrong and we couldn't create your nodes. Ex: " + ex.message);
-      });
+
+        var ids = Object.keys(this.state.nodesList.nodes);
+        if (ids) {
+          this.makeRequest('POST', '/nodes/commands/peek', JSON.stringify({ ids: ids }))
+            .then(resp => {
+              resp.commands.forEach(c => { if (this.nodes[c._id]) this.nodes[c._id].lastCommand = c.status });
+              this.commit();
+            }).catch(err);
+        }
+      }).catch(err);
   }
 
   fetchNodes(filters = {}) {

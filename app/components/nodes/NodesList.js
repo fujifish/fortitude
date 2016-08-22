@@ -24,6 +24,8 @@ export default class NodesList extends Box {
     });
     
     nodesStore.on('nodesList.nodes.*', () => {
+      if (this.tableDrawId == nodesStore.state.nodesList.metaData.draw) return;
+      this.tableDrawId = nodesStore.state.nodesList.metaData.draw;
       this.tabelDraw({
         data: this._renderServerNodes(nodesStore.nodes),
         draw: nodesStore.state.nodesList.metaData.draw,
@@ -84,7 +86,7 @@ export default class NodesList extends Box {
       "serverSide": true,
       "ajax" : this._fetchTableData.bind(this),
     }).on('draw.dt', this._tableHandlers.bind(this))
-      .on('preDrawCallback', this._tableHandlersOff.bind(this));
+      .on('preDraw.dt', this._tableHandlersOff.bind(this));
 
 
     // search table handler
@@ -187,6 +189,14 @@ export default class NodesList extends Box {
     $(`#${this.componentId} .dataTables_filter .input-group input`).focus();
   }
 
+  _tableHandlersOff() {
+    $(`#${this.componentId} table [data-toggle="popover"]`).off();
+    $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
+    $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
+    $(`#${this.componentId} button[name='btRemoveNode']`).off();
+    $(`#${this.componentId} .badge.remove`).off();
+  }
+
   _tableHandlers() {
     var _this = this;
     $(`#${this.componentId} a[name='btSelectItemNodes']`).click(function(event) {
@@ -227,14 +237,6 @@ export default class NodesList extends Box {
     });
 
     $(`#${this.componentId} table [data-toggle="popover"]`).popover();
-  }
-
-  _tableHandlersOff() {
-    $(`#${this.componentId} table [data-toggle="popover"]`).off();
-    $(`#${this.componentId} a[name='btSelectItemNodes']`).off();
-    $(`#${this.componentId} input:checkbox[name='checkNode']`).off();
-    $(`#${this.componentId} button[name='btRemoveNode']`).off();
-    $(`#${this.componentId} .badge.remove`).off();
   }
   
   _fetchTableData(data, cb, settings) {

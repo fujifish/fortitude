@@ -175,7 +175,11 @@ router.route('/nodes/commands')
 router.route('/nodes/commands/peek')
   // get last command for the given node ids
   .post(function(req, res) {
-    var nodeIds = req.body.ids.map(function(id) { return common.mongoSanitize(id) });
+    var nodeIds = req.body.ids && req.body.ids.map(function(id) { return common.mongoSanitize(id) }) || [];
+    if (!nodeIds.length) {
+      return res.json({ success: true, commands: [] });
+    }
+
     logger.info('Retrieving last commands for nodes: ' + nodeIds);
     store.db().collection('commands', function(err, collection) {
       if (err) {
