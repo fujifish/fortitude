@@ -26,7 +26,7 @@ module.exports.timeSince = (date) => {
 };
 
 // Overwrites slaveObj's values with masterObj's and adds masterObj's if non existent in slaveObj
-module.exports.mergeObjects = function(slaveObj, masterObj){
+module.exports.mergeObjects = function(slaveObj ={}, masterObj = {}) {
   var obj3 = {};
   for (var attrname in slaveObj) { obj3[attrname] = slaveObj[attrname]; }
   for (var attrname in masterObj) { obj3[attrname] = masterObj[attrname]; }
