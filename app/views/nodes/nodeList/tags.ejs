@@ -21,7 +21,8 @@
     <% } %>
 
     <% node.state.current.forEach(function(s) { %>
-        <span class="label bg-green"  style="line-height: 24px; margin-left: 3px;"><%= s.name %>:<%= s.version %></span>
+        <% var stopped = !(s.state && s.state.start && s.state.start.data && s.state.start.data.started) %>
+        <span class="label bg-<%- stopped ? 'red' : 'green' %>"  style="line-height: 24px; margin-left: 3px;"><%= s.name %>:<%= s.version %><%= stopped ? ' * ' : '' %></span>
     <% }); %>
 
 </td>
