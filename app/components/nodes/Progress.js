@@ -3,21 +3,22 @@ import template from 'views/nodes/progress';
 import routerStore from 'store/relax/RouterStore';
 
 export default class Progress extends Component{
-  constructor(title, used, total) {
+  constructor(title) {
     super(title.replace(/ /g, '-'));
-    this.used = used;
     this.title = title;
-    this.total = total;
-
-    // this needs to change to after view (initial) is called
-    routerStore.on('path', diff => {
+    this._togglePopover = function(diff) {
       var oldPath = diff.lhs;
       if (oldPath.indexOf('/nodes#') != -1) {
         $(`#${this.componentId} [data-toggle="popover"]`).off();
       } else if (routerStore.isNodePage()) {
         $(`#${this.componentId} [data-toggle="popover"]`).popover();
       }
-    });
+    }.bind(this);
+  }
+
+  setProgress(used, total) {
+    this.used = used;
+    this.total = total;
   }
 
   setType(type) {
@@ -31,6 +32,9 @@ export default class Progress extends Component{
   }
 
   view() {
+    routerStore.off('path', this._togglePopover);
+    routerStore.on('path', this._togglePopover);
+
     var data = {
       title: this.title,
       used: this.used,
@@ -41,5 +45,4 @@ export default class Progress extends Component{
     };
     return template(data);
   }
-
 }
