@@ -14,7 +14,21 @@
   <h5 class="text-uppercase text-gray">No Entries</h5>
   <% } else { %>
   <%
-    for (var i = 0; i < states.length; ++i) {
+    function sortedIndexes(toSort) {
+      var objAndIdx = [];
+      for (var i = 0; i < toSort.length; i++) {
+        objAndIdx[i] = [toSort[i], i];
+      }
+      objAndIdx.sort(function(left, right) {
+        return left[0].name < right[0].name ? -1 : 1;
+      });
+      var sortedIndexes = [];
+      for (var j = 0; j < objAndIdx.length; j++) {
+        sortedIndexes.push(objAndIdx[j][1]);
+      }
+      return sortedIndexes;
+    }
+    sortedIndexes(states).forEach(function(i) {
       var state = states[i];
   %>
   <div class="info-box" style="position: relative" name="StateOfModuleInfoBox" data-index="<%= i %>">
@@ -43,6 +57,6 @@
       </div>
     </div>
   </div>
-  <% } } %>
+  <% })} %>
 </div>
 
