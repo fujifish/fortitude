@@ -82,6 +82,11 @@ router.route('/nodes')
         filters['$and'].push({ $or: orFilters });
       });
 
+      if (req.query.lastSeenBefore) {
+        if(!filters['$and']) filters['$and'] = [];
+        filters['$and'].push({ lastSync: {$lt: new Date(req.query.lastSeenBefore)}});
+      }
+
       var perPage = parseInt(req.query.length) || 1000;
       var offset = parseInt(req.query.start) || 0;
 

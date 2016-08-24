@@ -125,6 +125,17 @@ export default class NodesList extends Box {
           nodesStore.uncheckAllNodes();
       }
     });
+
+    // problems only filter
+    $(`#${this.componentId} table .filter-problems`).click(function(event) {
+      if ($(this).hasClass('text-yellow')) {
+        $(this).removeClass('text-yellow').addClass('text-gray');
+        nodesStore.fetchNodes({ problemsOnly: false });
+      } else {
+        $(this).removeClass('text-gray').addClass('text-yellow');
+        nodesStore.fetchNodes({ problemsOnly: true });
+      }
+    });
   }
 
   beforeRender() {
@@ -135,6 +146,7 @@ export default class NodesList extends Box {
     $(`#${this.componentId} table`).off('draw.dt');
     $(`#${this.componentId} table`).off('preDrawCallback');
     $(`#${this.componentId} table`).off('preXhr');
+    $(`#${this.componentId} table .filter-problems`).off();
     $(`#${this.componentId} .dataTables_filter input`).off();
     this._tableHandlersOff();
   }
@@ -160,7 +172,7 @@ export default class NodesList extends Box {
   }
 
   view() {
-    return this.viewWithContent(tableTemplate({}));
+    return this.viewWithContent(tableTemplate({ problemsOnly: nodesStore.state.nodesList.problemsOnly }));
   }
 
   show() {
