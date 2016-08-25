@@ -5,19 +5,12 @@
   </div>
 </div>
 <div class="box-body">
-  <table class="table table-striped">
-    <tbody>
-    <% for (var index = 0; index < modules.length; index++ ){
-        var module = modules[index];
-    %>
-    <tr>
-      <td><input name="btSelectItemModules" type="radio" <%= selectedIndex === index ? 'checked' : ''%>/></td>
-      <td><%= module.name %></td>
-      <td><%= module.version %></td>
-      <td><a href="#" data-index="<%= index %>" name="RemoveModule" data-toggle="tooltip" data-placement="top" title="Remove"
-             ><i class="glyphicon glyphicon-remove"></i></a></td>
-    </tr>
-    <% } %>
-    </tbody>
-  </table>
+  <div class="row">
+    <div class="col-md-6">
+      <%- moduleNames %>
+    </div>
+    <div class="col-md-6">
+      <%- moduleVersions %>
+    </div>
+  </div>
 </div>

@@ -5,9 +5,11 @@ import fontawesome from 'font-awesome/css/font-awesome.css';
 import appcss from 'css/app.css'
 import favicon from 'images/favicon.png'
 import datatables_bs_css from 'datatables.net-bs/css/dataTables.bootstrap.css';
+import select2css from 'admin-lte/plugins/select2/select2.min.css'
 
 import bootstrapjs from 'admin-lte/bootstrap/js/bootstrap';
 import icheck from 'admin-lte/plugins/iCheck/icheck.js';
+import select2js from 'admin-lte/plugins/select2/select2.min.js';
 import adminltejs from 'admin-lte/dist/js/app';
 import jsonform from 'json-form/lib/jsonform';
 import datatables from 'datatables.net/js/jquery.dataTables';

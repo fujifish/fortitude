@@ -587,7 +587,14 @@ router.route('/modules/:name/:version')
           if (err) {
             return respondWithError(res, err);
           }
-          res.json(items);
+          res.json(items.map(function(i) {
+            i.name = i._id;
+            delete i._id;
+            i.versions.forEach(function(v) {
+              delete v._id
+            });
+            return i;
+          }));
         }));
       }));
     });

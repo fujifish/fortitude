@@ -2,33 +2,48 @@ import Store from 'store/relax/Store'
 
 class ModulesStore extends Store {
   constructor() {
-    super({modules: [], selectedIndex: -1, modulesLoading: false, addingModule: false});
-  }
-
-  flatModules(){
-    return this._flattenModulesData(this.state.modules);
-  }
-
-  _flattenModulesData(modules) {
-    let result = [];
-    modules.forEach(function(mod) {
-      result = result.concat(mod.versions.sort());
+    super({
+      modules: [],
+      selectedModule: null,
+      selectedVersion: null,
+      modulesLoading: false,
+      addingModule: false,
+      modulesSyncedAt: null,
     });
-    return result;
+  }
+
+  get modules() {
+    return this.state.modules;
+  }
+
+  setSelectedModule(moduleName) {
+    this.state.selectedModule = moduleName;
+    this.commit();
+  }
+
+  setSelectedVersion(version) {
+    this.state.selectedVersion = version;
+    this.commit();
+  }
+
+  getSelectedVersion() {
+    var module = this.modules && this.modules.filter(m => m.name == this.state.selectedModule)[0];
+    return module && module.versions.filter(v => v.version == this.state.selectedVersion)[0];
   }
 
   _handleModulesResult(promise) {
     promise
-        .then(modules => {
-          this.state.modules = modules;
-          this.state.selectedIndex = 0;
-          this.state.modulesLoading = false;
-          this.commit();
-        }).catch(ex => {
-      throw new Error("Oops! Something went wrong and we couldn't create your modules. Ex: " + ex.message);
-    })
+      .then(modules => {
+        this.state.modules = modules;
+        this.state.modulesLoading = false;
+        this.state.selectedVersion = null;
+        this.state.selectedModule = null;
+        this.state.modulesSyncedAt = (new Date()).getTime();
+        this.commit();
+      }).catch(ex => {
+        throw new Error("Oops! Something went wrong and we couldn't create your modules. Ex: " + ex.message);
+      })
   }
-
 
   fetchModules() {
     this.state.modulesLoading = true;
@@ -43,11 +58,6 @@ class ModulesStore extends Store {
 
   closeAddModuleDialog() {
     this.state.addingModule = false;
-    this.commit();
-  }
-
-  setSelectedIndex(selectedIndex) {
-    this.state.selectedIndex = selectedIndex;
     this.commit();
   }
 

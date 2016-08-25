@@ -1,40 +1,25 @@
 import template from "views/modules/modulesList";
 import modulesStore from 'store/ModulesStore';
 import Box from 'components/Box';
-import ConfirmDialog from 'components/ConfirmDialog';
+import Select from 'components/modules/Select'
+import common from '../../common'
 
 export default class ModulesList extends Box {
   constructor() {
     super('ModulesList', {style: 'primary'});
-    modulesStore.on('modules*', modules => {
+    modulesStore.on('modulesSyncedAt', modules => {
       this.render();
     });
     modulesStore.on('modulesLoading', loading => {
       this.renderLoading(loading.rhs);
     });
-    this.deleteModuleConfirmDialog = new ConfirmDialog('deleteModule');
   }
 
   _handlers() {
     $("#moduleListAddButton").click(()=> {
       modulesStore.openAddModuleDialog();
     });
-    $(`#${this.componentId} input:radio[name='btSelectItemModules']`).on('change', ()=> {
-      let radioButtons = $(`#${this.componentId} input:radio[name='btSelectItemModules']`);
-      var selectedIndex = radioButtons.index(radioButtons.filter(':checked'));
-      modulesStore.setSelectedIndex(selectedIndex);
-    });
-    let _this = this;
-    $(`#${this.componentId} a[name='RemoveModule']`).click(function() {
-      let index = parseInt($(this).data('index'));
-      let module = modulesStore.flatModules()[index];
-      _this.deleteModuleConfirmDialog.show({
-        ok: ()=> {
-          modulesStore.deleteModule(module.name, module.version);
-        },
-        text: `Remove module ${module.name}@${module.version}?`
-      });
-    });
+    this._populateModules();
   }
 
   viewMounted() {
@@ -46,7 +31,8 @@ export default class ModulesList extends Box {
   beforeRender() {
     super.beforeRender();
     $("#moduleListAddButton").off();
-    $(`#${this.componentId} input:radio[name='btSelectItemModules']`).off();
+    $(`#${this.componentId} .select2.name`).off();
+    $(`#${this.componentId} .select2.version`).off();
   }
 
   afterRender() {
@@ -54,14 +40,50 @@ export default class ModulesList extends Box {
     this._handlers();
   }
 
-  initialView() {
-    return `${super.initialView()}${this.deleteModuleConfirmDialog.initialView()}`;
+  view() {
+    this.moduleNames = new Select('Name');
+    this.moduleVersions = new Select('Version');
+    return this.viewWithContent(template({
+      moduleNames: this.moduleNames.initialView(),
+      moduleVersions: this.moduleVersions.initialView()
+    }));
   }
 
-  view() {
-    return this.viewWithContent(template({
-      modules: modulesStore.flatModules(),
-      selectedIndex: modulesStore.state.selectedIndex
-    }));
+  _populateVersion() {
+    var moduleName = $(`#${this.componentId} .select2.name`).val();
+    var module = modulesStore.modules.filter(m => m.name == moduleName)[0] || (modulesStore.modules.sort())[0];
+    var versions;
+    if (module) {
+      versions = module.versions.map(v => v.version).sort(common.versionCompare);
+      this.moduleVersions.setItems(versions);
+    }
+
+    $(`#${this.componentId} .select2.version`).off();
+
+    this.moduleVersions.render();
+    this.moduleVersions.init();
+    // set selected version as the first item
+    modulesStore.setSelectedVersion(versions && versions[0] || null);
+    $(`#${this.componentId} .select2.version`).change(function() {
+      modulesStore.setSelectedVersion($(this).val());
+    });
+  }
+
+  _populateModules() {
+    var modules = modulesStore.modules.map(m => m.name ).sort();
+
+    $(`#${this.componentId} .select2.name`).off();
+    this.moduleNames.setItems(modules);
+    this.moduleNames.render();
+    this.moduleNames.init();
+
+    let _this = this;
+    $(`#${this.componentId} .select2.name`).change(function() {
+      modulesStore.setSelectedModule($(this).val());
+      _this._populateVersion();
+    });
+
+    modulesStore.setSelectedModule(modules[0]);
+    this._populateVersion();
   }
 }
