@@ -10,6 +10,9 @@ export default class ModulesList extends Box {
     modulesStore.on('modulesSyncedAt', modules => {
       this.render();
     });
+    modulesStore.on('selectedModule', modules => {
+      this._populateVersion();
+    });
     modulesStore.on('modulesLoading', loading => {
       this.renderLoading(loading.rhs);
     });
@@ -24,7 +27,6 @@ export default class ModulesList extends Box {
 
   viewMounted() {
     super.viewMounted();
-    this._handlers();
     modulesStore.fetchModules();
   }
 
@@ -59,31 +61,24 @@ export default class ModulesList extends Box {
     }
 
     $(`#${this.componentId} .select2.version`).off();
-
     this.moduleVersions.render();
     this.moduleVersions.init();
-    // set selected version as the first item
-    modulesStore.setSelectedVersion(versions && versions[0] || null);
     $(`#${this.componentId} .select2.version`).change(function() {
       modulesStore.setSelectedVersion($(this).val());
     });
+    modulesStore.setSelectedVersion(versions && versions[0] || null);
   }
 
   _populateModules() {
-    var modules = modulesStore.modules.map(m => m.name ).sort();
+    var modules = modulesStore.modules.map(m => m.name).sort();
 
-    $(`#${this.componentId} .select2.name`).off();
     this.moduleNames.setItems(modules);
+    $(`#${this.componentId} .select2.name`).off();
     this.moduleNames.render();
     this.moduleNames.init();
-
-    let _this = this;
     $(`#${this.componentId} .select2.name`).change(function() {
       modulesStore.setSelectedModule($(this).val());
-      _this._populateVersion();
     });
-
     modulesStore.setSelectedModule(modules[0]);
-    this._populateVersion();
   }
 }

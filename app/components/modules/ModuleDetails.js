@@ -6,7 +6,10 @@ import ConfirmDialog from 'components/ConfirmDialog';
 export default class ModuleDetails extends Box {
   constructor() {
     super('ModuleDetails', {style: 'primary'});
-    modulesStore.on('selectedVersion', selectedIndex => {
+    modulesStore.on('selectedVersion', diff => {
+      this.render();
+    });
+    modulesStore.on('selectedModule', diff => {
       this.render();
     });
     this.deleteModuleConfirmDialog = new ConfirmDialog('deleteModule');

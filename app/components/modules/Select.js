@@ -17,15 +17,6 @@ export default class Select extends Component {
     $(`#${this.componentId} .select2`).select2();
   }
 
-  afterRender() {
-    $(`#${this.componentId} .select2`).select2();
-  }
-
-  viewMounted() {
-    super.viewMounted();
-    $(`#${this.componentId} .select2`).select2();
-  }
-
   view() {
     return template({ name: this.name, items: this.items });
   }
