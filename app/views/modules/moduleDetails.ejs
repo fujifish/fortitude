@@ -1,10 +1,14 @@
+<% contentStr = content ? JSON.stringify(content, null, 2) : "N/A" %>
 <div class="box-header with-border">
   <h3 class="box-title">Module Details</h3>
   <div class="box-tools pull-right">
+    <button type="button" id="cpyModule" class="btn btn-small btn-default" data-toggle="tooltip" title="Copy">
+      <i class="fa fa-clipboard"></i>
+    </button>
     <button type="button" id="moduleRemButton" class="btn btn-small btn-default" data-toggle="tooltip" title="Delete"><i class="fa fa-remove"></i></button>
   </div>
 </div>
 <div class="box-body">
-  <pre style="margin: 0 16px 16px 16px; max-height: 70%;"><%- content ? JSON.stringify(content, null, 2) : "N/A" %></pre>
+  <pre id="dddd" style="margin: 0 16px 16px 16px; max-height: 70%;"><%- contentStr %></pre>
 </div>
 

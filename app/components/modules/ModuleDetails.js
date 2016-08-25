@@ -2,6 +2,7 @@ import Box from 'components/Box'
 import template from 'views/modules/moduleDetails';
 import modulesStore from 'store/ModulesStore';
 import ConfirmDialog from 'components/ConfirmDialog';
+import Clipboard from 'clipboard'
 
 export default class ModuleDetails extends Box {
   constructor() {
@@ -18,6 +19,7 @@ export default class ModuleDetails extends Box {
   beforeRender() {
     super.beforeRender();
     $("#moduleRemButton").off();
+    this.clipboard && this.clipboard.destroy();
   }
 
   afterRender() {
@@ -30,6 +32,12 @@ export default class ModuleDetails extends Box {
         },
         text: `Remove module ${module.name}@${module.version}?`
       });
+    });
+    this.clipboard = new Clipboard('#cpyModule', {
+      text: () => {
+        var moduleVersion = modulesStore.getSelectedVersion();
+        return moduleVersion && JSON.stringify(moduleVersion);
+      }
     });
   }
 
