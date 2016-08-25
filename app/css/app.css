@@ -33,3 +33,7 @@
 .metadata:hover .badge.remove, .badge.remove:hover {
     visibility: visible;
 }
+
+span.selection > .select2-selection.select2-selection--single {
+    height: 34px;
+}
