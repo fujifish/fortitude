@@ -1,5 +1,6 @@
 import NodeState from 'components/nodes/NodeState';
 import nodesStore from 'store/NodesStore';
+import routerStore from 'store/relax/RouterStore';
 
 export default class NodePlannedState extends NodeState {
   constructor(configureDialog) {
@@ -10,6 +11,12 @@ export default class NodePlannedState extends NodeState {
     
     nodesStore.on('nodesList.nodes.*.planned*', () => {
       this.render();
+    });
+
+    routerStore.on('path', diff => {
+      if (diff.lhs && diff.lhs.indexOf('/nodes#') != -1) {
+        nodesStore.resetApplyStatePending();
+      }
     });
   }
 }

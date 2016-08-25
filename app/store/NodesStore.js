@@ -170,6 +170,11 @@ class NodesStore extends Store {
     this.state.nodeDetails.commandsSyncedAt = null;
   }
 
+  resetApplyStatePending() {
+    this.state.nodeDetails.applyStatePending = false;
+    this.commit();
+  }
+
   cancelPendingCommand() {
     let selected = this.selectedNode;
     if (!selected) {
