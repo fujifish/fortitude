@@ -42,44 +42,91 @@ router.route('/nodes')
       // filter these fields for 'search' parameter.
       const searchableFields = ['id', 'name', 'info.agentVersion'];
       var searchTerm = common.mongoSanitize(req.query.search);
-      var orFilters = [], filters = {};
+      var orFilters = [], andFilters = [], filters = {}, filter = {};
       if (searchTerm) {
-        searchableFields.forEach(function(field) {
-          var filter = {};
-          filter[field] = new RegExp('^' + searchTerm + '.*', 'i');
-          orFilters.push(filter);
-        });
-        if(!filters['$and']) filters['$and'] = [];
-        filters['$and'].push({ $or: orFilters });
+        // search nodes without 'searchTerm'
+        if (searchTerm[0] == '-') {
+          searchableFields.forEach(function(field) {
+            filter = {};
+            filter[field] = { $not: new RegExp('^' + searchTerm.substring(1) + '.*', 'i') };
+            andFilters.push(filter);
+          });
+          if(!filters['$and']) filters['$and'] = [];
+          filters['$and'] = filters['$and'].concat(andFilters);
+        }
+        // search nodes with 'searchTerm'
+        else {
+          searchableFields.forEach(function(field) {
+            filter = {};
+            filter[field] = new RegExp('^' + searchTerm + '.*', 'i');
+            orFilters.push(filter);
+          });
+          if(!filters['$and']) filters['$and'] = [];
+          filters['$and'].push({ $or: orFilters });
+        }
       }
 
       // also filter by 'tag' parameter (includes tags, metadata and current state).
+      // ( tag is a string of Name[:value] Or an array of Name[:value] elements )
       if (req.query.tag && !Array.isArray(req.query.tag)) {
         req.query.tag = [req.query.tag];
       }
       req.query.tag && req.query.tag.forEach(function(tag) {
         tag = common.mongoSanitize(tag);
-        var filter = {}, m = tag.match(/^(.+):(.+)$/);
-        orFilters = [];
+        var m = tag.match(/^(.+):(.+)$/);
+        orFilters = [], andFilters = [], filter = {};
         if (m) {
-          filter['info.tags.' + m[1]] = new RegExp('^' + m[2], 'i');
-          orFilters.push(filter);
-          filter = {};
-          filter['metadata.' + m[1]] = new RegExp('^' + m[2], 'i');
-          orFilters.push(filter);
-          filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + m[1], 'i'), version: new RegExp('^' + m[2], 'i')}}};
-          orFilters.push(filter);
-        } else {
-          filter['info.tags.' + tag] = new RegExp('^.*$');
-          orFilters.push(filter);
-          filter = {};
-          filter['metadata.' + tag] = new RegExp('^.*$');
-          orFilters.push(filter);
-          filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + tag, 'i'), version: new RegExp('^.*$')}}};
-          orFilters.push(filter);
+          // search nodes without tag:value
+          if(m[1][0] == '-') {
+            filter['info.tags.' + m[1].substring(1)] = { $not: new RegExp('^' + m[2], 'i') };
+            andFilters.push(filter);
+            filter = {};
+            filter['metadata.' + m[1].substring(1)] = { $not: new RegExp('^' + m[2], 'i') };
+            andFilters.push(filter);
+            filter = {'state.current': { $not: { $elemMatch: {'name': new RegExp('^' + m[1].substring(1), 'i'), version: new RegExp('^' + m[2], 'i')}}}};
+            andFilters.push(filter);
+            if(!filters['$and']) filters['$and'] = [];
+            filters['$and'] = filters['$and'].concat(andFilters);
+          }
+          // search nodes with tag:value
+          else {
+            filter['info.tags.' + m[1]] = new RegExp('^' + m[2], 'i');
+            orFilters.push(filter);
+            filter = {};
+            filter['metadata.' + m[1]] = new RegExp('^' + m[2], 'i');
+            orFilters.push(filter);
+            filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + m[1], 'i'), version: new RegExp('^' + m[2], 'i')}}};
+            orFilters.push(filter);
+            if(!filters['$and']) filters['$and'] = [];
+            filters['$and'].push({ $or: orFilters });
+          }
         }
-        if(!filters['$and']) filters['$and'] = [];
-        filters['$and'].push({ $or: orFilters });
+        else {
+          // search nodes without a tag (any value)
+          if(tag[0] == '-') {
+            filter['info.tags.' + tag.substring(1)] = { $exists: false };
+            andFilters.push(filter);
+            filter = {};
+            filter['metadata.' + tag.substring(1)] = { $exists: false };
+            andFilters.push(filter);
+            filter = { 'state.current.name': { $not: new RegExp('^' + tag.substring(1), 'i')}};
+            andFilters.push(filter);
+            if(!filters['$and']) filters['$and'] = [];
+            filters['$and'] = filters['$and'].concat(andFilters);
+          }
+          // search nodes with tag (any value)
+          else {
+            filter['info.tags.' + tag] = { $exists: true };
+            orFilters.push(filter);
+            filter = {};
+            filter['metadata.' + tag] = { $exists: true };
+            orFilters.push(filter);
+            filter = {'state.current': {$elemMatch: { 'name': new RegExp('^' + tag, 'i') }}};
+            orFilters.push(filter);
+            if(!filters['$and']) filters['$and'] = [];
+            filters['$and'].push({ $or: orFilters });
+          }
+        }
       });
 
       if (req.query.lastSeenBefore) {

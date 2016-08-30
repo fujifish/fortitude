@@ -1,0 +1,61 @@
+<div class="input-group margin">
+    <div class="input-group-btn">
+        <button aria-expanded="true" id="table-actions" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Actions
+            <span style="margin-left: 2px;" class="fa fa-caret-down"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="#" name="aUpdateNode">Update Version</a></li>
+            <li><a href="#" name="aAddTags">Update Tags</a></li>
+            <li class="divider"></li>
+            <li><a href="#" name="aRemoveNode">Delete Nodes</a></li>
+        </ul>
+    </div>
+
+    <input class="form-control" placeholder="" type="text">
+    <a class="input-group-addon"
+          data-toggle="popover" data-placement="bottom" title="Query Language" data-html="true" data-trigger="focus" href="#"
+          data-template='
+           <div class="popover" style="width: 800px;left:0px;max-width:200%" role="tooltip">
+              <div class="arrow"></div>
+              <h3 class="popover-title bg-blue"></h3>
+              <div class="popover-content"></div>
+            </div>'
+          data-content='
+          <table class="table table-bordered">
+            <thead>
+            </thead>
+            <tbody>
+              <tr>
+                <td>searchTerm</td>
+                <td><p class="text-muted">Search on id, name and agentVersion</p></td>
+              </tr>
+              <tr>
+                <td>tagName:value</td>
+                <td><p class="text-muted">Serach on installed modules, tags and metadata (all tags in the table)</p></td>
+              </tr>
+              <tr>
+                <td>tagName:*</td>
+                <td><p class="text-muted">Search for all nodes that have this tagName with whatever value</p></td>
+              </tr>
+              <tr>
+                <td>-searchTerm</td>
+                <td><p class="text-muted">Search for nodes NOT containing this value in id, name and agentVersion</p></td>
+              </tr>
+              <tr>
+                <td>-tagName:*</td>
+                <td><p class="text-muted">Search for nodes NOT having this tag</p></td>
+              </tr>
+              <tr>
+                <td>-tagName:0.1</td>
+                <td><p class="text-muted">Search for nodes NOT having this tag with a version of 0.1.*</p></td>
+              </tr>
+              <tr>
+                <td>logstash:* -logstash:1</td>
+                <td><p class="text-muted">Space is AND operator (search for node having logstash version other than 1.*)</p></td>
+              </tr>
+            </tbody>
+          </table>' >
+
+        <i class="fa fa-question" title="query language"></i>
+    </a>
+</div>

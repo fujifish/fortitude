@@ -4,12 +4,11 @@ import routerStore from 'store/relax/RouterStore';
 import ConfirmDialog from 'components/ConfirmDialog';
 import UpdateNodesVersionDialog from 'components/nodes/UpdateNodesVersionDialog';
 import AddNodesTagsDialog from 'components/nodes/AddNodesTagsDialog';
-
-import actionsTemplate from 'views/nodes/actions';
 import tableTemplate from 'views/nodes/nodeList/table';
 import checkboxTemplate from 'views/nodes/nodeList/checkbox';
 import removeButtonTemplate from 'views/nodes/nodeList/removeButton';
 import warningTemplate from 'views/nodes/nodeList/warning';
+import searchTemplate from 'views/nodes/search';
 import nodeName from 'views/nodes/nodeList/nodeName';
 import tags from 'views/nodes/nodeList/tags';
 import commandStatusTemplate from 'views/nodes/commandStatus';
@@ -74,7 +73,7 @@ export default class NodesList extends Box {
 
     $(`#${this.componentId} table`).DataTable({
       "pagingType": "full_numbers",
-      "dom": "<'row'<'col-sm-9'<'pull-left'f>><'col-sm-3'<'pull-right'l>>>" +
+      "dom": "<'row'<'col-sm-9'<'pull-left table-filter'>><'col-sm-3'<'pull-right'l>>>" +
       "<'row'<'col-sm-12'tr>>" +
       "<'row'<'col-sm-5'i><'col-sm-7'p>>",
       "oLanguage": { "sSearch": '' },
@@ -89,16 +88,18 @@ export default class NodesList extends Box {
       .on('preDraw.dt', this._tableHandlersOff.bind(this));
 
 
-    // search table handler
-    $(`#${this.componentId} .dataTables_filter input`).off().keyup(e => {
+
+    // append table filters (search and actions) and set handlers
+    $(`#${this.componentId} .table-filter`).append(searchTemplate);
+    $(`#${this.componentId} .table-filter input`).keyup(e => {
       var val = $(e.target).val();
       if (e.keyCode == 13 || (e.keyCode == 8 && !val)) {
         this._queryNodes(val);
       }
     });
+    $(`#${this.componentId} .table-filter [data-toggle="popover"]`).popover();
 
-    // append 'actions' button to table and add menu listeners
-    $('.dataTables_filter > label').addClass('input-group').prepend(actionsTemplate);
+    // 'actions' menu listeners
     $(`#${this.componentId} a[name='aUpdateNode']`).click(() => {
       this.updateNodesVersionDialog.show();
     });
@@ -147,7 +148,8 @@ export default class NodesList extends Box {
     $(`#${this.componentId} table`).off('preDrawCallback');
     $(`#${this.componentId} table`).off('preXhr');
     $(`#${this.componentId} table .filter-problems`).off();
-    $(`#${this.componentId} .dataTables_filter input`).off();
+    $(`#${this.componentId} .table-filter input`).off();
+    $(`#${this.componentId} .table-filter [data-toggle="popover"]`).off();
     this._tableHandlersOff();
   }
 
@@ -157,7 +159,7 @@ export default class NodesList extends Box {
 
     var query = routerStore.urlValueOf('q');
     if (query) {
-      $(`#${this.componentId} .dataTables_filter input`).val(query);
+      $(`#${this.componentId} .table-filter input`).val(query);
       this._queryNodes(query);
     } else {
       this._focusTableSearch();
@@ -198,7 +200,7 @@ export default class NodesList extends Box {
   }
 
   _focusTableSearch() {
-    $(`#${this.componentId} .dataTables_filter .input-group input`).focus();
+    $(`#${this.componentId} .table-filter input`).focus();
   }
 
   _tableHandlersOff() {

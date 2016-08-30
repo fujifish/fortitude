@@ -1,5 +1,10 @@
-#NodesList .dataTables_filter > label.input-group > input {
-    width: 150%;
+#NodesList .table-filter .input-group input {
+    width: 350px;
+}
+
+#table-actions {
+    margin-right: 10px;
+    margin-left: -10px;
 }
 
 .box-clear {
