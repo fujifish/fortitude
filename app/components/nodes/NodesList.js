@@ -87,8 +87,6 @@ export default class NodesList extends Box {
     }).on('draw.dt', this._tableHandlers.bind(this))
       .on('preDraw.dt', this._tableHandlersOff.bind(this));
 
-
-
     // append table filters (search and actions) and set handlers
     $(`#${this.componentId} .table-filter`).append(searchTemplate);
     $(`#${this.componentId} .table-filter input`).keyup(e => {

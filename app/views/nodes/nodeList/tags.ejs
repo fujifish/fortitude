@@ -1,28 +1,25 @@
-<td>
-    <%
+<%
     var meta = node.metadata || {};
     var keys = Object.keys(meta);
     for (var j = 0; j < keys.length; ++j) {
-    %>
+%>
     <span class="metadata label bg-orange" style="line-height: 24px; margin-left: 3px;">
         <%= keys[j] %>:<%= meta[keys[j]] %>
         <span class="badge remove" data-id="<%= node.id %>"><i class="fa fa-remove"></i></span>
     </span>
-    <% } %>
+<% } %>
 
-    <%
+<%
     var tags = Object.keys(node.info.tags || {}).map(function(k) {
         return { key: k, val: node.info.tags[k] };
     });
 
-    for (var j = 0; j < tags.length; ++j) {
-    %>
+for (var j = 0; j < tags.length; ++j) {
+%>
     <span class="label bg-blue"  style="line-height: 24px; margin-left: 3px;"><%= tags[j]['key'] %>:<%= tags[j]['val'] %></span>
-    <% } %>
+<% } %>
 
-    <% node.state.current.forEach(function(s) { %>
-        <% var stopped = !(s.state && s.state.start && s.state.start.data && s.state.start.data.started) %>
-        <span class="label bg-<%- stopped ? 'red' : 'green' %>"  style="line-height: 24px; margin-left: 3px;"><%= s.name %>:<%= s.version %><%= stopped ? ' * ' : '' %></span>
-    <% }); %>
-
-</td>
+<% node.state.current.forEach(function(s) { %>
+    <% var stopped = !(s.state && s.state.start && s.state.start.data && s.state.start.data.started) %>
+    <span class="label bg-<%- stopped ? 'red' : 'green' %>"  style="line-height: 24px; margin-left: 3px;"><%= s.name %>:<%= s.version %><%= stopped ? ' * ' : '' %></span>
+<% }); %>

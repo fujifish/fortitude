@@ -7,6 +7,10 @@
     margin-left: -10px;
 }
 
+#DataTables_Table_0 th:nth-child(4) {
+    max-width: 350px;
+}
+
 .box-clear {
     background: none;
     border-top: none;
