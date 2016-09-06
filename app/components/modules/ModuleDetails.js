@@ -2,7 +2,7 @@ import Box from 'components/Box'
 import template from 'views/modules/moduleDetails';
 import modulesStore from 'store/ModulesStore';
 import ConfirmDialog from 'components/ConfirmDialog';
-import Clipboard from 'clipboard'
+import ClipBoard from 'components/ClipBoard';
 
 export default class ModuleDetails extends Box {
   constructor() {
@@ -14,12 +14,13 @@ export default class ModuleDetails extends Box {
       this.render();
     });
     this.deleteModuleConfirmDialog = new ConfirmDialog('deleteModule');
+    this.clipboard = new ClipBoard('module-details-cpy');
   }
 
   beforeRender() {
     super.beforeRender();
     $("#moduleRemButton").off();
-    this.clipboard && this.clipboard.destroy();
+    this.clipboard.destroy();
   }
 
   afterRender() {
@@ -33,11 +34,9 @@ export default class ModuleDetails extends Box {
         text: `Remove module ${module.name}@${module.version}?`
       });
     });
-    this.clipboard = new Clipboard('#cpyModule', {
-      text: () => {
-        var moduleVersion = modulesStore.getSelectedVersion();
-        return moduleVersion && JSON.stringify(moduleVersion);
-      }
+    this.clipboard.init(() => {
+      var moduleVersion = modulesStore.getSelectedVersion();
+      return moduleVersion && JSON.stringify(moduleVersion);
     });
   }
 
@@ -46,6 +45,6 @@ export default class ModuleDetails extends Box {
   }
 
   view() {
-    return this.viewWithContent(template({ content: modulesStore.getSelectedVersion() }));
+    return this.viewWithContent(template({ content: modulesStore.getSelectedVersion(), clipboard: this.clipboard.view() }));
   }
 }

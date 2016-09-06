@@ -12,11 +12,17 @@ export default class Dialog extends Component {
       this.cancel();
     });
     $(`#${this.dialogId}-ok`).click(()=> {
+      this.okClicked = true;
       this.ok();
     });
     // register on background clicks
-    $(`#${this.dialogId}`).on('hidden.bs.modal', () => {
-      this.cancel();
+    var _this = this;
+    $(`#${this.dialogId}`).on('hidden.bs.modal', function () {
+      if (_this.okClicked) {
+        _this.okClicked = false;
+      } else {
+        _this.cancel();
+      }
     });
   }
 

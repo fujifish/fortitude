@@ -1,0 +1,6 @@
+<div class="form-group <%- hasError ? 'has-error' : '' %>">
+    <form>
+        <label for="TextArea-dialog-data"><%- hasError ? 'Invalid json' : 'Modules' %></label>
+        <textarea class="form-control" id="TextArea-dialog-data" style="resize: none; height: 256px; background: #EEEEEE"><%- JSON.stringify(data) %></textarea>
+    </form>
+</div>

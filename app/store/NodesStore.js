@@ -34,6 +34,8 @@ class NodesStore extends Store {
         commands: [],
         commandsSyncedAt: null,
         configureModuleDialog: false,
+        setModulesStateDialog: false,
+        modulesState: [],
         plannedStateLoading: false,
         applyStatePending: false
       }
@@ -243,6 +245,21 @@ class NodesStore extends Store {
 
   closeConfigureModuleDialog() {
     this.state.nodeDetails.configureModuleDialog = false;
+    this.commit();
+  }
+
+  openSetModulesDialog() {
+    this.state.nodeDetails.setModulesStateDialog = true;
+    this.commit();
+  }
+
+  closeSetModulesDialog() {
+    this.state.nodeDetails.setModulesStateDialog = false;
+    this.commit();
+  }
+
+  setModulesState(modulesState) {
+    this.state.nodeDetails.modulesState = modulesState;
     this.commit();
   }
 

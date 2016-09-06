@@ -7,9 +7,10 @@ import NodeSummary from 'components/nodes/NodeSummary';
 import NodeInfo from 'components/nodes/NodeInfo';
 import nodesStore from 'store/NodesStore';
 import routerStore from 'store/relax/RouterStore';
-import ConfigureModuleDialog from 'components/nodes/ConfigureModuleDialog'
-import CommandDetailsDialog from 'components/nodes/CommandDetailsDialog'
-import UpdateAgentVersionDialog from 'components/nodes/UpdateAgentVersionDialog'
+import ConfigureModuleDialog from 'components/nodes/ConfigureModuleDialog';
+import SetModulesDialog from 'components/nodes/SetModulesDialog';
+import CommandDetailsDialog from 'components/nodes/CommandDetailsDialog';
+import UpdateAgentVersionDialog from 'components/nodes/UpdateAgentVersionDialog';
 import ConfirmDialog from 'components/ConfirmDialog';
 
 export default class NodeDetails extends Box {
@@ -18,6 +19,7 @@ export default class NodeDetails extends Box {
     this.updateAgentVersionDialog = new UpdateAgentVersionDialog();
     this.confirmDialog = new ConfirmDialog('NodeDetailsConfirm');
     this.configureModuleDialog = new ConfigureModuleDialog();
+    this.setStateDialog = new SetModulesDialog('setNodeModulesState');
     this.commandDetailsDialog = new CommandDetailsDialog();
   }
 
@@ -64,7 +66,8 @@ export default class NodeDetails extends Box {
       `${this.updateAgentVersionDialog.initialView()}` +
       `${this.confirmDialog.initialView()}` +
       `${this.commandDetailsDialog.initialView()}` +
-      `${this.configureModuleDialog.initialView()}`;
+      `${this.configureModuleDialog.initialView()}` +
+      `${this.setStateDialog.initialView()}`;
   }
 
   view() {

@@ -20,6 +20,7 @@ export default class ConfirmDialog extends Dialog {
 
   cancel() {
     this.hide();
+    this.options.cancel && this.options.cancel();
   }
 
   view() {

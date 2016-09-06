@@ -110,10 +110,6 @@ export default class ConfigureModuleDialog extends Dialog {
     selectName.trigger('change');
   }
 
-  viewMounted() {
-    super.viewMounted();
-  }
-
   _getModuleConfig(){
     let selectVersion = $('#nodeModuleVersion');
     var module = JSON.parse(JSON.stringify(selectVersion.find(':selected').data()));

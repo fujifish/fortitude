@@ -34,6 +34,9 @@ export default class NodeState extends Box {
         this.configureDialog.setConfiguredModule(null);
         nodesStore.openConfigureModuleDialog();
       });
+      $("#btnSetModulesToState").click(()=> {
+        nodesStore.openSetModulesDialog();
+      });
       var applyStateButton = $("#btnApplyState");
       applyStateButton.click(()=> {
         _this.confirmDialog.show({
