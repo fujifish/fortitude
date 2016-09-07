@@ -18,8 +18,8 @@ export default class SetModulesDialog extends Dialog {
 
     this.modulesStateText = new ModulesStateText();
     this.confirmDialog = new ConfirmDialog('ModuleStateConfirm');
-    this.clipboard = new ClipBoard('planned-state-cpy', 'Copy state json', '#TextArea-dialog-data');
-    this.downloader = new Downloader('planned-state-download', 'Save state json').setDataGetter(()=> {
+    this.clipboard = new ClipBoard('PlannedStateCpy', 'Copy json', '#TextArea-dialog-data');
+    this.downloader = new Downloader('PlannedStateDownload', 'Download json', () => {
       var state = this.modulesStateText.getState();
       if (state == null) {
         alert('Note: current state is an invalid json array');
@@ -28,7 +28,7 @@ export default class SetModulesDialog extends Dialog {
     });
   }
 
-  _handlers(){
+  _handlers() {
     $('#modulesStateFile').on('change', function (e){
       var reader = new FileReader();
       reader.onload = function(e) {
@@ -46,7 +46,7 @@ export default class SetModulesDialog extends Dialog {
     this.downloader.init();
   }
 
-  _clearHandlers(){
+  _clearHandlers() {
     $('#modulesStateFile').off();
     this.clipboard.destroy();
     this.downloader.destroy();
@@ -56,7 +56,7 @@ export default class SetModulesDialog extends Dialog {
     return `${super.initialView()}${this.confirmDialog.initialView()}`
   }
 
-  show(){
+  show() {
     super.show();
     this._handlers();
     var node = nodesStore.selectedNode;

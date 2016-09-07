@@ -10,7 +10,7 @@ export default class ClipBoard extends Component {
   }
 
   init(getter = null) {
-    // needs 'target' or 'getter' (target is css selector of input getter is used to dynamically get the text)
+    // needs 'target' or 'getter' (target is css selector of input, getter is used to dynamically get the text)
     this.clipboard = getter ? new Clipboard(`#${this.componentId}-btn`, { text: getter }) : new Clipboard(`#${this.componentId}-btn`);
     var _this = this;
     this.clipboard.on('error', function(e) {
@@ -23,6 +23,6 @@ export default class ClipBoard extends Component {
   }
 
   view() {
-    return template({id: `${this.componentId}-btn`, target: this.target, title: this.title });
+    return template({id: `${this.componentId}`, target: this.target, title: this.title });
   }
 }

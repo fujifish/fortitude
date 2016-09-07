@@ -2,14 +2,10 @@ import Component from 'components/relax/Component';
 import template from 'views/downloader';
 
 export default class Downloader extends Component {
-  constructor(name, title = '') {
+  constructor(name, title, dataGetter) {
     super(`${name}-downloader`);
-    this.title = title;
-  }
-
-  setDataGetter(getter) {
-    this.dataGetter = getter;
-    return this;
+    this.dataGetter = dataGetter;
+    this.title = title || '';
   }
 
   setFileName(fileName) {

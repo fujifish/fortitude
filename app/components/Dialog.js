@@ -9,19 +9,26 @@ export default class Dialog extends Component {
 
   _viewHandlers() {
     $(`#${this.dialogId}-cancel`).click(()=> {
+      this.cancelClicked = true;
       this.cancel();
     });
+
     $(`#${this.dialogId}-ok`).click(()=> {
       this.okClicked = true;
       this.ok();
     });
+
     // register on background clicks
-    var _this = this;
-    $(`#${this.dialogId}`).on('hidden.bs.modal', function () {
-      if (_this.okClicked) {
-        _this.okClicked = false;
+    $(`#${this.dialogId}`).on('hidden.bs.modal', () => {
+      // ok / cancel clicks (that close the dialog) send a click to the hidden.bs.model, ignore those.
+      if (this.okClicked && this.hidden) {
+        this.okClicked = false;
+      } else if (this.cancelClicked && this.hidden) {
+        this.cancelClicked = false;
       } else {
-        _this.cancel();
+        this.okClicked = false;
+        this.cancelClicked = false;
+        this.cancel();
       }
     });
   }
@@ -56,10 +63,12 @@ export default class Dialog extends Component {
 
   show() {
     $(`#${this.dialogId}`).modal('show');
+    this.hidden = false;
   }
 
   hide() {
     $(`#${this.dialogId}`).modal('hide');
+    this.hidden = true;
   }
 
   cancel() {

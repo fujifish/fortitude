@@ -21,6 +21,6 @@ export default class ModulesStateText extends Component{
 
   view() {
     var data = nodesStore.state.nodeDetails.modulesState;
-    return template({ data: data || [], hasError: data == null });
+    return template({ data: data, hasError: data == null });
   }
 }
