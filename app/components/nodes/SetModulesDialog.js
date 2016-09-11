@@ -18,13 +18,16 @@ export default class SetModulesDialog extends Dialog {
 
     this.modulesStateText = new ModulesStateText();
     this.confirmDialog = new ConfirmDialog('ModuleStateConfirm');
-    this.clipboard = new ClipBoard('PlannedStateCpy', 'Copy json', '#TextArea-dialog-data');
+    this.clipboard = new ClipBoard('PlannedStateCpy', '#TextArea-dialog-data');
     this.downloader = new Downloader('PlannedStateDownload', 'Download json', () => {
       var state = this.modulesStateText.getState();
       if (state == null) {
         alert('Note: current state is an invalid json array');
       }
       return state || [];
+    });
+    this.clipboard.onCopy((text) => {
+      nodesStore.setCopiedState(text);
     });
   }
 
@@ -41,6 +44,18 @@ export default class SetModulesDialog extends Dialog {
       };
       reader.readAsText(e.target.files[0]);
     });
+    $('#paste-state-btn').on('click', () => {
+      var state = nodesStore.state.nodeDetails.copiedState;
+      try {
+        state = JSON.parse(state);
+        nodesStore.setModulesState(state);
+      } catch (e) {
+        alert('state is an invalid json array');
+      }
+    });
+    $('#edit-module-text').on('click', () => {
+      this.modulesStateText.toggleEdit();
+    });
 
     this.clipboard.init();
     this.downloader.init();
@@ -48,6 +63,8 @@ export default class SetModulesDialog extends Dialog {
 
   _clearHandlers() {
     $('#modulesStateFile').off();
+    $('#paste-state-btn').off();
+    $('#edit-module-text').off();
     this.clipboard.destroy();
     this.downloader.destroy();
   }
@@ -96,7 +113,8 @@ export default class SetModulesDialog extends Dialog {
 
   view() {
     return this.viewWithContent({
-      title: "Set Modules State",
+      title: "Quick modules setting",
+      okLabel: "Apply",
       body: body({
         modulesStateText: this.modulesStateText.initialView(),
         clipboard: this.clipboard.view(),

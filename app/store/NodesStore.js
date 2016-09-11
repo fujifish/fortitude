@@ -36,6 +36,7 @@ class NodesStore extends Store {
         configureModuleDialog: false,
         setModulesStateDialog: false,
         modulesState: [],
+        copiedState: null,
         plannedStateLoading: false,
         applyStatePending: false
       }
@@ -260,6 +261,11 @@ class NodesStore extends Store {
 
   setModulesState(modulesState) {
     this.state.nodeDetails.modulesState = modulesState;
+    this.commit();
+  }
+
+  setCopiedState(copiedState) {
+    this.state.nodeDetails.copiedState = copiedState;
     this.commit();
   }
 

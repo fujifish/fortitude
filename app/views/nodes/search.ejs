@@ -12,15 +12,16 @@
     </div>
 
     <input class="form-control" placeholder="" type="text">
-    <a class="input-group-addon"
-          data-toggle="popover" data-placement="bottom" title="Query Language" data-html="true" data-trigger="focus" href="#"
-          data-template='
-           <div class="popover" style="width: 800px;left:0px;max-width:200%" role="tooltip">
+    <span class="input-group-btn query-language">
+        <button type="button" class="btn btn-default" style="color: rgb(60, 141, 188)"
+           data-toggle="popover" data-placement="bottom" title="Query Language" data-html="true" data-trigger="focus" href="#"
+           data-template='
+           <div class="popover big-popover" role="tooltip">
               <div class="arrow"></div>
               <h3 class="popover-title bg-blue"></h3>
               <div class="popover-content"></div>
             </div>'
-          data-content='
+           data-content='
           <table class="table table-bordered">
             <thead>
             </thead>
@@ -54,8 +55,7 @@
                 <td><p class="text-muted">Space is AND operator (search for node having logstash version other than 1.*)</p></td>
               </tr>
             </tbody>
-          </table>' >
-
-        <i class="fa fa-question" title="query language"></i>
-    </a>
+          </table>'
+        >?</button>
+    </span>
 </div>

@@ -1,6 +1,6 @@
 <div class="form-group <%- hasError ? 'has-error' : '' %>">
     <form>
-        <label for="TextArea-dialog-data"><%- hasError ? 'Invalid json' : 'Edit Modules as json' %></label>
-        <textarea class="form-control" id="TextArea-dialog-data" style="resize: none; height: 256px; background: #EEEEEE"><%- data && JSON.stringify(data) || '' %></textarea>
+        <label for="TextArea-dialog-data"><%- hasError ? 'Invalid json' : 'Raw modules' %></label>
+        <textarea readonly="true" class="form-control" id="TextArea-dialog-data" style="cursor: not-allowed; resize: none; height: 100px; background: #EEEEEE"><%- data && JSON.stringify(data) || '' %></textarea>
     </form>
 </div>

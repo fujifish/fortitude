@@ -1,8 +1,32 @@
-<label for="modulesStateFile">Upload a modules json</label>
-<input id="modulesStateFile" type="file" style="margin-bottom: 10px;">
-
-<div class="pull-right" style="margin-bottom: 5px;">
-    <%- clipboard %>
-    <%- download %>
+<label>Import export as a json file</label>
+<div class="row">
+    <div class="col-md-4">
+        <label  class="btn btn-default btn-file">
+            Import <input id="modulesStateFile" type="file" style="display:none;">
+        </label>
+        <label  class="btn btn-default">
+            Export <div style="display: none;"><%- download %></div>
+        </label>
+    </div>
 </div>
-<%- modulesStateText %>
+
+<br/>
+<label>Copy paste between nodes</label>
+<div class="row">
+    <div class="col-md-4">
+        <%- clipboard %>
+        <button type="button" id="paste-state-btn" class="btn btn-small btn-default" data-toggle="tooltip" title="Paste">
+            <i class="fa fa-paste"></i>
+        </button>
+    </div>
+</div>
+
+<br/>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" id="edit-module-text" class="pull-right btn btn-small btn-default" style="margin-bottom: 5px;" data-toggle="tooltip" title="Edit raw modules">
+            <i class="fa fa-paste"></i>
+        </button>
+        <%- modulesStateText %>
+    </div>
+</div>

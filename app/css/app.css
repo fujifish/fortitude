@@ -46,3 +46,7 @@
 span.selection > .select2-selection.select2-selection--single {
     height: 34px;
 }
+
+.popover.big-popover {
+    min-width: 800px;
+}

@@ -96,6 +96,9 @@ export default class NodesList extends Box {
       }
     });
     $(`#${this.componentId} .table-filter [data-toggle="popover"]`).popover();
+    $(`#${this.componentId} .table-filter .query-language > button`).on('click', () => {
+      $(`#${this.componentId} .table-filter .query-language > a`).popover('toggle');
+    });
 
     // 'actions' menu listeners
     $(`#${this.componentId} a[name='aUpdateNode']`).click(() => {
