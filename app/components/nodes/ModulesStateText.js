@@ -22,10 +22,8 @@ export default class ModulesStateText extends Component{
   toggleEdit() {
     var readAttr = $('#TextArea-dialog-data').prop('readonly');
     if (readAttr) {
-      console.log('was read, removing')
       $('#TextArea-dialog-data').removeAttr('readonly').css('cursor','text');
     } else {
-      console.log('wasnt read, adding')
       $('#TextArea-dialog-data').attr('readonly', true).css('cursor','not-allowed');
     }
   }
