@@ -91,5 +91,5 @@ class App extends Component {
     return template(data);
   }
 }
-
+window.jQuery = window.$ = $;
 $('#app').html(new App().initialView());
