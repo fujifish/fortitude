@@ -7,9 +7,9 @@ import routerStore from 'store/relax/RouterStore';
 export default class NodeInfo extends Box {
   constructor() {
     super("NodeInfo");
-    this.memoryProgress = new Progress('Memory');
-    this.moduleDiskSpaceProgress = new Progress('Module DiskSpace');
-    this.agentDiskSpaceProgress = new Progress('Agent DiskSpace');
+    this.memoryProgress = new Progress('Machine Memory');
+    this.moduleDiskSpaceProgress = new Progress('Module Diskspace');
+    this.agentDiskSpaceProgress = new Progress('Agent Diskspace');
 
     routerStore.on('path', () => {
       if (routerStore.isNodePage()) {
