@@ -153,13 +153,17 @@ router.route('/nodes/sync')
           callback('invalid agent authentication');
           return;
         }
+        var info = input.payload.info;
+        if (info) {
+          info.externalIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        }
         nodeCollection.updateOne({id: input.id}, {
           $set: {
             id: input.id,
             name: input.name,
             authHash: authHash,
             'state.current': input.payload.modules,
-            info: input.payload.info,
+            info: info,
             lastSync: new Date(),
             // add arbitrary metadata about the agent that can be added by an embedding server
             metadata: node && common.mergeObjects(node.metadata, req.metadata) || req.metadata
