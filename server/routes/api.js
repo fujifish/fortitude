@@ -67,35 +67,36 @@ router.route('/nodes')
       }
 
       // also filter by 'tag' parameter (includes tags, metadata and current state).
-      // ( tag is a string of Name[:value] Or an array of Name[:value] elements )
+      // tag is a string of Name[:<val|"val val"|'val val'>] Or an array of these elements
       if (req.query.tag && !Array.isArray(req.query.tag)) {
         req.query.tag = [req.query.tag];
       }
       req.query.tag && req.query.tag.forEach(function(tag) {
         tag = common.mongoSanitize(tag);
-        var m = tag.match(/^(.+):(.+)$/);
+        var m = tag.match(/^(.+):(.+)$/), tagValue;
         orFilters = [], andFilters = [], filter = {};
         if (m) {
+          tagValue = m[2] && m[2].replace(/['"]/g, '');
           // search nodes without tag:value
           if(m[1][0] == '-') {
-            filter['info.tags.' + m[1].substring(1)] = { $not: new RegExp('^' + m[2], 'i') };
+            filter['info.tags.' + m[1].substring(1)] = { $not: new RegExp('^' + tagValue, 'i') };
             andFilters.push(filter);
             filter = {};
-            filter['metadata.' + m[1].substring(1)] = { $not: new RegExp('^' + m[2], 'i') };
+            filter['metadata.' + m[1].substring(1)] = { $not: new RegExp('^' + tagValue, 'i') };
             andFilters.push(filter);
-            filter = {'state.current': { $not: { $elemMatch: {'name': new RegExp('^' + m[1].substring(1), 'i'), version: new RegExp('^' + m[2], 'i')}}}};
+            filter = {'state.current': { $not: { $elemMatch: {'name': new RegExp('^' + m[1].substring(1), 'i'), version: new RegExp('^' + tagValue, 'i')}}}};
             andFilters.push(filter);
             if(!filters['$and']) filters['$and'] = [];
             filters['$and'] = filters['$and'].concat(andFilters);
           }
           // search nodes with tag:value
           else {
-            filter['info.tags.' + m[1]] = new RegExp('^' + m[2], 'i');
+            filter['info.tags.' + m[1]] = new RegExp('^' + tagValue, 'i');
             orFilters.push(filter);
             filter = {};
-            filter['metadata.' + m[1]] = new RegExp('^' + m[2], 'i');
+            filter['metadata.' + m[1]] = new RegExp('^' + tagValue, 'i');
             orFilters.push(filter);
-            filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + m[1], 'i'), version: new RegExp('^' + m[2], 'i')}}};
+            filter = {'state.current': {$elemMatch: {'name': new RegExp('^' + m[1], 'i'), version: new RegExp('^' + tagValue, 'i')}}};
             orFilters.push(filter);
             if(!filters['$and']) filters['$and'] = [];
             filters['$and'].push({ $or: orFilters });

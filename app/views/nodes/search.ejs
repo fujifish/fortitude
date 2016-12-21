@@ -35,6 +35,10 @@
                 <td><p class="text-muted">Serach in installed modules, tags and metadata (all tags in the table)</p></td>
               </tr>
               <tr>
+                <td>tagName:"value1 value2"</td>
+                <td><p class="text-muted">Search for all tags having this sentence</p></td>
+              </tr>
+              <tr>
                 <td>tagName:*</td>
                 <td><p class="text-muted">Search for all nodes that have this tagName with whatever value</p></td>
               </tr>
@@ -49,6 +53,10 @@
               <tr>
                 <td>-tagName:0.1</td>
                 <td><p class="text-muted">Search for nodes NOT having this tag with a version of 0.1.*</p></td>
+              </tr>
+              <tr>
+                <td>-tagName:"value1 value2"</td>
+                <td><p class="text-muted">Search for nodes NOT having this sentence</p></td>
               </tr>
               <tr>
                 <td>logstash:* -logstash:1</td>
