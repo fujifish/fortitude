@@ -194,8 +194,8 @@ export default class NodesList extends Box {
   }
 
   _queryNodes(val) {
-    var tags = val.match(/([^\s]+:[^\s"']+)|([^\s]+:(["'])[^"']+\3)/g) || [] // get tags
-    var search = val.replace(/([^\s]+:[^\s"']+)|([^\s]+:(["'])[^"']+\3)/g, '').trim(); // remove tag:val words
+    var tags = val.match(/([^\s]+:"[^"]+")|([^\s]+:[^\s"]+)/g) || [] // get tags
+    var search = val.replace(/([^\s]+:"[^"]+")|([^\s]+:[^\s"]+)/g, '').trim(); // remove tag:val words
     tags = tags.map(t => { return t.replace(/\:\*$/g, '') });
     nodesStore.fetchNodes({ search: search, tags: tags });
   }

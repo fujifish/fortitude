@@ -76,7 +76,7 @@ router.route('/nodes')
         var m = tag.match(/^(.+):(.+)$/), tagValue;
         orFilters = [], andFilters = [], filter = {};
         if (m) {
-          tagValue = m[2] && m[2].replace(/['"]/g, '');
+          tagValue = m[2] && m[2].replace(/"/g, '');
           // search nodes without tag:value
           if(m[1][0] == '-') {
             filter['info.tags.' + m[1].substring(1)] = { $not: new RegExp('^' + tagValue, 'i') };
