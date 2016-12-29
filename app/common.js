@@ -1,22 +1,36 @@
 module.exports.timeSince = (date) => {
   var seconds = Math.floor((new Date() - date) / 1000);
-  var interval;
+  var interval, subInterval;
 
-  interval = Math.round(seconds / 31536000);
+  interval = Math.floor(seconds / 29030400);
   if (interval >= 1) {
-    return interval + " year" + (interval != 1 ? 's' : '') + ' ago';
+    subInterval = Math.floor(seconds / 2419200) - (interval * 12);
+    subInterval = subInterval > 0 ? subInterval + " month" + (subInterval != 1 ? 's ' : ' ') : '';
+    return interval + " year" + (interval != 1 ? 's ' : ' ') + subInterval + 'ago';
   }
-  interval = Math.round(seconds / 2592000);
+  interval = Math.floor(seconds / 2419200);
   if (interval >= 1) {
-    return interval + " month" + (interval != 1 ? 's' : '') + ' ago';
+    subInterval = Math.floor(seconds / 604800) - (interval * 4);
+    subInterval = subInterval > 0 ? subInterval + " week" + (subInterval != 1 ? 's ' : ' ') : '';
+    return interval + " month" + (interval != 1 ? 's ' : ' ') + subInterval + 'ago';
   }
-  interval = Math.round(seconds / 86400);
+  interval = Math.floor(seconds / 604800);
   if (interval >= 1) {
-    return interval + " day" + (interval != 1 ? 's' : '') + ' ago';
+    subInterval = Math.floor(seconds / 86400) - (interval * 7);
+    subInterval = subInterval > 0 ? subInterval + " day" + (subInterval != 1 ? 's ' : ' ') : '';
+    return interval + " week" + (interval != 1 ? 's ' : ' ') + subInterval + 'ago';
   }
-  interval = Math.round(seconds / 3600);
+  interval = Math.floor(seconds / 86400);
   if (interval >= 1) {
-    return interval + " hour" + (interval != 1 ? 's' : '') + ' ago';
+    subInterval = Math.floor(seconds / 3600) - (interval * 24);
+    subInterval = subInterval > 0 ? subInterval + " hour" + (subInterval != 1 ? 's ' : ' ') : '';
+    return interval + " day" + (interval != 1 ? 's ' : ' ') + subInterval + 'ago';
+  }
+  interval = Math.floor(seconds / 3600);
+  if (interval >= 1) {
+    subInterval = Math.floor(seconds / 60) - (interval * 60);
+    subInterval = subInterval > 0 ? subInterval + " minute" + (subInterval != 1 ? 's ' : ' ') : '';
+    return interval + " hour" + (interval != 1 ? 's ' : ' ') + subInterval + 'ago';
   }
   interval = Math.round(seconds / 60);
   if (interval >= 1) {
