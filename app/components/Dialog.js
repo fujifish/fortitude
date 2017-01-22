@@ -53,6 +53,7 @@ export default class Dialog extends Component {
 
   viewWithContent(content) {
     content.title = content.title || "New Dialog";
+    content.subTitle = content.subTitle || '';
     content.okLabel = content.okLabel || "OK";
     content.dialogId = this.dialogId;
     content.header = content.header || "";

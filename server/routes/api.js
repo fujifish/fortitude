@@ -207,6 +207,7 @@ router.route('/nodes/commands')
       }
 
       var command = req.body.command;
+      command.user = req.user;
       var nodeIds = req.body.ids.map(function(id) { return common.mongoSanitize(id) });
 
       buildCmds(command, nodeIds, collection, function(err, cmds) {
@@ -365,6 +366,7 @@ router.route('/nodes/:node_id/commands')
       }
 
       var command = req.body;
+      command.user = req.user;
       var nodeId = [common.mongoSanitize(req.params.node_id)];
 
       buildCmds(command, nodeId, collection, function(err, cmd) {

@@ -57,7 +57,7 @@ export default class NodeCommands extends Box {
     $("a[name='nodeCommandDetails']").click(function() {
       let index = parseInt($(this).data('index'));
       let command = nodesStore.state.nodeDetails.commands[index];
-      _this.commandDetailsDialog.show(command.log);
+      _this.commandDetailsDialog.show(command);
     });
   }
 

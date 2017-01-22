@@ -10,9 +10,12 @@ export default class CommandDetailsDialog extends Dialog {
     super.viewMounted();
   }
 
-  show(content) {
+  show(command) {
     super.show();
-    $(`#${this.dialogId} pre`).text(content);
+    $(`#${this.dialogId} .modal-title`).text(command.status.toUpperCase());
+    $(`#${this.dialogId} .modal-subTitle`).text(command.details);
+    $(`#${this.dialogId} .modal-header-content`).text(`Initiator: ${command.user || 'unknown'}`);
+    $(`#${this.dialogId} pre`).text(command.log);
   }
 
 
