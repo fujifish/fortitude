@@ -1,3 +1,5 @@
+import { JSONForm } from 'json-form/lib/jsonform';
+import AJV from 'ajv';
 import Dialog from 'components/Dialog';
 import nodesStore from 'store/NodesStore';
 import modulesStore from 'store/ModulesStore'
@@ -49,23 +51,44 @@ export default class ConfigureModuleDialog extends Dialog {
       let schema = version.schema && version.schema.configure;
       let form = (version.form && version.form.configure) || ['*'];
       let module = this.context && this.context.module;
-      var values = module && module.state && module.state.configure && module.state.configure.data;
+      let values = module && module.state && module.state.configure && module.state.configure.data;
       if (!schema) {
         schema = {config: {type: "string", title: "Raw JSON Configuration"}, default: "{}"};
         form = [{key: 'config', type: 'textarea'}];
         values = {config: values && JSON.stringify(values, null, 2)};
       }
 
-      var configElementCont = $('#nodeModuleConfiguration');
+      // convert the schema from v3 to v4 (if needed)
+      // changes the schema object in-place so we clone it
+      schema = JSON.parse(JSON.stringify({type: "object", properties: schema}));
+      JSONForm.util.convertSchemaV3ToV4(schema);
+
+      // populate default values from the schema (if there are any missing from the currently set values)
+      // as there might be new fields in the newly selected module version.
+      // changes the values object in-place if needed.
+      let ajv = new AJV({useDefaults: true});
+      ajv.validate(schema, values);
+
+      let configElementCont = $('#nodeModuleConfiguration');
       configElementCont.empty();
       configElementCont.off();
       configElementCont.jsonForm({
         schema: schema,
-        form: form ,
-        value: values
+        form: form,
+        value: values,
+        validate: {
+          validate: function(data, schema) {
+            let ajv = new AJV({allErrors: true, errorDataPath: 'property'});
+            ajv.validate(schema, data);
+            return {errors: ajv.errors};
+          }
+        }
       });
-      if(this.readOnly) $('#nodeModuleConfiguration').find('input, textarea, button, select').attr('disabled','disabled');
-      else $('#nodeModuleConfiguration').find('input, textarea, button, select').removeAttr("disabled");
+      if (this.readOnly) {
+        $('#nodeModuleConfiguration').find('input, textarea, button, select').attr('disabled','disabled');
+      } else {
+        $('#nodeModuleConfiguration').find('input, textarea, button, select').removeAttr("disabled");
+      }
     });
   }
 
@@ -138,6 +161,12 @@ export default class ConfigureModuleDialog extends Dialog {
   ok() {
 //    modulesStore.addModule($(`#${this.dialogId}-data`).val());
 //    $(`#${this.dialogId}-data`).val("");
+    // validate the values entered in the form
+    let validation = $('#nodeModuleConfiguration').jsonForm('validate');
+    if (validation.errors) {
+      return;
+    }
+
     nodesStore.closeConfigureModuleDialog();
     if(this.context){
       nodesStore.updateSelectedNodeModule(this.context.index, this._getModuleConfig());
