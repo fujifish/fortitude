@@ -10,12 +10,24 @@ export default class CommandDetailsDialog extends Dialog {
     super.viewMounted();
   }
 
+  unescapeHtml(input) {
+    return input.replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&lt;/g, '<')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&gt;/g, '>');
+  }
+
   show(command) {
     super.show();
     $(`#${this.dialogId} .modal-title`).text(command.status.toUpperCase());
-    $(`#${this.dialogId} .modal-subTitle`).text(command.details);
+    let subtitle = '';
+    if (command.details) {
+      subtitle = `Message: ${command.details}`;
+    }
+    $(`#${this.dialogId} .modal-subTitle`).text(subtitle);
     $(`#${this.dialogId} .modal-header-content`).text(`Initiator: ${command.user || 'unknown'}`);
-    $(`#${this.dialogId} pre`).text(command.log);
+    $(`#${this.dialogId} pre`).text(this.unescapeHtml(command.log));
   }
 
 
