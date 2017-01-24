@@ -1,4 +1,4 @@
-<form id="nodeModule">
+<div id="nodeModule">
   <h4>Name</h4>
   <select class="form-control" id="nodeModuleName">
   </select>
@@ -7,15 +7,17 @@
   <select class="form-control" id="nodeModuleVersion">
   </select>
 
-  <h4>State</h4>
-  <div class="checkbox">
-    <label>
-      <input id="nodeModuleStarted" type="checkbox"> Started
-    </label>
+  <div id="nodeModuleSettings">
+    <h4>State</h4>
+    <div class="checkbox">
+      <label>
+        <input id="nodeModuleStarted" type="checkbox"> Started
+      </label>
+    </div>
+    <h4>Configuration</h4>
+    <div id="nodeModuleConfigurationDiv">
+      <form id="nodeModuleConfiguration" style="max-height: 50%; overflow: auto" class="jsform-section"></form>
+    </div>
   </div>
-</form>
 
-<h4>Configuration</h4>
-<div id="nodeModuleConfigurationDiv">
-  <form id="nodeModuleConfiguration" style="max-height: 50%; overflow: auto" class="jsform-section"></form>
 </div>

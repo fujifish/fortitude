@@ -33,6 +33,14 @@ export default class Dialog extends Component {
     });
   }
 
+  enableOk(enable) {
+    if (enable) {
+      $(`#${this.dialogId}-ok`).removeAttr('disabled');
+    } else {
+      $(`#${this.dialogId}-ok`).attr('disabled','disabled');
+    }
+  }
+
   viewMounted() {
     super.viewMounted();
     $(`#${this.dialogId}`).modal('hide');

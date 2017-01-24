@@ -16,6 +16,7 @@ export default class ConfigureModuleDialog extends Dialog {
 
   setConfiguredModule(context){
     this.context = context;
+    this.context.state = this.context.state || [];
     this.readOnly = context && !!context.readOnly;
   }
 
@@ -28,10 +29,17 @@ export default class ConfigureModuleDialog extends Dialog {
       // populate available versions
       var module = selectName.find(':selected').data();
 
-      module.versions.sort((a,b) => common.versionCompare(a.version, b.version)).forEach(function(v) {
+      // filter out versions that are already in the state
+      var existingModules = _this.context.state.filter(m => m.name == module.name);
+      var existingVersions = existingModules.map(m => m.version);
+      if (_this.context.module) {
+        existingVersions = existingVersions.filter(v => v !== _this.context.module.version);
+      }
+      var versions = module.versions.filter(v => -1 === existingVersions.indexOf(v.version));
+      versions.sort((a,b) => common.versionCompare(a.version, b.version)).forEach(function(v) {
         selectVersion.append($('<option>', {text: v.version, data: v}));
       });
-      if(this.context) {
+      if (this.context.module) {
         selectVersion.find('option').filter(function() {
           return $(this).text() == _this.context.module.version;
         }).attr('selected', true);
@@ -39,7 +47,7 @@ export default class ConfigureModuleDialog extends Dialog {
 
       selectVersion.trigger('change');
 
-      if(this.readOnly) selectVersion.attr('disabled', 'disabled');
+      if (this.readOnly) selectVersion.attr('disabled', 'disabled');
       else selectVersion.removeAttr("disabled");
 
     });
@@ -48,9 +56,21 @@ export default class ConfigureModuleDialog extends Dialog {
     let selectVersion = $('#nodeModuleVersion');
     selectVersion.change(()=> {
       let version = selectVersion.find(':selected').data();
+      if (!version) {
+        this.enableOk(false);
+        $(`#nodeModuleSettings`).hide();
+        return;
+      }
+
+      let configElementCont = $('#nodeModuleConfiguration');
+      configElementCont.empty();
+      configElementCont.off();
+      this.enableOk(true);
+      $(`#nodeModuleSettings`).show();
+
       let schema = version.schema && version.schema.configure;
       let form = (version.form && version.form.configure) || ['*'];
-      let module = this.context && this.context.module;
+      let module = this.context.module;
       let values = module && module.state && module.state.configure && module.state.configure.data;
       if (!schema) {
         schema = {config: {type: "string", title: "Raw JSON Configuration"}, default: "{}"};
@@ -69,9 +89,6 @@ export default class ConfigureModuleDialog extends Dialog {
       let ajv = new AJV({useDefaults: true});
       ajv.validate(schema, values);
 
-      let configElementCont = $('#nodeModuleConfiguration');
-      configElementCont.empty();
-      configElementCont.off();
       configElementCont.jsonForm({
         schema: schema,
         form: form,
@@ -111,16 +128,16 @@ export default class ConfigureModuleDialog extends Dialog {
     });
 
     this._handlers();
-    if(this.context) {
+    if (this.context.module) {
       selectName.find('option').filter(function() {
         return $(this).text() == _this.context.module.name;
       }).attr('selected', true);
       selectName.prop('disabled', true);
-    }else{
+    } else {
       selectName.removeAttr('disabled');
     }
 
-    let module = this.context && this.context.module;
+    let module = this.context.module;
     if (module && module.state && module.state.start && module.state.start.data && module.state.start.data.started) {
       $('#nodeModuleStarted').iCheck('check');
     } else {
@@ -168,8 +185,8 @@ export default class ConfigureModuleDialog extends Dialog {
     }
 
     nodesStore.closeConfigureModuleDialog();
-    if(this.context){
-      nodesStore.updateSelectedNodeModule(this.context.index, this._getModuleConfig());
+    if(this.context.module){
+      nodesStore.updateSelectedNodeModule(this.context.module.fullname, this._getModuleConfig());
     }else{
       nodesStore.addSelectedNodeModule(this._getModuleConfig());
     }

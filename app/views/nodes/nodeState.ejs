@@ -11,32 +11,19 @@
     </div>
 </div>
 <div class="box-body bg-gray-light">
-  <% if (states.length === 0) { %>
+  <% if (state.length === 0) { %>
   <h5 class="text-uppercase text-gray">No Entries</h5>
   <% } else { %>
+
   <%
-    function sortedIndexes(toSort) {
-      var objAndIdx = [];
-      for (var i = 0; i < toSort.length; i++) {
-        objAndIdx[i] = [toSort[i], i];
-      }
-      objAndIdx.sort(function(left, right) {
-        return left[0].name < right[0].name ? -1 : 1;
-      });
-      var sortedIndexes = [];
-      for (var j = 0; j < objAndIdx.length; j++) {
-        sortedIndexes.push(objAndIdx[j][1]);
-      }
-      return sortedIndexes;
-    }
-    sortedIndexes(states).forEach(function(i) {
-      var state = states[i];
+    state.forEach(function(module) {
   %>
-  <div class="info-box" style="position: relative" name="StateOfModuleInfoBox" data-index="<%= i %>">
+
+  <div class="info-box" style="position: relative" name="StateOfModuleInfoBox" data-module-name="<%= module.fullname %>">
     <span class="info-box-icon bg-light-blue-gradient">
       <!--<div style="line-height: 90px;">-->
         <!--<span class="info-box-text">-->
-          <% if (state.state.start && state.state.start.data && state.state.start.data.started) { %>
+          <% if (module.state.start && module.state.start.data && module.state.start.data.started) { %>
           &nbsp;<i class="fa fa-play-circle"></i>&nbsp;
           <% } else { %>
           &nbsp;<i class="fa fa-stop-circle"></i>&nbsp;
@@ -45,15 +32,15 @@
       <!--</div>-->
     </span>
     <div class="info-box-content">
-      <span class="info-box-text"><b><%= state.name %></b></span>
-      <span class="info-box-text"><%= state.version %></span>
+      <span class="info-box-text"><b><%= module.name %></b></span>
+      <span class="info-box-text"><%= module.version %></span>
 
-      <div class="btn-group btn-group-sm" style="position: absolute; bottom: 4px;" data-index="<%= i %>">
+      <div class="btn-group btn-group-sm" style="position: absolute; bottom: 4px;" data-module-name="<%= module.fullname %>">
         <% if (editable) { %>
-        <button type="button" name="btnEditModuleInState" class="btn btn-default" data-index="<%= i %>" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></button>
-        <button type="button" name="btnRemoveModuleFromState" data-index="<%= i %>" class="btn btn-default" data-toggle="tooltip" title="Remove"><i class="fa fa-remove"></i></button>
+        <button type="button" name="btnEditModuleInState" class="btn btn-default" data-module-name="<%= module.fullname %>" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></button>
+        <button type="button" name="btnRemoveModuleFromState" data-module-name="<%= module.fullname %>" class="btn btn-default" data-toggle="tooltip" title="Remove"><i class="fa fa-remove"></i></button>
         <% } else { %>
-        <button type="button" name="btnViewModuleInState" class="btn btn-default" data-index="<%= i %>" data-toggle="tooltip" title="Details"><i class="fa fa-eye"></i></button>
+        <button type="button" name="btnViewModuleInState" class="btn btn-default" data-module-name="<%= module.fullname %>" data-toggle="tooltip" title="Details"><i class="fa fa-eye"></i></button>
         <% } %>
       </div>
     </div>

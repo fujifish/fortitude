@@ -93,7 +93,18 @@ class NodesStore extends Store {
     if (order) {
       node.orderIndex = order;
     }
+    this.enrichState(node.state.planned);
+    this.enrichState(node.state.current);
     return node;
+  }
+
+  enrichState(state) {
+    if (!state) {
+      return;
+    }
+    state.forEach(m => {
+      m.fullname = `${m.name}-${m.version}`
+    });
   }
 
   _handleNodesResult(promise) {
@@ -269,9 +280,13 @@ class NodesStore extends Store {
     this.commit();
   }
 
-  removeSelectedNodeModule(index){
+  removeSelectedNodeModule(name){
     var node = this.selectedNode;
     let planned = JSON.parse(JSON.stringify(node.state.planned || []));
+    let index = planned.findIndex(m => m.fullname == name);
+    if (-1 === index) {
+        this.fatalError(`could not find module ${name} in planned state of ${node.name}`);
+    }
     planned.splice(index, 1);
     this.updateNodePlannedState(node.id, planned);
   }
@@ -283,9 +298,13 @@ class NodesStore extends Store {
     this.updateNodePlannedState(node.id, planned);
   }
 
-  updateSelectedNodeModule(index, module){
+  updateSelectedNodeModule(name, module){
     var node = this.selectedNode;
     let planned = JSON.parse(JSON.stringify(node.state.planned || []));
+    let index = planned.findIndex(m => m.fullname == name);
+    if (-1 === index) {
+        this.fatalError(`could not find module ${name} in planned state of ${node.name}`);
+    }
     planned[index] = module;
     this.updateNodePlannedState(node.id, planned);
   }
@@ -297,6 +316,17 @@ class NodesStore extends Store {
   }
 
   updateNodePlannedState(nodeId, state) {
+    // validating that there are no duplicates for each modules@version
+    let modulesMap = {};
+    this.enrichState(state);
+    state.forEach(m => {
+      if (modulesMap[m.fullname]) {
+        this.fatalError(`illegal planned state ! ${m.fullname} appears more than once`);
+        return;
+      }
+      modulesMap[m.fullname] = true;
+    });
+
     this.state.nodeDetails.plannedStateLoading = true;
     this.state.nodeDetails.applyStatePending = true;
     this.commit();
@@ -409,6 +439,11 @@ class NodesStore extends Store {
   setNodeSyncEnabled(enabled) {
     this.state.nodeSyncEnabled = !!enabled;
     localStorage.setItem('nodesList/nodeSyncEnabled', this.state.nodeSyncEnabled);
+  }
+
+  fatalError(msg) {
+      alert(msg);
+      throw new Error(msg);
   }
   
 }

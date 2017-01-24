@@ -31,7 +31,7 @@ export default class NodeState extends Box {
     let _this = this;
     if(this.options.editable){
       $("#btnAddModuleToState").click(()=> {
-        this.configureDialog.setConfiguredModule(null);
+        this.configureDialog.setConfiguredModule({ state: nodesStore.selectedNode.state.planned });
         nodesStore.openConfigureModuleDialog();
       });
       $("#btnSetModulesToState").click(()=> {
@@ -55,19 +55,18 @@ export default class NodeState extends Box {
         applyStateButton.addClass('btn-outline');
       }
       $("button[name='btnEditModuleInState']").click(function(){
-        let index = parseInt($(this).data('index'));
-        let module = nodesStore.selectedNode.state.planned[index];
-        _this.configureDialog.setConfiguredModule({module: module, index: index});
+        let name = $(this).data('module-name');
+        let module = nodesStore.selectedNode.state.planned.find(m => m.fullname == name );
+        _this.configureDialog.setConfiguredModule({ module: module, state: nodesStore.selectedNode.state.planned });
         nodesStore.openConfigureModuleDialog();
       });
       $("button[name='btnRemoveModuleFromState']").click(function(){
-        let index = parseInt($(this).data('index'));
-        let module = nodesStore.selectedNode.state.planned[index];
+        let name = $(this).data('module-name');
         _this.confirmDialog.show({
           ok: ()=> {
-            nodesStore.removeSelectedNodeModule(index);
+            nodesStore.removeSelectedNodeModule(name);
           },
-          text: `Remove module ${module.name}@${module.version}?`
+          text: `Remove module ${name}?`
         });
       });
     }else{
@@ -81,15 +80,15 @@ export default class NodeState extends Box {
         });
       });
       $("button[name='btnViewModuleInState']").click(function(){
-        let index = parseInt($(this).data('index'));
-        let module = nodesStore.selectedNode.state.current[index];
-        _this.configureDialog.setConfiguredModule({module: module, index: index, readOnly: true});
+        let name = $(this).data('module-name');
+        let module = nodesStore.selectedNode.state.current.find(m => m.fullname == name );
+        _this.configureDialog.setConfiguredModule({ module: module, readOnly: true, state: nodesStore.selectedNode.state.current });
         nodesStore.openConfigureModuleDialog();
       });
     }
     $(`#${this.componentId} div[name="StateOfModuleInfoBox"]`).hover(
       function() {
-        $(`#${_this.componentId} div.btn-group[data-index="${$(this).data('index')}"]`).show();
+        $(`#${_this.componentId} div.btn-group[data-module-name="${$(this).data('module-name')}"]`).show();
       },
       function() {
         $(`#${_this.componentId} div.btn-group`).hide();
@@ -123,10 +122,14 @@ export default class NodeState extends Box {
 
   view() {
     let node = nodesStore.selectedNode;
+    let state = node ? node.state[this.options.title.toLowerCase()] || [] : [];
+    state = state.sort((s1, s2) => {
+      return s1.fullname.localeCompare(s2.fullname);
+    });
     const data = {
       title: this.options.title || "",
       editable: this.options.editable,
-      states: node ? node.state[this.options.title.toLowerCase()] || [] : []
+      state: state
     };
     return this.viewWithContent(template(data));
   }
