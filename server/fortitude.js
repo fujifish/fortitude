@@ -66,7 +66,6 @@ function fortitude(config) {
         csrfToken: csrfToken(salt, config.csrfSecret),
         fortitudeVersion: require('../package').version };
 
-      res.setHeader('Set-Cookie', '_csrf=' + salt+';HttpOnly');
       ejs.renderFile(path.resolve(__dirname, '../index.ejs'), clientConfig, function(err, html) {
         res.end(html);
       });
@@ -109,21 +108,17 @@ function csrfVerify(secret) {
       next(err);
     }
 
-    var cookie = req.cookies['_csrf'];
-    if (!cookie) {
-      return _done();
-    }
     var token = req.headers['x-csrf-token'];
     if (!token || token.length === 0) {
-      return _done('invalid csrf token');
+      return _done('missing csrf token');
     }
     var parts = token.split(':');
     if (parts.length !== 2) {
-      return _done('invalid csrf token');
+      return _done('malformed csrf token');
     }
     var salt = parts[0];
     var hash = parts[1];
-    if (salt === cookie && hash === csrfHash(salt, secret)) {
+    if (hash === csrfHash(salt, secret)) {
       _done();
     } else {
       return _done('invalid csrf token');
