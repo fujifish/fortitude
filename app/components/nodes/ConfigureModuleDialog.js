@@ -115,6 +115,11 @@ export default class ConfigureModuleDialog extends Dialog {
     this.readOnly = false;
   }
 
+  hide() {
+    super.hide();
+    $('#nodeConfigurationErrors').text('');
+  }
+
   show(){
     super.show();
     let _this = this;
@@ -181,6 +186,7 @@ export default class ConfigureModuleDialog extends Dialog {
     // validate the values entered in the form
     let validation = $('#nodeModuleConfiguration').jsonForm('validate');
     if (validation.errors) {
+      $('#nodeConfigurationErrors').text(`${validation.errors.length} errors remaining`);
       return;
     }
 
