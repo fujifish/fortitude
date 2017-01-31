@@ -3,10 +3,14 @@ import template from 'views/nodes/nodeInfo';
 import Progress from 'components/nodes/Progress';
 import nodesStore from 'store/NodesStore';
 import routerStore from 'store/relax/RouterStore';
+import UpdateAgentVersionDialog from 'components/nodes/UpdateAgentVersionDialog';
+import ConfirmDialog from 'components/ConfirmDialog';
 
 export default class NodeInfo extends Box {
   constructor() {
     super("NodeInfo");
+    this.updateAgentVersionDialog = new UpdateAgentVersionDialog();
+    this.confirmDialog = new ConfirmDialog('NodeDetailsConfirm');
     this.memoryProgress = new Progress('Machine Memory');
     this.moduleDiskSpaceProgress = new Progress('Module Diskspace');
     this.agentDiskSpaceProgress = new Progress('Agent Diskspace');
@@ -30,6 +34,34 @@ export default class NodeInfo extends Box {
     });
   }
 
+  _handlers() {
+    $(`#${this.componentId} button[name='btUpdateNode']`).click(() => {
+      let node = nodesStore.selectedNode;
+      this.updateAgentVersionDialog.show(node.info.agentVersion);
+    });
+    $(`#${this.componentId} button[name='btResetNode']`).click(() => {
+      let node = nodesStore.selectedNode;
+      this.confirmDialog.show({
+        ok: ()=> {
+          nodesStore.resetNodeContents();
+        },
+        text: `Are you sure you want to reset node "${node.name}"?`,
+        subtext: 'This action will remove all currently installed modules and clear the agent cache.'
+      });
+    });
+  }
+
+  beforeRender() {
+    super.beforeRender();
+    $(`#${this.componentId} button[name='btUpdateNode']`).off();
+    $(`#${this.componentId} button[name='btResetNode']`).off();
+  }
+
+  afterRender() {
+    super.afterRender();
+    this._handlers();
+  }
+
   getMemoryProgress(node) {
     var totalMem = Math.floor(node.info.totalmem/1024/1024), freeMem = Math.floor(node.info.freemem/1024/1024);
     this.memoryProgress.setProgress(totalMem - freeMem, totalMem);
@@ -49,6 +81,12 @@ export default class NodeInfo extends Box {
 
     this.agentDiskSpaceProgress.setPopoverTitle(node.info.diskspace && node.info.diskspace.installed.path);
     return this.agentDiskSpaceProgress;
+  }
+
+  initialView() {
+    return `${super.initialView()}` +
+        `${this.updateAgentVersionDialog.initialView()}` +
+        `${this.confirmDialog.initialView()}`;
   }
 
   view() {
