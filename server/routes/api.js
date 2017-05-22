@@ -391,7 +391,7 @@ router.route('/nodes/:id/metadata')
   .delete(function(req, res) {
     var id = req.params.id;
     var metadata = req.body;
-    logger.info('Deleting node:' + id + ' metadata:' + metadata);
+    logger.info('Deleting node:' + id + ' metadata:' + (metadata && JSON.stringify(metadata) || ''));
     store.db().collection('nodes', function(err, collection) {
       if (err) {
         return respondWithError(res, err);

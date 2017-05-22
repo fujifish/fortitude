@@ -35,7 +35,7 @@ export default class AddNodesTagsDialog extends Dialog {
       var key = $(this).find('.key').val();
       var value = $(this).find('.val').val();
       if (key && value) {
-        tags[key] = value;
+        tags[key.trim()] = value.trim();
       } else  {
         invalid = true;
         var errTag = $(this).addClass('has-error');

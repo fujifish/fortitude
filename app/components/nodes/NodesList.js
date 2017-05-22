@@ -239,7 +239,7 @@ export default class NodesList extends Box {
     });
 
     $(`#${this.componentId} .badge.remove`).click(function(event) {
-      var match = $(this).parent().text().match(/([^\s]+):(.+)/);
+      var match = $(this).parent().attr('data-value').match(/(.+):(.+)/);
       var metadataJson = {};
       metadataJson[match[1]] = match[2];
       var node = _this._nodeById($(this).data('id'));

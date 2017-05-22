@@ -3,8 +3,9 @@
     var keys = Object.keys(meta);
     for (var j = 0; j < keys.length; ++j) {
 %>
-    <span class="metadata label bg-orange" style="line-height: 24px; margin-left: 3px;">
-        <%= keys[j] %>:<%= meta[keys[j]] %>
+    <% tagValue = (keys[j] || '') + ':' + (meta[keys[j]] || '') %>
+    <span class="metadata label bg-orange" style="line-height: 24px; margin-left: 3px;" data-value="<%= tagValue %>">
+        <%= tagValue %>
         <span class="badge remove" data-id="<%= node.id %>"><i class="fa fa-remove"></i></span>
     </span>
 <% } %>
