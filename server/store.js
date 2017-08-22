@@ -46,7 +46,11 @@ module.exports.init = function(config, log) {
 
   var optionsString = config.options || '';
   var serverList = config.serverList || 'localhost:27017';
-  var connectionString = util.format('mongodb://%s/%s?%s', serverList , 'fortitude', optionsString);
+  var username = config.FortitudemongoUsername;
+  var password = config.FortitudemongoPassword;
+  var connectionString = (username && password) ?
+      util.format('mongodb://%s:%s@%s/%s?%s', username, password, serverList , 'fortitude', optionsString) :
+      util.format('mongodb://%s/%s?%s', serverList , 'fortitude', optionsString);
   var readPref = config.readPref !== undefined ? config.readPref : mongo.ReadPreference.PRIMARY_PREFERRED;
   var options = {
     db: {
